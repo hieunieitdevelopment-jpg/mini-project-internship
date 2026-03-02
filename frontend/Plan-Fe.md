@@ -67,7 +67,6 @@ Rèn luyện kỹ năng xây dựng hệ thống theo kiến trúc Frontend – 
 4. Cấu trúc thư mục rõ ràng, dễ bảo trì và mở rộng  
 
 ### Cấu trúc thư mục Frontend (dự kiến)
-```bash
 src/
  ├─ pages/        # Các trang chức năng chính
  ├─ components/   # Component giao diện dùng chung
@@ -77,7 +76,7 @@ src/
 
 ---
 
-## Objective 6: Hoàn thành Frontend trong phạm vi và thời gian thực tập
+### Objective 6: Hoàn thành Frontend trong phạm vi và thời gian thực tập
 **Mục tiêu:**  
 Hoàn thiện Frontend phù hợp với yêu cầu học tập và thời gian thực tập.
 
@@ -106,3 +105,4 @@ Hoàn thiện Frontend phù hợp với yêu cầu học tập và thời gian t
 - **Gọi API:** Fetch / Axios  
 - **Styling:** CSS / Tailwind CSS  
 - **Công cụ build:** Vite  **
+```bash
