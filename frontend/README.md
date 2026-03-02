@@ -104,11 +104,11 @@ Frontend chỉ thực hiện gọi API và hiển thị dữ liệu, không xử
 
 
 src/
-├── pages/ # Các trang chức năng chính
-├── components/ # Component giao diện dùng chung
-├── services/ # Xử lý gọi API
-├── styles/ # CSS / styling
-└── App.jsx
+   - pages/ # Các trang chức năng chính
+   - components/ # Component giao diện dùng chung
+   - services/ # Xử lý gọi API
+   - styles/ # CSS / styling
+   - App.jsx
 
 ---
 
