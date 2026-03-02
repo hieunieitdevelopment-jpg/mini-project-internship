@@ -1,70 +1,146 @@
-# Getting Started with Create React App
+# FRONTEND – HỆ THỐNG TRA CỨU & CHUYỂN ĐỔI ĐỊA CHỈ HÀNH CHÍNH
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+## 1. Giới thiệu
 
-In the project directory, you can run:
+Phần Frontend của project được xây dựng nhằm cung cấp giao diện web cho hệ thống tra cứu và chuyển đổi địa chỉ hành chính trước và sau khi sáp nhập.
 
-### `npm start`
+Frontend tập trung vào việc:
+- Hiển thị dữ liệu một cách rõ ràng, dễ hiểu
+- Hỗ trợ người dùng tra cứu địa chỉ nhanh chóng
+- Kết nối và làm việc với Backend thông qua REST API
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Toàn bộ logic xử lý dữ liệu và nghiệp vụ được thực hiện ở Backend, Frontend không xử lý các bài toán mapping phức tạp.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 2. Mục tiêu của Frontend
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Tạo giao diện web đơn giản, dễ sử dụng cho người dùng phổ thông
+- Cho phép nhập và tra cứu địa chỉ hành chính
+- Hiển thị kết quả chuyển đổi địa chỉ cũ ↔ địa chỉ mới
+- Thực hành kỹ năng xây dựng Frontend trong mô hình FE – BE tách biệt
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 3. Vai trò của Frontend trong hệ thống
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Frontend đóng vai trò là lớp giao tiếp giữa người dùng và hệ thống, bao gồm:
+- Nhận dữ liệu đầu vào từ người dùng
+- Gửi request lên Backend thông qua API
+- Nhận dữ liệu phản hồi từ Backend
+- Hiển thị kết quả và trạng thái lên giao diện
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Frontend không lưu trữ dữ liệu hành chính và không can thiệp vào logic xử lý nghiệp vụ.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 4. Các chức năng chính
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 4.1 Tra cứu địa chỉ cũ sang địa chỉ mới
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Người dùng nhập địa chỉ hành chính cũ (xã/phường, huyện, tỉnh)
+- Frontend gửi dữ liệu lên Backend
+- Hiển thị địa chỉ hành chính mới tương ứng
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+### 4.2 Tra cứu ngược địa chỉ mới sang địa chỉ cũ
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Người dùng nhập địa chỉ hành chính mới
+- Frontend hiển thị địa chỉ cũ tương ứng (nếu tồn tại)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+### 4.3 Hiển thị lịch sử thay đổi
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- Hiển thị thông tin thay đổi đơn vị hành chính:
+  - Địa chỉ trước sáp nhập
+  - Địa chỉ sau sáp nhập
+  - Thời điểm thay đổi
+  - Hình thức thay đổi (đổi tên, gộp đơn vị)
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 4.4 Thông báo và trạng thái
 
-### Making a Progressive Web App
+- Hiển thị loading khi đang gọi API
+- Thông báo khi không tìm thấy dữ liệu
+- Hiển thị lỗi khi Backend trả về lỗi
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## 5. Luồng xử lý Frontend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
+Người dùng nhập dữ liệu
+↓
+Frontend gửi request API
+↓
+Backend xử lý và trả kết quả
+↓
+Frontend hiển thị dữ liệu
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 6. Giao tiếp với Backend
+
+Frontend sử dụng REST API do Backend cung cấp.
+
+Các API chính được sử dụng:
+
+GET /api/address/convert
+GET /api/address/reverse
+GET /api/address/history/{id}
+
+
+Frontend chỉ thực hiện gọi API và hiển thị dữ liệu, không xử lý logic nghiệp vụ.
+
+---
+
+## 7. Cấu trúc thư mục Frontend (dự kiến)
+
+
+src/
+├── pages/ # Các trang chức năng chính
+├── components/ # Component giao diện dùng chung
+├── services/ # Xử lý gọi API
+├── styles/ # CSS / styling
+└── App.jsx
+
+---
+
+## 8. Công nghệ sử dụng
+
+- Framework Frontend: React
+- Gọi API: Fetch / Axios
+- Styling: CSS / Tailwind CSS
+- Công cụ build: Vite
+
+---
+
+## 9. Phạm vi và giới hạn
+
+Trong phạm vi thực tập, Frontend:
+- Chỉ tập trung vào chức năng tra cứu và hiển thị dữ liệu
+- Chưa triển khai đăng nhập và phân quyền người dùng
+- Chưa tích hợp bản đồ hoặc các chức năng GIS
+- Giao diện ở mức cơ bản, ưu tiên rõ ràng và dễ sử dụng
+
+---
+
+## 10. Khó khăn gặp phải
+
+- Dữ liệu địa chỉ có nhiều trường hợp trùng tên
+- Việc hiển thị kết quả sao cho dễ hiểu với người dùng phổ thông
+- Phụ thuộc nhiều vào độ chính xác và đầy đủ của dữ liệu từ Backend
+
+---
+
+## 11. Mong muốn nhận góp ý
+
+- Phạm vi Frontend đã phù hợp với thời gian thực tập hay chưa
+- Cách tổ chức chức năng và giao diện đã hợp lý chưa
+- Có nên bổ sung thêm chức năng Frontend nào để tăng tính thực tiễn của hệ thống
