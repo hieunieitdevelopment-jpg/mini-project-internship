@@ -11,9 +11,9 @@ const client = new Client({
 async function connectDB() {
   try {
     await client.connect()
-    console.log('✅ DB Connected')
+    console.log(' DB Connected')
   } catch (err) {
-    console.error('❌ DB Connection Failed:', err.message)
+    console.error('DB Connection Failed:', err.message)
     process.exit(1)
   }
 }
