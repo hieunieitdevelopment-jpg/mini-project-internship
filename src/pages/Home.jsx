@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 function Home() {
+
+  const [keyword, setKeyword] = useState("");
 
   return (
 
@@ -13,13 +17,17 @@ function Home() {
       <div className="bg-gray-100 p-6 rounded-lg shadow mb-10">
 
         <h2 className="text-xl font-semibold mb-4">
-          Khu vực tìm kiếm
+          Tìm kiếm nhanh
         </h2>
 
-        {/* Search components sẽ thêm ở task sau */}
-        <div className="h-20 flex items-center justify-center text-gray-500">
-          Search components here
-        </div>
+        {/* Search Input */}
+        <input
+          type="text"
+          placeholder="Nhập địa chỉ cần tra cứu..."
+          className="border p-2 w-full rounded"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
 
       </div>
 
@@ -30,8 +38,7 @@ function Home() {
           Kết quả tra cứu
         </h2>
 
-        {/* Result list sẽ thêm ở task sau */}
-        <div className="h-32 flex items-center justify-center text-gray-500">
+        <div className="text-gray-500">
           Result list will display here
         </div>
 
