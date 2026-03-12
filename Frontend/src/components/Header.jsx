@@ -6,7 +6,7 @@ function Header() {
     <header className="bg-gray-800 text-white">
 
       <div className="max-w-6xl mx-auto flex justify-between items-center p-4">
-
+ 
         {/* Logo */}
         <div className="text-xl font-bold">
           MyWebsite

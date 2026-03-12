@@ -2,7 +2,7 @@ import { useState } from "react";
 import { register } from "../services/authService";
 
 function Register() {
-
+ 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 

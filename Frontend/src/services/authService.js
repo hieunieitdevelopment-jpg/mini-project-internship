@@ -8,4 +8,4 @@ export const login = async (data) => {
 
 export const register = async (data) => {
   return axios.post(`${API}/register`, data);
-};
+}; 
