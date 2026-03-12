@@ -48,7 +48,7 @@ function Home() {
 
         </div>
 
-        {/* Search Input + Button */}
+        {/* Search */}
         <div className="flex gap-3">
 
           <input
@@ -74,8 +74,28 @@ function Home() {
           Kết quả tra cứu
         </h2>
 
-        <div className="text-gray-500">
-          Result list will display here
+        <div className="space-y-3">
+
+          <div className="border p-3 rounded">
+            <strong>Địa chỉ cũ:</strong> ---
+          </div>
+
+          <div className="border p-3 rounded">
+            <strong>Địa chỉ mới:</strong> ---
+          </div>
+
+          <div className="border p-3 rounded">
+            <strong>Tỉnh/Thành phố:</strong> ---
+          </div>
+
+          <div className="border p-3 rounded">
+            <strong>Quận/Huyện:</strong> ---
+          </div>
+
+          <div className="border p-3 rounded">
+            <strong>Phường/Xã:</strong> ---
+          </div>
+
         </div>
 
       </div>
