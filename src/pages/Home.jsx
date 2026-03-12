@@ -4,6 +4,7 @@ function Home() {
 
   const [keyword, setKeyword] = useState("");
   const [convertType, setConvertType] = useState("oldToNew");
+  const [searchMode, setSearchMode] = useState("quick");
 
   return (
 
@@ -18,10 +19,10 @@ function Home() {
       <div className="bg-gray-100 p-6 rounded-lg shadow mb-10">
 
         <h2 className="text-xl font-semibold mb-4">
-          Tìm kiếm nhanh
+          Tra cứu địa chỉ
         </h2>
 
-        {/* Toggle */}
+        {/* Convert Toggle */}
         <div className="flex gap-4 mb-4">
 
           <button
@@ -48,22 +49,77 @@ function Home() {
 
         </div>
 
-        {/* Search */}
-        <div className="flex gap-3">
+        {/* Search Mode Toggle */}
+        <div className="flex gap-4 mb-4">
 
-          <input
-            type="text"
-            placeholder="Nhập địa chỉ cần tra cứu..."
-            className="border p-2 flex-1 rounded"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
+          <button
+            className={`px-4 py-2 rounded ${
+              searchMode === "quick"
+                ? "bg-green-500 text-white"
+                : "bg-gray-200"
+            }`}
+            onClick={() => setSearchMode("quick")}
+          >
+            Tìm kiếm nhanh
+          </button>
 
-          <button className="bg-blue-500 text-white px-4 py-2 rounded">
-            Tìm kiếm
+          <button
+            className={`px-4 py-2 rounded ${
+              searchMode === "dropdown"
+                ? "bg-green-500 text-white"
+                : "bg-gray-200"
+            }`}
+            onClick={() => setSearchMode("dropdown")}
+          >
+            Tìm theo Dropdown
           </button>
 
         </div>
+
+        {/* QUICK SEARCH */}
+        {searchMode === "quick" && (
+
+          <div className="flex gap-3">
+
+            <input
+              type="text"
+              placeholder="Nhập địa chỉ cần tra cứu..."
+              className="border p-2 flex-1 rounded"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+            />
+
+            <button className="bg-blue-500 text-white px-4 py-2 rounded">
+              Tìm kiếm
+            </button>
+
+          </div>
+
+        )}
+
+        {/* DROPDOWN SEARCH */}
+        {searchMode === "dropdown" && (
+
+          <div className="grid grid-cols-3 gap-3">
+
+            <select className="border p-2 rounded">
+              <option>Tỉnh / Thành phố</option>
+              <option>Đà Nẵng</option>
+              <option>Hà Nội</option>
+              <option>TP Hồ Chí Minh</option>
+            </select>
+
+            <select className="border p-2 rounded">
+              <option>Quận / Huyện</option>
+            </select>
+
+            <select className="border p-2 rounded">
+              <option>Phường / Xã</option>
+            </select>
+
+          </div>
+
+        )}
 
       </div>
 
