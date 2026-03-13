@@ -5,7 +5,6 @@ exports.convertOldToNew = async (province, district, ward) => {
     const query = `
         SELECT
             old_province,
-            old_province,
             old_district,
             old_ward,
             new_province,

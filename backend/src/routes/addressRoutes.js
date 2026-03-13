@@ -7,6 +7,7 @@ const addressController = require("../controllers/addressController");
 */
 
 router.get("/convert/old-to-new", addressController.convertOldToNew);
+router.get("/suggest", addressController.suggestAddress);
 
 
 module.exports = router;
