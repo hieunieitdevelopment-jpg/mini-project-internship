@@ -1,58 +1,82 @@
 import { useState } from "react";
 import { login } from "../services/authService";
+import { Link } from "react-router-dom";
 
 function Login() {
- 
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    try {
 
-      const res = await login({
-        email,
-        password
-      });
+  // fake admin account
+  if (email === "admin@gmail.com" && password === "123456") {
 
-      console.log(res.data);
+    alert("Đăng nhập admin thành công");
 
-      alert("Đăng nhập thành công");
+    console.log({
+      user: "admin",
+      role: "ADMIN"
+    });
 
-    } catch (error) {
-      alert("Đăng nhập thất bại");
-    }
-  };
+    return;
+  }
 
+  try {
+
+    const res = await login({
+      email,
+      password
+    });
+
+    console.log(res.data);
+
+    alert("Đăng nhập thành công");
+
+  } catch (error) {
+
+    alert("Đăng nhập thất bại");
+
+  }
+
+};
   return (
 
-    <div className="flex justify-center items-center h-screen">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
-      <div className="bg-white p-6 shadow rounded w-80">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-96">
 
-        <h1 className="text-xl font-bold mb-4">
-          Login
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Đăng nhập
         </h1>
 
         <input
           type="email"
           placeholder="Email"
-          className="border p-2 w-full mb-3"
+          className="border p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
           type="password"
-          placeholder="Password"
-          className="border p-2 w-full mb-3"
+          placeholder="Mật khẩu"
+          className="border p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
           onClick={handleLogin}
-          className="bg-blue-500 text-white w-full p-2 rounded"
+          className="bg-blue-600 hover:bg-blue-700 text-white w-full p-3 rounded-lg transition"
         >
-          Login
+          Đăng nhập
         </button>
+
+        <p className="text-center text-sm text-gray-500 mt-4">
+          Chưa có tài khoản?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Đăng ký
+          </Link>
+        </p>
 
       </div>
 
