@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Home() {
 
   const [keyword, setKeyword] = useState("");
   const [convertType, setConvertType] = useState("oldToNew");
-  const [searchMode, setSearchMode] = useState("quick"); // quick | dropdown
-  const [showDetail, setShowDetail] = useState(false);
+  const [searchMode, setSearchMode] = useState("quick");
 
+  // mock data (sau này sẽ lấy từ API)
   const result = {
+    id: 1,
     oldAddress: "Phường Hòa Thọ Đông, Quận Cẩm Lệ, Thành phố Đà Nẵng",
     newAddress: "Phường Cẩm Lệ, Thành phố Đà Nẵng",
     date: "03/10/2026"
@@ -26,10 +28,9 @@ function Home() {
         Kiểm tra địa chỉ cũ – mới theo nghị quyết chính thức
       </p>
 
-      {/* Toggle convert + search mode */}
+      {/* Toggle convert */}
       <div className="flex justify-center items-center gap-6 mb-6">
 
-        {/* Convert toggle */}
         <div className="flex items-center gap-3">
 
           <span className={convertType === "oldToNew" ? "font-semibold" : ""}>
@@ -57,7 +58,7 @@ function Home() {
 
         </div>
 
-        {/* Search mode toggle */}
+        {/* đổi kiểu search */}
         <button
           onClick={() =>
             setSearchMode(searchMode === "quick" ? "dropdown" : "quick")
@@ -76,7 +77,7 @@ function Home() {
 
           <input
             type="text"
-            placeholder="Phường Hòa Thọ Đông, Quận Cẩm Lệ, Thành phố Đà Nẵng"
+            placeholder="Nhập địa chỉ..."
             className="border p-3 flex-1 rounded-lg"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
@@ -97,9 +98,9 @@ function Home() {
 
           <select className="border p-3 rounded-lg">
             <option>--Chọn Tỉnh/Thành phố--</option>
-            <option>Thành phố Hà Nội</option>
-            <option>Thành phố Hồ Chí Minh</option>
-            <option>Thành phố Đà Nẵng</option>
+            <option>Đà Nẵng</option>
+            <option>Hà Nội</option>
+            <option>TP Hồ Chí Minh</option>
           </select>
 
           <select className="border p-3 rounded-lg">
@@ -120,102 +121,44 @@ function Home() {
 
       )}
 
-      {/* Result */}
+      {/* RESULT */}
       <div className="border rounded-xl p-6 bg-gray-50">
 
         <h2 className="text-xl font-bold text-center mb-6">
           Kết Quả Tra Cứu
         </h2>
 
-        {/* Old address */}
-        <div className="flex justify-between items-center border-b py-4">
+        <div className="flex justify-between items-center py-4 border-b">
 
           <div>
             <strong>Địa chỉ cũ:</strong> {result.oldAddress}
           </div>
 
-          <div className="flex gap-2">
-
-            <button
-              onClick={() => setShowDetail(true)}
-              className="border px-3 py-1 rounded"
-            >
-              Chi tiết
-            </button>
-
-            <button className="border px-3 py-1 rounded">
-              Sao chép tất cả
-            </button>
-
-          </div>
+          <Link
+            to={`/address/${result.id}`}
+            className="border px-3 py-1 rounded hover:bg-gray-100"
+          >
+            Chi tiết
+          </Link>
 
         </div>
 
-        {/* New address */}
         <div className="flex justify-between items-center py-4">
 
           <div>
             <strong>Địa chỉ mới:</strong> {result.newAddress}
           </div>
 
-          <div className="flex gap-2">
-
-            <button
-              onClick={() => setShowDetail(true)}
-              className="border px-3 py-1 rounded"
-            >
-              Chi tiết
-            </button>
-
-            <button className="border px-3 py-1 rounded">
-              Sao chép tất cả
-            </button>
-
-          </div>
+          <Link
+            to={`/address/${result.id}`}
+            className="border px-3 py-1 rounded hover:bg-gray-100"
+          >
+            Chi tiết
+          </Link>
 
         </div>
 
       </div>
-
-      {/* Detail popup */}
-      {showDetail && (
-
-        <div className="fixed right-10 top-32 w-96 bg-white shadow-xl rounded-xl p-6">
-
-          <div className="flex justify-between items-center mb-4">
-
-            <h3 className="text-lg font-bold">
-              Chi tiết
-            </h3>
-
-            <button
-              onClick={() => setShowDetail(false)}
-              className="bg-blue-600 text-white px-3 py-1 rounded"
-            >
-              Đóng
-            </button>
-
-          </div>
-
-          <p className="mb-2">
-            <strong>Địa chỉ cũ:</strong> {result.oldAddress}
-          </p>
-
-          <p className="mb-2">
-            <strong>Địa chỉ mới:</strong> {result.newAddress}
-          </p>
-
-          <p className="mb-4">
-            <strong>Ngày tra cứu:</strong> {result.date}
-          </p>
-
-          <div className="bg-gray-200 h-40 rounded flex items-center justify-center">
-            Bản đồ
-          </div>
-
-        </div>
-
-      )}
 
     </div>
 
