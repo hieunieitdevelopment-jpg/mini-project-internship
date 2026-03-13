@@ -1,0 +1,33 @@
+CREATE TABLE provinces (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50)
+);
+
+CREATE TABLE districts (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50),
+    province_id INT REFERENCES provinces(id)
+);
+
+CREATE TABLE wards (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50),
+    district_id INT REFERENCES districts(id)
+);
+
+CREATE TABLE address_changes (
+  id SERIAL PRIMARY KEY,
+  old_province VARCHAR(255),
+  old_district VARCHAR(255),
+  old_ward VARCHAR(255),
+
+  new_province VARCHAR(255),
+  new_district VARCHAR(255),
+  new_ward VARCHAR(255),
+
+  change_type VARCHAR(50),
+  effective_date DATE
+);
