@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const addressRoutes = require("./address.routes");
+const addressRoutes = require("./addressRoutes");
 
 router.use("/address", addressRoutes);
 
