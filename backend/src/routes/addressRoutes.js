@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const convertController = require("../controllers/convertController");
-const dropdownController = require("../controllers/dropdownController");
+const suggestController = require("../controllers/suggestController");
+const fuzzyController = require("../controllers/fuzzyController");
 
 
 // ============== CONVERT ==============
@@ -12,16 +13,15 @@ router.get("/convert/old-to-new", convertController.convertOldToNew);
 // GET /api/v1/address/convert/new-to-old
 router.get("/convert/new-to-old", convertController.convertNewToOld);
 
-// ============== DROPDOWN ==============
+// ============== SUGGEST (Gợi ý nhanh) ==============
 
-// GET /api/v1/address/provinces
-router.get("/provinces", dropdownController.getProvinces);
+// GET /api/v1/address/suggest?q=keyword&level=ward
+router.get("/suggest", suggestController.suggestUnits);
 
-// GET /api/v1/address/districts?provinceId=X
-router.get("/districts", dropdownController.getDistricts);
+// ============== FUZZY SEARCH (Tìm gần đúng) ==============
 
-// GET /api/v1/address/wards?districtId=X
-router.get("/wards", dropdownController.getWards);
+// GET /api/v1/address/fuzzy-search?q=keyword&level=ward
+router.get("/fuzzy-search", fuzzyController.fuzzySearch);
 
 
 module.exports = router;

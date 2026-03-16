@@ -1,3 +1,7 @@
+-- Bật extension cho fuzzy search (trigram) và bỏ dấu tiếng Việt
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
 -- Xóa bảng cũ nếu tồn tại
 DROP TABLE IF EXISTS administrative_change_mappings CASCADE;
 DROP TABLE IF EXISTS administrative_changes CASCADE;
@@ -31,3 +35,6 @@ CREATE TABLE administrative_change_mappings (
     old_unit_id INT REFERENCES administrative_units(id),
     new_unit_id INT REFERENCES administrative_units(id)
 );
+
+-- Index GIN trigram trên cột name để fuzzy search nhanh
+CREATE INDEX idx_units_name_trgm ON administrative_units USING GIN (name gin_trgm_ops);
