@@ -1,118 +1,113 @@
 const { client } = require("../config/db");
 
-/**
- * Tìm kiếm gần đúng đơn vị hành chính (Fuzzy Search)
- * Mục đích: tìm kiếm dù user gõ sai/thiếu dấu, trả kết quả chi tiết kèm mapping cũ↔mới
- * Dùng pg_trgm (trigram similarity) + unaccent
- *
- * @param {string} keyword - Từ khóa (VD: "phu lok", "ea tam")
- * @param {string|null} level - 'province' | 'district' | 'ward'
- * @returns {Array} - Kết quả chi tiết kèm thông tin thay đổi hành chính
- */
+// Tim kiem gan dung bang pg_trgm (trigram)
+// Khac voi suggest: cai nay tim duoc ca khi go sai chinh ta
+// VD: go "phu lok" van tim duoc "Phu Loc"
 exports.fuzzySearch = async (keyword, level) => {
   const conditions = [];
   const values = [];
-  let paramIndex = 1;
+  let i = 1;
 
-  // Dùng trigram similarity để tìm gần đúng
-  // similarity() trả giá trị 0-1, càng cao càng giống
+  // dung similarity() de tinh diem tuong dong + ILIKE de bat them
   conditions.push(
-    `(similarity(unaccent(u.name), unaccent($${paramIndex})) > 0.1 OR unaccent(u.name) ILIKE unaccent($${paramIndex + 1}))`
+    `(similarity(unaccent(u.name), unaccent($${i})) > 0.1 OR unaccent(u.name) ILIKE unaccent($${i + 1}))`
   );
   values.push(keyword, `%${keyword}%`);
-  paramIndex += 2;
+  i += 2;
 
-  // Filter theo cấp nếu có
+  // filter theo level neu co truyen
   if (level) {
-    conditions.push(`u.level = $${paramIndex}`);
+    conditions.push(`u.level = $${i}`);
     values.push(level);
-    paramIndex++;
+    i++;
   }
 
-  const query = `
+  const sql = `
     SELECT
-      u.id,
-      u.name,
-      u.code,
-      u.level,
-      u.is_active,
-      parent.name AS parent_name,
-      grandparent.name AS grandparent_name,
+      u.id, u.name, u.code, u.level, u.is_active,
+      p.name AS parent_name,
+      gp.name AS grandparent_name,
       similarity(unaccent(u.name), unaccent($1)) AS score,
 
-      -- Thông tin mapping cũ↔mới (nếu có)
+      -- lay thong tin mapping cu/moi
       m.id AS mapping_id,
       ac.change_type,
       ac.resolution_number,
-      ac.description AS change_description,
+      ac.description AS change_desc,
       ac.effective_date,
 
-      -- Đơn vị được map tới
       mapped.id AS mapped_id,
       mapped.name AS mapped_name,
       mapped.code AS mapped_code,
       mapped.level AS mapped_level,
       mapped.is_active AS mapped_is_active,
-      mapped_parent.name AS mapped_parent_name,
-      mapped_grandparent.name AS mapped_grandparent_name
+      mp.name AS mapped_parent_name,
+      mgp.name AS mapped_grandparent_name
 
     FROM administrative_units u
-    LEFT JOIN administrative_units parent ON u.parent_id = parent.id
-    LEFT JOIN administrative_units grandparent ON parent.parent_id = grandparent.id
+    LEFT JOIN administrative_units p ON u.parent_id = p.id
+    LEFT JOIN administrative_units gp ON p.parent_id = gp.id
 
-    -- LEFT JOIN mapping: tìm cả trường hợp đơn vị này là cũ hoặc mới
+    -- join voi bang mapping (tim ca 2 chieu: unit la cu hoac moi)
     LEFT JOIN administrative_change_mappings m
       ON (m.old_unit_id = u.id OR m.new_unit_id = u.id)
     LEFT JOIN administrative_changes ac ON m.change_id = ac.id
 
-    -- Đơn vị được map tới (đối diện)
+    -- lay don vi "doi dien" trong mapping
     LEFT JOIN administrative_units mapped
       ON mapped.id = CASE
         WHEN m.old_unit_id = u.id THEN m.new_unit_id
         WHEN m.new_unit_id = u.id THEN m.old_unit_id
-        ELSE NULL
       END
-    LEFT JOIN administrative_units mapped_parent ON mapped.parent_id = mapped_parent.id
-    LEFT JOIN administrative_units mapped_grandparent ON mapped_parent.parent_id = mapped_grandparent.id
+    LEFT JOIN administrative_units mp ON mapped.parent_id = mp.id
+    LEFT JOIN administrative_units mgp ON mp.parent_id = mgp.id
 
     WHERE ${conditions.join(" AND ")}
-    ORDER BY score DESC, u.name ASC
+    ORDER BY score DESC, u.name
     LIMIT 20
   `;
 
-  const result = await client.query(query, values);
+  const result = await client.query(sql, values);
 
-  // Format kết quả
-  return result.rows.map((row) => ({
-    unit: {
-      id: row.id,
-      name: row.name,
-      code: row.code,
-      level: row.level,
-      is_active: row.is_active,
-      parent: row.parent_name || null,
-      grandparent: row.grandparent_name || null,
-    },
-    score: parseFloat(row.score).toFixed(2),
-    // Thông tin mapping (null nếu không có thay đổi)
-    mapping: row.mapping_id
-      ? {
-          mapped_unit: {
-            id: row.mapped_id,
-            name: row.mapped_name,
-            code: row.mapped_code,
-            level: row.mapped_level,
-            is_active: row.mapped_is_active,
-            parent: row.mapped_parent_name || null,
-            grandparent: row.mapped_grandparent_name || null,
-          },
-          change: {
-            type: row.change_type,
-            resolution_number: row.resolution_number,
-            description: row.change_description,
-            effective_date: row.effective_date,
-          },
-        }
-      : null,
-  }));
+  // format ket qua tra ve
+  const data = result.rows.map((r) => {
+    const item = {
+      unit: {
+        id: r.id,
+        name: r.name,
+        code: r.code,
+        level: r.level,
+        is_active: r.is_active,
+        parent: r.parent_name || null,
+        grandparent: r.grandparent_name || null,
+      },
+      score: parseFloat(r.score).toFixed(2),
+      mapping: null,
+    };
+
+    // neu co mapping thi them thong tin
+    if (r.mapping_id) {
+      item.mapping = {
+        mapped_unit: {
+          id: r.mapped_id,
+          name: r.mapped_name,
+          code: r.mapped_code,
+          level: r.mapped_level,
+          is_active: r.mapped_is_active,
+          parent: r.mapped_parent_name || null,
+          grandparent: r.mapped_grandparent_name || null,
+        },
+        change: {
+          type: r.change_type,
+          resolution_number: r.resolution_number,
+          description: r.change_desc,
+          effective_date: r.effective_date,
+        },
+      };
+    }
+
+    return item;
+  });
+
+  return data;
 };

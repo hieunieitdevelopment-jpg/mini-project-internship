@@ -1,47 +1,31 @@
 const fuzzyService = require("../services/fuzzy.service");
 
-/**
- * API tìm kiếm gần đúng đơn vị hành chính (Fuzzy Search)
- * GET /api/v1/address/fuzzy-search?q=keyword&level=ward
- *
- * Query params:
- *   - q (bắt buộc): từ khóa tìm kiếm, VD: "phu lok", "ea tam"
- *   - level (tuỳ chọn): 'province' | 'district' | 'ward'
- *
- * Trả về: kết quả chi tiết kèm score tương đồng và mapping cũ↔mới
- */
+// API tim kiem gan dung (fuzzy search)
 exports.fuzzySearch = async (req, res) => {
   try {
     const { q, level } = req.query;
 
-    // Validate keyword
-    if (!q || q.trim().length === 0) {
+    if (!q) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Cần truyền q" });
+    }
+
+    // validate
+    const allowedLevels = ["province", "district", "ward"];
+    if (level && !allowedLevels.includes(level)) {
       return res.status(400).json({
         success: false,
-        message: "Cần truyền từ khóa tìm kiếm (q)",
+        message: "Level không hợp lệ",
       });
     }
 
-    // Validate level nếu có
-    const validLevels = ["province", "district", "ward"];
-    if (level && !validLevels.includes(level)) {
-      return res.status(400).json({
-        success: false,
-        message: "Level không hợp lệ. Chọn: province, district, hoặc ward",
-      });
-    }
+    const data = await fuzzyService.fuzzySearch(q.trim(), level || null);
+    console.log(`fuzzy search: q="${q}", found ${data.length} results`);
 
-    const result = await fuzzyService.fuzzySearch(q.trim(), level || null);
-
-    return res.status(200).json({
-      success: true,
-      data: result,
-    });
-  } catch (error) {
-    console.error("Lỗi fuzzy search:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Lỗi máy chủ",
-    });
+    res.json({ success: true, data });
+  } catch (err) {
+    console.log("fuzzy search loi:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

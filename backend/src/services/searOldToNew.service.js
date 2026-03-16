@@ -1,36 +1,36 @@
 const { client } = require("../config/db");
 
 
-// Tìm kiếm đơn vị hành chính cũ → mới
-// Hỗ trợ tìm theo tên tỉnh, huyện, xã (có thể chỉ truyền 1 hoặc nhiều)
+// Tim kiem don vi cu -> moi
+// Truyen ten tinh/huyen/xa cu -> tra ve don vi moi tuong ung
 exports.convertOldToNew = async (province, district, ward) => {
-  // Xây dựng điều kiện WHERE động
-  // province → match ông (grandparent) của old_unit
-  // district → match cha (parent) của old_unit
-  // ward → match chính old_unit
+  // xay dung dieu kien where dong
   const conditions = [];
   const values = [];
-  let paramIndex = 1;
+  let i = 1;
 
+  // province -> match ong (grandparent)
   if (province) {
-    conditions.push(`unaccent(old_grandparent.name) ILIKE unaccent($${paramIndex})`);
+    conditions.push(`unaccent(old_gp.name) ILIKE unaccent($${i})`);
     values.push(`%${province}%`);
-    paramIndex++;
+    i++;
   }
 
+  // district -> match cha (parent)
   if (district) {
-    conditions.push(`unaccent(old_parent.name) ILIKE unaccent($${paramIndex})`);
+    conditions.push(`unaccent(old_p.name) ILIKE unaccent($${i})`);
     values.push(`%${district}%`);
-    paramIndex++;
+    i++;
   }
 
+  // ward -> match chinh don vi
   if (ward) {
-    conditions.push(`unaccent(old_unit.name) ILIKE unaccent($${paramIndex})`);
+    conditions.push(`unaccent(old_unit.name) ILIKE unaccent($${i})`);
     values.push(`%${ward}%`);
-    paramIndex++;
+    i++;
   }
 
-  const query = `
+  const sql = `
     SELECT
       old_unit.id AS old_id,
       old_unit.name AS old_name,
@@ -45,29 +45,24 @@ exports.convertOldToNew = async (province, district, ward) => {
 
       ac.change_type,
       ac.resolution_number,
-      ac.description AS change_description,
+      ac.description AS change_desc,
       ac.effective_date,
 
-      -- Lấy tên tỉnh/huyện cha của đơn vị cũ
-      old_parent.name AS old_parent_name,
-      old_grandparent.name AS old_grandparent_name,
-
-      -- Lấy tên tỉnh/huyện cha của đơn vị mới
-      new_parent.name AS new_parent_name,
-      new_grandparent.name AS new_grandparent_name
+      old_p.name AS old_parent_name,
+      old_gp.name AS old_grandparent_name,
+      new_p.name AS new_parent_name,
+      new_gp.name AS new_grandparent_name
 
     FROM administrative_change_mappings m
     JOIN administrative_units old_unit ON m.old_unit_id = old_unit.id
     JOIN administrative_units new_unit ON m.new_unit_id = new_unit.id
     JOIN administrative_changes ac ON m.change_id = ac.id
 
-    -- JOIN cha/ông của đơn vị cũ
-    LEFT JOIN administrative_units old_parent ON old_unit.parent_id = old_parent.id
-    LEFT JOIN administrative_units old_grandparent ON old_parent.parent_id = old_grandparent.id
+    LEFT JOIN administrative_units old_p ON old_unit.parent_id = old_p.id
+    LEFT JOIN administrative_units old_gp ON old_p.parent_id = old_gp.id
 
-    -- JOIN cha/ông của đơn vị mới
-    LEFT JOIN administrative_units new_parent ON new_unit.parent_id = new_parent.id
-    LEFT JOIN administrative_units new_grandparent ON new_parent.parent_id = new_grandparent.id
+    LEFT JOIN administrative_units new_p ON new_unit.parent_id = new_p.id
+    LEFT JOIN administrative_units new_gp ON new_p.parent_id = new_gp.id
 
     WHERE old_unit.is_active = FALSE
     ${conditions.length > 0 ? "AND " + conditions.join(" AND ") : ""}
@@ -75,32 +70,31 @@ exports.convertOldToNew = async (province, district, ward) => {
     ORDER BY ac.effective_date DESC
   `;
 
-  const result = await client.query(query, values);
+  const result = await client.query(sql, values);
 
-  // Format kết quả dễ đọc hơn
-  return result.rows.map(row => ({
+  return result.rows.map(r => ({
     old_unit: {
-      id: row.old_id,
-      name: row.old_name,
-      code: row.old_code,
-      level: row.old_level,
-      parent: row.old_parent_name || null,
-      grandparent: row.old_grandparent_name || null
+      id: r.old_id,
+      name: r.old_name,
+      code: r.old_code,
+      level: r.old_level,
+      parent: r.old_parent_name || null,
+      grandparent: r.old_grandparent_name || null
     },
     new_unit: {
-      id: row.new_id,
-      name: row.new_name,
-      code: row.new_code,
-      level: row.new_level,
-      is_active: row.new_is_active,
-      parent: row.new_parent_name || null,
-      grandparent: row.new_grandparent_name || null
+      id: r.new_id,
+      name: r.new_name,
+      code: r.new_code,
+      level: r.new_level,
+      is_active: r.new_is_active,
+      parent: r.new_parent_name || null,
+      grandparent: r.new_grandparent_name || null
     },
     change: {
-      type: row.change_type,
-      resolution_number: row.resolution_number,
-      description: row.change_description,
-      effective_date: row.effective_date
+      type: r.change_type,
+      resolution_number: r.resolution_number,
+      description: r.change_desc,
+      effective_date: r.effective_date
     }
   }));
 };
