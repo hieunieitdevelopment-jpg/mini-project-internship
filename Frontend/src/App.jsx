@@ -1,14 +1,9 @@
-import { BrowserRouter } from "react-router-dom";
-import Header from "./components/Header";
-import AppRouter from "./router/AppRouter";
-
 function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <AppRouter />
-    </BrowserRouter>
-  );
+    <div>
+      <h1>Hello World</h1>
+    </div>
+  )
 }
 
-export default App ; 
+export default App
