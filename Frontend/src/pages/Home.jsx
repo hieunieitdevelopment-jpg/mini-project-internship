@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Home() {
@@ -7,12 +7,93 @@ function Home() {
   const [convertType, setConvertType] = useState("oldToNew");
   const [searchMode, setSearchMode] = useState("quick");
 
-  // mock data (sau này sẽ lấy từ API)
-  const result = {
-    id: 1,
-    oldAddress: "Phường Hòa Thọ Đông, Quận Cẩm Lệ, Thành phố Đà Nẵng",
-    newAddress: "Phường Cẩm Lệ, Thành phố Đà Nẵng",
-    date: "03/10/2026"
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  const fetchProvinces = async () => {
+    try {
+      const res = await fetch('http://44.202.66.188:3000/api/v1/address/provinces');
+      const data = await res.json();
+      setProvinces(data.data || []);
+    } catch (error) {
+      console.error('Error fetching provinces:', error);
+    }
+  };
+
+  const handleProvinceChange = (e) => {
+    const id = e.target.value;
+    setSelectedProvince(id);
+    setSelectedDistrict("");
+    setSelectedWard("");
+    setDistricts([]);
+    setWards([]);
+    if (id) fetchDistricts(id);
+  };
+
+  const fetchDistricts = async (provinceId) => {
+    try {
+      const res = await fetch(`http://44.202.66.188:3000/api/v1/address/districts?provinceId=${provinceId}`);
+      const data = await res.json();
+      setDistricts(data.data || []);
+    } catch (error) {
+      console.error('Error fetching districts:', error);
+    }
+  };
+
+  const handleDistrictChange = (e) => {
+    const id = e.target.value;
+    setSelectedDistrict(id);
+    setSelectedWard("");
+    setWards([]);
+    if (id) fetchWards(id);
+  };
+
+  const fetchWards = async (districtId) => {
+    try {
+      const res = await fetch(`http://44.202.66.188:3000/api/v1/address/wards?districtId=${districtId}`);
+      const data = await res.json();
+      setWards(data.data || []);
+    } catch (error) {
+      console.error('Error fetching wards:', error);
+    }
+  };
+
+  const handleWardChange = (e) => {
+    setSelectedWard(e.target.value);
+  };
+
+  const handleSearch = async () => {
+    if (!selectedProvince || !selectedDistrict || !selectedWard) {
+      alert("Vui lòng chọn đầy đủ Tỉnh, Huyện, Xã.");
+      return;
+    }
+    setLoading(true);
+    const province = provinces.find(p => p.id == selectedProvince)?.name;
+    const district = districts.find(d => d.id == selectedDistrict)?.name;
+    const ward = wards.find(w => w.id == selectedWard)?.name;
+    const url = convertType === "oldToNew" 
+      ? `http://44.202.66.188:3000/api/v1/address/convert/old-to-new?province=${encodeURIComponent(province)}&district=${encodeURIComponent(district)}&ward=${encodeURIComponent(ward)}`
+      : `http://44.202.66.188:3000/api/v1/address/convert/new-to-old?province=${encodeURIComponent(province)}&district=${encodeURIComponent(district)}&ward=${encodeURIComponent(ward)}`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      setResults(data.data || []);
+    } catch (error) {
+      console.error('Error converting address:', error);
+      alert("Có lỗi xảy ra khi tra cứu.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -97,24 +178,42 @@ function Home() {
 
         <div className="grid grid-cols-3 gap-6 mb-10 bg-white rounded-2xl shadow-lg p-8">
 
-          <select className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm">
-            <option>--Chọn Tỉnh/Thành phố--</option>
-            <option>Đà Nẵng</option>
-            <option>Hà Nội</option>
-            <option>TP Hồ Chí Minh</option>
+          <select 
+            value={selectedProvince} 
+            onChange={handleProvinceChange}
+            className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm"
+          >
+            <option value="">--Chọn Tỉnh/Thành phố--</option>
+            {provinces.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
 
-          <select className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm">
-            <option>--Quận/Huyện--</option>
+          <select 
+            value={selectedDistrict} 
+            onChange={handleDistrictChange}
+            className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm"
+            disabled={!selectedProvince}
+          >
+            <option value="">--Quận/Huyện--</option>
+            {districts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
           </select>
 
-          <select className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm">
-            <option>--Phường/Xã--</option>
+          <select 
+            value={selectedWard} 
+            onChange={handleWardChange}
+            className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm"
+            disabled={!selectedDistrict}
+          >
+            <option value="">--Phường/Xã--</option>
+            {wards.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
 
           <div className="col-span-3 text-center mt-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-              Tra cứu
+            <button 
+              onClick={handleSearch}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-12 py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none"
+            >
+              {loading ? "Đang tra cứu..." : "Tra cứu"}
             </button>
           </div>
 
@@ -129,41 +228,41 @@ function Home() {
           Kết Quả Tra Cứu
         </h2>
 
-        <div className="space-y-6">
+        {results.length > 0 ? (
+          <div className="space-y-6">
+            {results.map((res, index) => (
+              <div key={index}>
+                <div className="flex justify-between items-center py-6 px-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors duration-200 mb-4">
+                  <div className="flex-1">
+                    <strong className="text-gray-700">Địa chỉ cũ:</strong>
+                    <p className="text-gray-600 mt-1">{res.old_unit.name}, {res.old_unit.parent}, {res.old_unit.grandparent}</p>
+                  </div>
+                  <Link
+                    to={`/address/${res.old_unit.id}`}
+                    className="border-2 border-blue-500 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                  >
+                    Chi tiết
+                  </Link>
+                </div>
 
-          <div className="flex justify-between items-center py-6 px-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors duration-200">
-
-            <div className="flex-1">
-              <strong className="text-gray-700">Địa chỉ cũ:</strong>
-              <p className="text-gray-600 mt-1">{result.oldAddress}</p>
-            </div>
-
-            <Link
-              to={`/address/${result.id}`}
-              className="border-2 border-blue-500 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200 font-medium shadow-sm hover:shadow-md"
-            >
-              Chi tiết
-            </Link>
-
+                <div className="flex justify-between items-center py-6 px-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors duration-200">
+                  <div className="flex-1">
+                    <strong className="text-gray-700">Địa chỉ mới:</strong>
+                    <p className="text-gray-600 mt-1">{res.new_unit.name}, {res.new_unit.parent}, {res.new_unit.grandparent}</p>
+                  </div>
+                  <Link
+                    to={`/address/${res.new_unit.id}`}
+                    className="border-2 border-blue-500 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+                  >
+                    Chi tiết
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <div className="flex justify-between items-center py-6 px-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors duration-200">
-
-            <div className="flex-1">
-              <strong className="text-gray-700">Địa chỉ mới:</strong>
-              <p className="text-gray-600 mt-1">{result.newAddress}</p>
-            </div>
-
-            <Link
-              to={`/address/${result.id}`}
-              className="border-2 border-blue-500 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200 font-medium shadow-sm hover:shadow-md"
-            >
-              Chi tiết
-            </Link>
-
-          </div>
-
-        </div>
+        ) : (
+          <p className="text-center text-gray-500">Chưa có kết quả. Vui lòng chọn địa chỉ và tra cứu.</p>
+        )}
 
       </div>
 

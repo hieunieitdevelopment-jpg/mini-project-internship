@@ -7,7 +7,7 @@ function Header() {
 
   return (
 
-    <header className="sticky top-0 bg-gradient-to-r from-blue-50 to-white shadow-lg border-b border-gray-200 z-50">
+    <header className="sticky top-0 bg-gradient-to-r from-blue-50 to-white shadow-lg border-b border-gray-200 z-[9999]">
 
       <div className="max-w-7xl mx-auto flex justify-between items-center px-8 py-5">
 
@@ -40,6 +40,14 @@ function Header() {
             className="hover:text-blue-600 transition-colors duration-200 relative group"
           >
             API
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+          </Link>
+
+          <Link
+            to="/admin"
+            className="hover:text-blue-600 transition-colors duration-200 relative group"
+          >
+            Admin
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
           </Link>
 
@@ -80,6 +88,14 @@ function Header() {
                 >
                   <span>📝</span>
                   <span className="font-medium">Đăng ký</span>
+                </Link>
+
+                <Link
+                  to="/admin"
+                  className="flex items-center gap-3 px-5 py-4 hover:bg-blue-50 transition-colors duration-200"
+                >
+                  <span>⚙️</span>
+                  <span className="font-medium">Admin</span>
                 </Link>
 
               </div>

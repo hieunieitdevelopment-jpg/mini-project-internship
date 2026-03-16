@@ -11,14 +11,14 @@ function Register() {
 
     try {
 
-      const res = await register({
+      await register({
         email,
         password
       });
 
       alert("Đăng ký thành công");
 
-    } catch (error) {
+    } catch {
 
       alert("Đăng ký thất bại");
 

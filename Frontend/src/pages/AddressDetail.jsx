@@ -1,6 +1,20 @@
+import L from "leaflet";
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+
+function FitBounds({ geojson }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!geojson) return;
+    const layer = L.geoJSON(geojson);
+    map.fitBounds(layer.getBounds(), { padding: [40, 40] });
+  }, [geojson, map]);
+
+  return null;
+}
 
 function AddressDetail() {
 
@@ -12,6 +26,24 @@ function AddressDetail() {
     newAddress: "Phường Cẩm Lệ, Thành phố Đà Nẵng",
     lat: 16.0471,
     lng: 108.2068
+  };
+
+  // Mock boundary polygon (rough area around Đà Nẵng) for highlight
+  const boundaryGeoJSON = {
+    type: "Feature",
+    properties: { name: "Đà Nẵng" },
+    geometry: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [108.130, 16.060],
+          [108.260, 16.060],
+          [108.260, 16.000],
+          [108.130, 16.000],
+          [108.130, 16.060]
+        ]
+      ]
+    }
   };
 
   return (
@@ -31,7 +63,7 @@ function AddressDetail() {
         </Link>
 
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
-          Chi tiết địa chỉ
+          Chi tiết địa chỉ #{id}
         </h1>
         <p className="text-lg text-gray-600">
           Thông tin chi tiết về thay đổi địa giới hành chính
@@ -85,9 +117,22 @@ function AddressDetail() {
             className="rounded-xl shadow-inner"
           >
 
+            <FitBounds geojson={boundaryGeoJSON} />
+
             <TileLayer
               attribution="&copy; OpenStreetMap contributors"
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+
+            <GeoJSON
+              data={boundaryGeoJSON}
+              style={{
+                color: "#2563eb",
+                weight: 3,
+                opacity: 0.7,
+                fillOpacity: 0.15,
+                fillColor: "#3b82f6"
+              }}
             />
 
             <Marker position={[data.lat, data.lng]}>

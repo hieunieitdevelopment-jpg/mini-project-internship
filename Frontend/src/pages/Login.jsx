@@ -25,7 +25,7 @@ function Login() {
 
       alert("Đăng nhập thành công");
 
-    } catch (error) {
+    } catch {
 
       alert("Đăng nhập thất bại");
 

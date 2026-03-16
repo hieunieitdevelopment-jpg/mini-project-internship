@@ -41,13 +41,19 @@
   color: #888;
 }
 
-/* Ensure Leaflet map layers stay below the fixed header */
+/* Ensure Leaflet map layers and controls stay below the sticky header */
 .leaflet-container,
 .leaflet-pane,
-.leaflet-layer,
 .leaflet-overlay-pane,
 .leaflet-shadow-pane,
 .leaflet-marker-pane,
-.leaflet-control-container {
-  z-index: 0 !important;
+.leaflet-control-container,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1 !important;
+}
+
+/* Keep header on top of everything */
+header {
+  z-index: 99999;
 }
