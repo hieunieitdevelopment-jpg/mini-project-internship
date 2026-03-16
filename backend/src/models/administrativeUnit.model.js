@@ -18,7 +18,6 @@ exports.searchByKeyword = async (conditions, params, limit = 10) => {
   return result.rows;
 };
 
-
 // fuzzy search bang similarity + ILIKE (cho fuzzy)
 exports.fuzzySearch = async (conditions, values, limit = 20) => {
   const sql = `

@@ -27,14 +27,14 @@ exports.convertNewToOld = async (province, district, ward) => {
   const rows = await mappingModel.findNewToOld(conditions, values);
 
   // format lai ket qua
-  return rows.map(r => ({
+  return rows.map((r) => ({
     new_unit: {
       id: r.new_id,
       name: r.new_name,
       code: r.new_code,
       level: r.new_level,
       parent: r.new_parent_name || null,
-      grandparent: r.new_grandparent_name || null
+      grandparent: r.new_grandparent_name || null,
     },
     old_unit: {
       id: r.old_id,
@@ -42,13 +42,13 @@ exports.convertNewToOld = async (province, district, ward) => {
       code: r.old_code,
       level: r.old_level,
       parent: r.old_parent_name || null,
-      grandparent: r.old_grandparent_name || null
+      grandparent: r.old_grandparent_name || null,
     },
     change: {
       type: r.change_type,
       resolution_number: r.resolution_number,
       description: r.change_desc,
-      effective_date: r.effective_date
-    }
+      effective_date: r.effective_date,
+    },
   }));
 };

@@ -5,10 +5,9 @@ const suggestController = require("../controllers/suggestController");
 const fuzzyController = require("../controllers/fuzzyController");
 const dropdownController = require("../controllers/dropdownController");
 
-
 /*
-* CONVERT
-*/
+ * CONVERT
+ */
 
 // GET /api/v1/address/convert/old-to-new
 router.get("/convert/old-to-new", convertController.convertOldToNew);
@@ -16,25 +15,23 @@ router.get("/convert/old-to-new", convertController.convertOldToNew);
 // GET /api/v1/address/convert/new-to-old
 router.get("/convert/new-to-old", convertController.convertNewToOld);
 
-
-/* 
-* SUGGEST
-*/
+/*
+ * SUGGEST
+ */
 
 // GET /api/v1/address/suggest?q=keyword&level=ward
 router.get("/suggest", suggestController.suggestUnits);
 
-
 /*
-* FUZZY SEARCH
-*/
+ * FUZZY SEARCH
+ */
 
 // GET /api/v1/address/fuzzy-search?q=keyword&level=ward
 router.get("/fuzzy-search", fuzzyController.fuzzySearch);
 
 /*
-* DROPDOWN
-*/
+ * DROPDOWN
+ */
 
 // GET /api/v1/address/dropdown/provinces
 router.get("/dropdown/provinces", dropdownController.getProvinces);
@@ -44,6 +41,5 @@ router.get("/dropdown/districts", dropdownController.getDistricts);
 
 // GET /api/v1/address/dropdown/wards?districtId=2
 router.get("/dropdown/wards", dropdownController.getWards);
-
 
 module.exports = router;

@@ -46,7 +46,6 @@ exports.findOldToNew = async (conditions, values) => {
   return result.rows;
 };
 
-
 // query mapping moi -> cu
 exports.findNewToOld = async (conditions, values) => {
   const sql = `

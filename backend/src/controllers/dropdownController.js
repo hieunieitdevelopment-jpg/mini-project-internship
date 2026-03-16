@@ -11,7 +11,6 @@ exports.getProvinces = async (req, res) => {
   }
 };
 
-
 // lay quan/huyen theo tinh
 exports.getDistricts = async (req, res) => {
   try {
@@ -32,7 +31,6 @@ exports.getDistricts = async (req, res) => {
     res.status(500).json({ success: false, message: "Lỗi server" });
   }
 };
-
 
 // lay xa/phuong theo huyen
 exports.getWards = async (req, res) => {

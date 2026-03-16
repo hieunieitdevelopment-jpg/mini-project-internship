@@ -1,6 +1,5 @@
 const mappingModel = require("../models/changeMapping.model");
 
-
 // Tim kiem don vi cu -> moi
 exports.convertOldToNew = async (province, district, ward) => {
   // xay dung dieu kien where dong
@@ -31,14 +30,14 @@ exports.convertOldToNew = async (province, district, ward) => {
 
   const rows = await mappingModel.findOldToNew(conditions, values);
 
-  return rows.map(r => ({
+  return rows.map((r) => ({
     old_unit: {
       id: r.old_id,
       name: r.old_name,
       code: r.old_code,
       level: r.old_level,
       parent: r.old_parent_name || null,
-      grandparent: r.old_grandparent_name || null
+      grandparent: r.old_grandparent_name || null,
     },
     new_unit: {
       id: r.new_id,
@@ -47,13 +46,13 @@ exports.convertOldToNew = async (province, district, ward) => {
       level: r.new_level,
       is_active: r.new_is_active,
       parent: r.new_parent_name || null,
-      grandparent: r.new_grandparent_name || null
+      grandparent: r.new_grandparent_name || null,
     },
     change: {
       type: r.change_type,
       resolution_number: r.resolution_number,
       description: r.change_desc,
-      effective_date: r.effective_date
-    }
+      effective_date: r.effective_date,
+    },
   }));
 };
