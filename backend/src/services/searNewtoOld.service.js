@@ -1,8 +1,6 @@
 const { client } = require("../config/db");
 
 // Tra cuu nguoc: don vi moi -> tim don vi cu
-// Tu ten don vi MOI, tim xem don vi CU nao da bi thay the
-
 exports.convertNewToOld = async (province, district, ward) => {
   const conditions = [];
   const values = [];

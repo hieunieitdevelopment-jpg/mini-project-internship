@@ -2,7 +2,6 @@ const { client } = require("../config/db");
 
 
 // Tim kiem don vi cu -> moi
-// Truyen ten tinh/huyen/xa cu -> tra ve don vi moi tuong ung
 exports.convertOldToNew = async (province, district, ward) => {
   // xay dung dieu kien where dong
   const conditions = [];

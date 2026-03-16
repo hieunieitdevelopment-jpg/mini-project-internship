@@ -1,7 +1,6 @@
 const { client } = require("../config/db");
 
 // Goi y don vi hanh chinh - dung ILIKE de tim nhanh
-// user go "Phu" -> goi y "Phu Loc", "Phu Xuan"...
 exports.suggestUnits = async (keyword, level) => {
   const conditions = [];
   const params = [];

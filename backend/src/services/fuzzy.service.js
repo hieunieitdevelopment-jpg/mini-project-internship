@@ -1,8 +1,6 @@
 const { client } = require("../config/db");
 
 // Tim kiem gan dung bang pg_trgm (trigram)
-// Khac voi suggest: cai nay tim duoc ca khi go sai chinh ta
-// VD: go "phu lok" van tim duoc "Phu Loc"
 exports.fuzzySearch = async (keyword, level) => {
   const conditions = [];
   const values = [];
