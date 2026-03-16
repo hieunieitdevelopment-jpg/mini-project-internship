@@ -6,9 +6,7 @@ exports.fuzzySearch = async (req, res) => {
     const { q, level } = req.query;
 
     if (!q) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Cần truyền q" });
+      return res.status(400).json({ success: false, message: "Cần truyền q" });
     }
 
     // validate

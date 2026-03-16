@@ -1,7 +1,6 @@
-const { client } = require("../config/db");
+const unitModel = require("../models/administrativeUnit.model");
 
 // Goi y don vi hanh chinh - dung ILIKE de tim nhanh
-// user go "Phu" -> goi y "Phu Loc", "Phu Xuan"...
 exports.suggestUnits = async (keyword, level) => {
   const conditions = [];
   const params = [];
@@ -18,23 +17,10 @@ exports.suggestUnits = async (keyword, level) => {
     idx++;
   }
 
-  // query lay ten + ten cha + ten ong
-  const sql = `
-    SELECT u.id, u.name, u.code, u.level, u.is_active,
-           p.name AS parent_name,
-           gp.name AS grandparent_name
-    FROM administrative_units u
-    LEFT JOIN administrative_units p ON u.parent_id = p.id
-    LEFT JOIN administrative_units gp ON p.parent_id = gp.id
-    WHERE ${conditions.join(" AND ")}
-    ORDER BY u.name
-    LIMIT 10
-  `;
-
-  const result = await client.query(sql, params);
+  const rows = await unitModel.searchByKeyword(conditions, params, 10);
 
   // map ket qua
-  return result.rows.map((r) => ({
+  return rows.map((r) => ({
     id: r.id,
     name: r.name,
     code: r.code,
