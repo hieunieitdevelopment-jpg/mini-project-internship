@@ -1,23 +1,22 @@
 const fuzzyService = require("../services/fuzzy.service");
 
 // API tim kiem gan dung (fuzzy search)
-exports.fuzzySearch = async (req, res) => {
+exports.fuzzySearch = async (req, res, next) => {
   try {
     const { q, level } = req.query;
 
     if (!q) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Cần truyền q" });
+      const error = new Error("Cần truyền q");
+      error.statusCode = 400;
+      return next(error);
     }
 
     // validate
     const allowedLevels = ["province", "district", "ward"];
     if (level && !allowedLevels.includes(level)) {
-      return res.status(400).json({
-        success: false,
-        message: "Level không hợp lệ",
-      });
+      const error = new Error("Level không hợp lệ");
+      error.statusCode = 400;
+      return next(error);
     }
 
     const data = await fuzzyService.fuzzySearch(q.trim(), level || null);
@@ -26,6 +25,6 @@ exports.fuzzySearch = async (req, res) => {
     res.json({ success: true, data });
   } catch (err) {
     console.log("fuzzy search loi:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+    next(err);
   }
 };

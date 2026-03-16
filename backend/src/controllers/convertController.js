@@ -3,15 +3,14 @@ const newToOldService = require("../services/searNewtoOld.service");
 
 
 // convert cu -> moi
-exports.convertOldToNew = async (req, res) => {
-    try {
+exports.convertOldToNew = async (req, res, next) => {
+    try {   
         const { province, district, ward } = req.query;
 
         if (!province && !district && !ward) {
-            return res.status(400).json({
-                success: false,
-                message: "Cần ít nhất 1 thông tin: tỉnh, huyện hoặc xã"
-            });
+            const error = new Error("Cần ít nhất 1 thông tin: tỉnh, huyện hoặc xã");
+            error.statusCode = 400;
+            return next(error);
         }
 
         const result = await oldToNewService.convertOldToNew(province, district, ward);
@@ -20,7 +19,7 @@ exports.convertOldToNew = async (req, res) => {
         res.json({ success: true, data: result });
     } catch (err) {
         console.log("convert old-to-new error:", err.message);
-        res.status(500).json({ success: false, message: "Lỗi server" });
+        next(err);
     }
 };
 

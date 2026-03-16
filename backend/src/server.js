@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const { connectDB } = require('./config/db')
 const routes = require("./routes");
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -12,6 +13,9 @@ app.use(express.json())
 
 
 app.use("/api/v1", routes);
+
+/// Error handler phải đặt cuối 
+app.use(errorHandler);
 
 app.get('/', (req, res) => {
   res.send('Admin Map Backend Running')
