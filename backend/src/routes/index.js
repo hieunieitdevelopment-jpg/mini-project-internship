@@ -1,8 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const addressRoutes = require("./addressRoutes");
+const provinceRoutes = require("./provinceRoutes");
+const districtRoutes = require("./districtRoutes");
+const unitRoutes = require("./unitRoutes");
+const mappingRoutes = require("./mappingRoutes");
 
-router.use("/address", addressRoutes);
+router.use("/provinces", provinceRoutes);
+router.use("/districts", districtRoutes);
+router.use("/units", unitRoutes);
+router.use("/mappings", mappingRoutes);
 
 module.exports = router;

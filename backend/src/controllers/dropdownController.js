@@ -14,14 +14,7 @@ exports.getProvinces = async (req, res) => {
 // lay quan/huyen theo tinh
 exports.getDistricts = async (req, res) => {
   try {
-    const { provinceId } = req.query;
-
-    if (!provinceId) {
-      return res.status(400).json({
-        success: false,
-        message: "Thiếu provinceId",
-      });
-    }
+    const { provinceId } = req.params;
 
     const data = await dropdownService.getDistricts(parseInt(provinceId));
 
@@ -35,14 +28,7 @@ exports.getDistricts = async (req, res) => {
 // lay xa/phuong theo huyen
 exports.getWards = async (req, res) => {
   try {
-    const { districtId } = req.query;
-
-    if (!districtId) {
-      return res.status(400).json({
-        success: false,
-        message: "Thiếu districtId",
-      });
-    }
+    const { districtId } = req.params;
 
     const data = await dropdownService.getWards(parseInt(districtId));
 
