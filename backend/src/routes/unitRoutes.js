@@ -25,6 +25,13 @@ const { validateSuggest, validateFuzzySearch } = require("../middlewares/validat
  *           type: string
  *           enum: [province, district, ward]
  *         description: Cấp đơn vị hành chính
+ *       - in: query
+ *         name: direction
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [old-to-new, new-to-old]
+ *         description: Chiều tìm kiếm (cũ sang mới hoặc mới sang cũ)
  *     responses:
  *       200:
  *         description: Danh sách gợi ý
@@ -81,6 +88,13 @@ router.get("/suggest", validateSuggest, suggestController.suggestUnits);
  *           type: string
  *           enum: [province, district, ward]
  *         description: Cấp đơn vị hành chính
+ *       - in: query
+ *         name: direction
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [old-to-new, new-to-old]
+ *         description: Chiều tìm kiếm (cũ sang mới hoặc mới sang cũ)
  *     responses:
  *       200:
  *         description: Kết quả tìm kiếm kèm điểm tương đồng và mapping
