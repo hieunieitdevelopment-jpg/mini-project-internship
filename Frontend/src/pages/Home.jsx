@@ -15,6 +15,8 @@ function Home() {
   const [selectedWard, setSelectedWard] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     fetchProvinces();
@@ -22,7 +24,7 @@ function Home() {
 
   const fetchProvinces = async () => {
     try {
-      const res = await fetch('http://44.202.66.188:3000/api/v1/address/provinces');
+      const res = await fetch('http://44.202.66.188:3000/api/v1/provinces');
       const data = await res.json();
       setProvinces(data.data || []);
     } catch (error) {
@@ -42,7 +44,7 @@ function Home() {
 
   const fetchDistricts = async (provinceId) => {
     try {
-      const res = await fetch(`http://44.202.66.188:3000/api/v1/address/districts?provinceId=${provinceId}`);
+      const res = await fetch(`http://44.202.66.188:3000/api/v1/provinces/${provinceId}/districts`);
       const data = await res.json();
       setDistricts(data.data || []);
     } catch (error) {
@@ -60,7 +62,7 @@ function Home() {
 
   const fetchWards = async (districtId) => {
     try {
-      const res = await fetch(`http://44.202.66.188:3000/api/v1/address/wards?districtId=${districtId}`);
+      const res = await fetch(`http://44.202.66.188:3000/api/v1/districts/${districtId}/wards`);
       const data = await res.json();
       setWards(data.data || []);
     } catch (error) {
@@ -72,18 +74,156 @@ function Home() {
     setSelectedWard(e.target.value);
   };
 
+  const formatAddressDetail = (unit) => {
+    if (!unit) return "";
+    let text = "";
+    if (unit.level === "ward") {
+      text = `Xã/Phường ${unit.name}`;
+    } else if (unit.level === "district") {
+      text = `Huyện/Quận ${unit.name}`;
+    } else if (unit.level === "province") {
+      text = `Tỉnh/Thành phố ${unit.name}`;
+    }
+    if (unit.parent) {
+      text += `, Huyện/Quận ${unit.parent}`;
+    }
+    if (unit.grandparent) {
+      text += `, Tỉnh/Thành phố ${unit.grandparent}`;
+    }
+    return text;
+  };
+
+  const handleQuickSearchChange = async (e) => {
+    const value = e.target.value;
+    setKeyword(value);
+    
+    if (value.length > 1) {
+      try {
+        const parts = value.split(',').map(p => p.trim());
+        const lastPart = parts[parts.length - 1];
+        
+        if (lastPart.length > 0) {
+          let url = `http://44.202.66.188:3000/api/v1/units/suggest?q=${encodeURIComponent(lastPart)}`;
+          
+          // Nếu đang nhập huyện (phần thứ 2) - filter theo xã
+          if (parts.length === 2 && parts[0]) {
+            url += `&level=district&parent=${encodeURIComponent(parts[0])}`;
+          }
+          // Nếu đang nhập tỉnh (phần thứ 3) - filter theo xã
+          else if (parts.length === 3 && parts[0]) {
+            url += `&level=province&parent=${encodeURIComponent(parts[0])}`;
+          }
+          // Nếu phần đầu - chỉ gợi ý xã
+          else if (parts.length === 1) {
+            url += `&level=ward`;
+          }
+          
+          const res = await fetch(url);
+          const data = await res.json();
+          setSuggestions(data.data || []);
+          setShowSuggestions(true);
+        } else {
+          setSuggestions([]);
+          setShowSuggestions(false);
+        }
+      } catch (error) {
+        console.error('Error fetching suggestions:', error);
+      }
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = async (unit) => {
+    // Auto-fill và auto-search ngay khi click xã
+    if (unit.level === "ward") {
+      // Ward: có đủ thông tin để search ngay
+      setKeyword(unit.name);
+      setSuggestions([]);
+      setShowSuggestions(false);
+      
+      // Auto-search ngay
+      setLoading(true);
+      try {
+        const url = convertType === "oldToNew"
+          ? `http://44.202.66.188:3000/api/v1/mappings?direction=old-to-new&ward=${encodeURIComponent(unit.name)}`
+          : `http://44.202.66.188:3000/api/v1/mappings?direction=new-to-old&ward=${encodeURIComponent(unit.name)}`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data.data || data.data.length === 0) {
+          alert("Không tìm thấy kết quả.");
+        }
+        setResults(data.data || []);
+      } catch (error) {
+        console.error('Error searching address:', error);
+        alert("Có lỗi xảy ra khi tra cứu.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // District/Province: cần thêm xã
+      alert("Vui lòng chọn Xã/Phường để tra cứu chính xác.");
+    }
+  };
+
+  const handleQuickSearch = async (unit = null) => {
+    if (!keyword && !unit) {
+      alert("Vui lòng nhập tên Xã/Phường để tìm kiếm.");
+      return;
+    }
+
+    setLoading(true);
+    let url = "";
+
+    if (unit) {
+      // Tìm kiếm từ gợi ý xã
+      url = convertType === "oldToNew"
+        ? `http://44.202.66.188:3000/api/v1/mappings?direction=old-to-new&ward=${encodeURIComponent(unit.name)}`
+        : `http://44.202.66.188:3000/api/v1/mappings?direction=new-to-old&ward=${encodeURIComponent(unit.name)}`;
+    } else {
+      // Tìm kiếm từ input text - chỉ cần xã
+      const ward = keyword.trim();
+      if (!ward) {
+        alert("Vui lòng nhập tên Xã/Phường.");
+        setLoading(false);
+        return;
+      }
+      
+      url = convertType === "oldToNew"
+        ? `http://44.202.66.188:3000/api/v1/mappings?direction=old-to-new&ward=${encodeURIComponent(ward)}`
+        : `http://44.202.66.188:3000/api/v1/mappings?direction=new-to-old&ward=${encodeURIComponent(ward)}`;
+    }
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.data || data.data.length === 0) {
+        alert("Không tìm thấy kết quả cho xã này.");
+      }
+      setResults(data.data || []);
+    } catch (error) {
+      console.error('Error searching address:', error);
+      alert("Có lỗi xảy ra khi tra cứu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSearch = async () => {
     if (!selectedProvince || !selectedDistrict || !selectedWard) {
       alert("Vui lòng chọn đầy đủ Tỉnh, Huyện, Xã.");
       return;
     }
     setLoading(true);
-    const province = provinces.find(p => p.id == selectedProvince)?.name;
-    const district = districts.find(d => d.id == selectedDistrict)?.name;
-    const ward = wards.find(w => w.id == selectedWard)?.name;
+    const ward_name = wards.find(w => w.id == selectedWard)?.name;
+    const district_name = districts.find(d => d.id == selectedDistrict)?.name;
+    const province_name = provinces.find(p => p.id == selectedProvince)?.name;
+    
     const url = convertType === "oldToNew" 
-      ? `http://44.202.66.188:3000/api/v1/address/convert/old-to-new?province=${encodeURIComponent(province)}&district=${encodeURIComponent(district)}&ward=${encodeURIComponent(ward)}`
-      : `http://44.202.66.188:3000/api/v1/address/convert/new-to-old?province=${encodeURIComponent(province)}&district=${encodeURIComponent(district)}&ward=${encodeURIComponent(ward)}`;
+      ? `http://44.202.66.188:3000/api/v1/mappings?direction=old-to-new&ward=${encodeURIComponent(ward_name)}&district=${encodeURIComponent(district_name)}&province=${encodeURIComponent(province_name)}`
+      : `http://44.202.66.188:3000/api/v1/mappings?direction=new-to-old&ward=${encodeURIComponent(ward_name)}&district=${encodeURIComponent(district_name)}&province=${encodeURIComponent(province_name)}`;
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -155,20 +295,45 @@ function Home() {
       {/* QUICK SEARCH */}
       {searchMode === "quick" && (
 
-        <div className="flex gap-4 mb-10 bg-white rounded-2xl shadow-lg p-6">
+        <div className="mb-10">
+          <div className="flex gap-4 bg-white rounded-2xl shadow-lg p-6 relative">
 
-          <input
-            type="text"
-            placeholder="Nhập địa chỉ..."
-            className="border-2 border-gray-200 p-4 flex-1 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
+            <input
+              type="text"
+              placeholder="Gõ tên Xã/Phường để tra cứu (vd: Ea Tam)"
+              className="border-2 border-gray-200 p-4 flex-1 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm"
+              value={keyword}
+              onChange={handleQuickSearchChange}
+            />
 
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-            Tra cứu
-          </button>
+            <button 
+              onClick={() => handleQuickSearch()}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-8 py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none"
+            >
+              {loading ? "Đang tra cứu..." : "Tra cứu"}
+            </button>
 
+            {/* Suggestions Dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-lg z-10 max-h-60 overflow-y-auto">
+                {suggestions.map((suggestion, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                  >
+                    <p className="font-medium text-gray-800">{suggestion.name}</p>
+                    <p className="text-sm text-gray-500">
+                      {suggestion.level === "ward" ? "Xã/Phường" : suggestion.level === "district" ? "Huyện/Quận" : "Tỉnh/Thành phố"}
+                      {suggestion.parent ? ` • ${suggestion.parent}` : ""}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
         </div>
 
       )}
@@ -235,7 +400,7 @@ function Home() {
                 <div className="flex justify-between items-center py-6 px-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors duration-200 mb-4">
                   <div className="flex-1">
                     <strong className="text-gray-700">Địa chỉ cũ:</strong>
-                    <p className="text-gray-600 mt-1">{res.old_unit.name}, {res.old_unit.parent}, {res.old_unit.grandparent}</p>
+                    <p className="text-gray-600 mt-1">{formatAddressDetail(res.old_unit)}</p>
                   </div>
                   <Link
                     to={`/address/${res.old_unit.id}`}
@@ -248,7 +413,7 @@ function Home() {
                 <div className="flex justify-between items-center py-6 px-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors duration-200">
                   <div className="flex-1">
                     <strong className="text-gray-700">Địa chỉ mới:</strong>
-                    <p className="text-gray-600 mt-1">{res.new_unit.name}, {res.new_unit.parent}, {res.new_unit.grandparent}</p>
+                    <p className="text-gray-600 mt-1">{formatAddressDetail(res.new_unit)}</p>
                   </div>
                   <Link
                     to={`/address/${res.new_unit.id}`}
