@@ -13,7 +13,13 @@ exports.convertNewToOld = async (province, district, ward) => {
   }
 
   if (district) {
-    conditions.push(`unaccent(new_p.name) ILIKE unaccent($${i})`);
+    if (!ward) {
+      // khong chon xa -> tim ca huyen va cac xa thuoc huyen
+      conditions.push(`(unaccent(new_p.name) ILIKE unaccent($${i}) OR unaccent(new_unit.name) ILIKE unaccent($${i}))`);
+    } else {
+      // co chon xa -> chi tim theo parent thoi
+      conditions.push(`unaccent(new_p.name) ILIKE unaccent($${i})`);
+    }
     values.push(`%${district}%`);
     i++;
   }

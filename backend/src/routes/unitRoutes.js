@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const suggestController = require("../controllers/suggestController");
 const fuzzyController = require("../controllers/fuzzyController");
+const { validateSuggest, validateFuzzySearch } = require("../middlewares/validate");
 
 /**
  * @swagger
@@ -24,6 +25,13 @@ const fuzzyController = require("../controllers/fuzzyController");
  *           type: string
  *           enum: [province, district, ward]
  *         description: Cấp đơn vị hành chính
+ *       - in: query
+ *         name: direction
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [old-to-new, new-to-old]
+ *         description: Chiều tìm kiếm (cũ sang mới hoặc mới sang cũ)
  *     responses:
  *       200:
  *         description: Danh sách gợi ý
@@ -57,7 +65,7 @@ const fuzzyController = require("../controllers/fuzzyController");
  *       400:
  *         description: Thiếu từ khóa hoặc level không hợp lệ
  */
-router.get("/suggest", suggestController.suggestUnits);
+router.get("/suggest", validateSuggest, suggestController.suggestUnits);
 
 /**
  * @swagger
@@ -80,6 +88,13 @@ router.get("/suggest", suggestController.suggestUnits);
  *           type: string
  *           enum: [province, district, ward]
  *         description: Cấp đơn vị hành chính
+ *       - in: query
+ *         name: direction
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [old-to-new, new-to-old]
+ *         description: Chiều tìm kiếm (cũ sang mới hoặc mới sang cũ)
  *     responses:
  *       200:
  *         description: Kết quả tìm kiếm kèm điểm tương đồng và mapping
@@ -123,6 +138,6 @@ router.get("/suggest", suggestController.suggestUnits);
  *       400:
  *         description: Thiếu từ khóa hoặc level không hợp lệ
  */
-router.get("/search", fuzzyController.fuzzySearch);
+router.get("/search", validateFuzzySearch, fuzzyController.fuzzySearch);
 
 module.exports = router;

@@ -25,13 +25,27 @@ exports.findDistricts = async (provinceId) => {
 };
 
 // lay xa/phuong theo huyen
-exports.findWards = async (districtId) => {
+// isActive = true -> xa moi, false -> xa cu
+exports.findWards = async (districtId, isActive = true) => {
   const sql = `
     SELECT id, name, code
     FROM administrative_units
-    WHERE level = 'ward' AND parent_id = $1 AND is_active = TRUE
+    WHERE level = 'ward' AND parent_id = $1 AND is_active = $2
     ORDER BY name
   `;
-  const result = await client.query(sql, [districtId]);
+  const result = await client.query(sql, [districtId, isActive]);
+  return result.rows;
+};
+
+// lay xa/phuong theo tinh (join qua huyen)
+exports.findWardsByProvince = async (provinceId, isActive = true) => {
+  const sql = `
+    SELECT w.id, w.name, w.code
+    FROM administrative_units w
+    JOIN administrative_units d ON w.parent_id = d.id
+    WHERE w.level = 'ward' AND d.parent_id = $1 AND w.is_active = $2
+    ORDER BY w.name
+  `;
+  const result = await client.query(sql, [provinceId, isActive]);
   return result.rows;
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const dropdownController = require("../controllers/dropdownController");
+const { validateProvinceId } = require("../middlewares/validate");
 
 /**
  * @swagger
@@ -69,6 +70,31 @@ router.get("/", dropdownController.getProvinces);
  *                       code:
  *                         type: string
  */
-router.get("/:provinceId/districts", dropdownController.getDistricts);
+router.get("/:provinceId/districts", validateProvinceId, dropdownController.getDistricts);
+
+/**
+ * @swagger
+ * /provinces/{provinceId}/wards:
+ *   get:
+ *     summary: Lấy danh sách xã/phường theo tỉnh (bỏ qua huyện)
+ *     tags: [Dropdown]
+ *     parameters:
+ *       - in: path
+ *         name: provinceId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID của tỉnh/thành phố
+ *       - in: query
+ *         name: active
+ *         schema:
+ *           type: boolean
+ *           default: true
+ *         description: Lấy xã active (mới) hay inactive (cũ)
+ *     responses:
+ *       200:
+ *         description: Danh sách xã/phường thuộc tỉnh
+ */
+router.get("/:provinceId/wards", validateProvinceId, dropdownController.getWardsByProvince);
 
 module.exports = router;
