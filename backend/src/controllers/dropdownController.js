@@ -1,57 +1,47 @@
 const dropdownService = require("../services/dropdown.service");
+const AppError = require("../utils/AppError");
 
 // lay tat ca tinh/thanh pho
-exports.getProvinces = async (req, res) => {
+exports.getProvinces = async (req, res, next) => {
   try {
     const data = await dropdownService.getProvinces();
     res.json({ success: true, data });
   } catch (err) {
-    console.log("loi lay tinh:", err.message);
-    res.status(500).json({ success: false, message: "Lỗi server" });
+    next(err);
   }
 };
 
 // lay quan/huyen theo tinh
-exports.getDistricts = async (req, res) => {
+exports.getDistricts = async (req, res, next) => {
   try {
     const { provinceId } = req.params;
-
     const data = await dropdownService.getDistricts(parseInt(provinceId));
-
     res.json({ success: true, data });
   } catch (err) {
-    console.log("loi lay huyen:", err.message);
-    res.status(500).json({ success: false, message: "Lỗi server" });
+    next(err);
   }
 };
 
 // lay xa/phuong theo huyen
-exports.getWards = async (req, res) => {
+exports.getWards = async (req, res, next) => {
   try {
     const { districtId } = req.params;
-    // active=false -> lay xa cu (inactive), mac dinh la true
     const isActive = req.query.active !== "false";
-
     const data = await dropdownService.getWards(parseInt(districtId), isActive);
-
     res.json({ success: true, data });
   } catch (err) {
-    console.log("loi lay xa:", err.message);
-    res.status(500).json({ success: false, message: "Lỗi server" });
+    next(err);
   }
 };
 
 // lay xa/phuong theo tinh (bo qua huyen, dung cho tab moi -> cu)
-exports.getWardsByProvince = async (req, res) => {
+exports.getWardsByProvince = async (req, res, next) => {
   try {
     const { provinceId } = req.params;
     const isActive = req.query.active !== "false";
-
     const data = await dropdownService.getWardsByProvince(parseInt(provinceId), isActive);
-
     res.json({ success: true, data });
   } catch (err) {
-    console.log("loi lay xa theo tinh:", err.message);
-    res.status(500).json({ success: false, message: "Lỗi server" });
+    next(err);
   }
 };

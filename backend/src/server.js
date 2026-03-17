@@ -5,6 +5,7 @@ const swaggerUi = require("swagger-ui-express");
 const { connectDB } = require("./config/db");
 const swaggerSpec = require("./config/swagger");
 const routes = require("./routes");
+const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,9 @@ app.use("/api/v1", routes);
 app.get("/", (req, res) => {
   res.send("Admin Map Backend Running");
 });
+
+// centralized error handler - phai dat sau routes
+app.use(errorHandler);
 
 async function startServer() {
   await connectDB();
