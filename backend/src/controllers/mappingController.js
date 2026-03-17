@@ -6,14 +6,6 @@ exports.getMappings = async (req, res) => {
   try {
     const { direction, province, district, ward } = req.query;
 
-    // validate direction
-    if (!direction || !["old-to-new", "new-to-old"].includes(direction)) {
-      return res.status(400).json({
-        success: false,
-        message: "direction phải là old-to-new hoặc new-to-old",
-      });
-    }
-
     if (!province && !district && !ward) {
       return res.status(400).json({
         success: false,

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mappingController = require("../controllers/mappingController");
+const { validateMapping } = require("../middlewares/validate");
 
 /**
  * @swagger
@@ -100,6 +101,6 @@ const mappingController = require("../controllers/mappingController");
  *       400:
  *         description: Thiếu direction hoặc không truyền thông tin tìm kiếm
  */
-router.get("/", mappingController.getMappings);
+router.get("/", validateMapping, mappingController.getMappings);
 
 module.exports = router;

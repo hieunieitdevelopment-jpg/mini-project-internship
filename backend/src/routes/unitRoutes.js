@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const suggestController = require("../controllers/suggestController");
 const fuzzyController = require("../controllers/fuzzyController");
+const { validateSuggest, validateFuzzySearch } = require("../middlewares/validate");
 
 /**
  * @swagger
@@ -57,7 +58,7 @@ const fuzzyController = require("../controllers/fuzzyController");
  *       400:
  *         description: Thiếu từ khóa hoặc level không hợp lệ
  */
-router.get("/suggest", suggestController.suggestUnits);
+router.get("/suggest", validateSuggest, suggestController.suggestUnits);
 
 /**
  * @swagger
@@ -123,6 +124,6 @@ router.get("/suggest", suggestController.suggestUnits);
  *       400:
  *         description: Thiếu từ khóa hoặc level không hợp lệ
  */
-router.get("/search", fuzzyController.fuzzySearch);
+router.get("/search", validateFuzzySearch, fuzzyController.fuzzySearch);
 
 module.exports = router;

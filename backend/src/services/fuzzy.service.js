@@ -1,14 +1,14 @@
 const unitModel = require("../models/administrativeUnit.model");
 
 // Tim kiem gan dung bang pg_trgm (trigram)
-exports.fuzzySearch = async (keyword, level) => {
+exports.fuzzySearch = async (keyword, level, direction) => {
   const conditions = [];
   const values = [];
   let i = 1;
 
   // dung similarity() de tinh diem tuong dong + ILIKE de bat them
   conditions.push(
-    `(similarity(unaccent(u.name), unaccent($${i})) > 0.1 OR unaccent(u.name) ILIKE unaccent($${i + 1}))`
+    `(similarity(unaccent(u.name), unaccent($${i})) > 0.3 OR unaccent(u.name) ILIKE unaccent($${i + 1}))`
   );
   values.push(keyword, `%${keyword}%`);
   i += 2;
@@ -20,7 +20,14 @@ exports.fuzzySearch = async (keyword, level) => {
     i++;
   }
 
-  const rows = await unitModel.fuzzySearch(conditions, values, 20);
+  // filter theo direction
+  if (direction === "old-to-new") {
+    conditions.push(`u.is_active = FALSE`);
+  } else if (direction === "new-to-old") {
+    conditions.push(`u.is_active = TRUE`);
+  }
+
+  const rows = await unitModel.fuzzySearch(conditions, values, 10);
 
   // format ket qua tra ve
   const data = rows.map((r) => {

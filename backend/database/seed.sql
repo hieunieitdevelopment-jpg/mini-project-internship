@@ -17,7 +17,7 @@ INSERT INTO administrative_units (name, code, level, parent_id, is_active) VALUE
 INSERT INTO administrative_units (name, code, level, parent_id, is_active) VALUES
 ('Phú Lộc', '24400', 'ward', 2, FALSE),
 ('Ea Tam', '24401', 'ward', 2, FALSE),
-('Phú Lộc', '24402', 'ward', 2, TRUE);
+
 
 
 -- === PHƯỜNG thuộc Buôn Hồ ===

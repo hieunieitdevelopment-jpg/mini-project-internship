@@ -1,28 +1,12 @@
 const suggestService = require("../services/suggest.service");
 
 // API goi y don vi hanh chinh
-// GET /api/v1/address/suggest?q=keyword&level=ward
+// middleware da validate q, level, direction
 exports.suggestUnits = async (req, res) => {
   try {
-    const { q, level } = req.query;
+    const { q, level, direction } = req.query;
 
-    // check keyword
-    if (!q || q.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "Thiếu từ khóa tìm kiếm (q)",
-      });
-    }
-
-    // check level hop le
-    if (level && !["province", "district", "ward"].includes(level)) {
-      return res.status(400).json({
-        success: false,
-        message: "level phải là province, district hoặc ward",
-      });
-    }
-
-    const data = await suggestService.suggestUnits(q.trim(), level || null);
+    const data = await suggestService.suggestUnits(q.trim(), level || null, direction || null);
 
     return res.json({ success: true, data });
   } catch (err) {

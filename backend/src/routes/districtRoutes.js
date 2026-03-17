@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const dropdownController = require("../controllers/dropdownController");
+const { validateDistrictId } = require("../middlewares/validate");
 
 /**
  * @swagger
@@ -38,6 +39,6 @@ const dropdownController = require("../controllers/dropdownController");
  *                       code:
  *                         type: string
  */
-router.get("/:districtId/wards", dropdownController.getWards);
+router.get("/:districtId/wards", validateDistrictId, dropdownController.getWards);
 
 module.exports = router;

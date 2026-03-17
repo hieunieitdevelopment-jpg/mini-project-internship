@@ -15,8 +15,15 @@ exports.getDistricts = async (provinceId) => {
 };
 
 // lay danh sach xa/phuong theo huyen
-exports.getWards = async (districtId) => {
-  const rows = await dropdownModel.findWards(districtId);
-  console.log(`dropdown wards: districtId=${districtId}, found ${rows.length}`);
+exports.getWards = async (districtId, isActive = true) => {
+  const rows = await dropdownModel.findWards(districtId, isActive);
+  console.log(`dropdown wards: districtId=${districtId}, active=${isActive}, found ${rows.length}`);
+  return rows;
+};
+
+// lay danh sach xa/phuong theo tinh (bo qua huyen)
+exports.getWardsByProvince = async (provinceId, isActive = true) => {
+  const rows = await dropdownModel.findWardsByProvince(provinceId, isActive);
+  console.log(`dropdown wards by province: provinceId=${provinceId}, active=${isActive}, found ${rows.length}`);
   return rows;
 };

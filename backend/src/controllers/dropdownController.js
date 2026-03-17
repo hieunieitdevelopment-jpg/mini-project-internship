@@ -29,12 +29,29 @@ exports.getDistricts = async (req, res) => {
 exports.getWards = async (req, res) => {
   try {
     const { districtId } = req.params;
+    // active=false -> lay xa cu (inactive), mac dinh la true
+    const isActive = req.query.active !== "false";
 
-    const data = await dropdownService.getWards(parseInt(districtId));
+    const data = await dropdownService.getWards(parseInt(districtId), isActive);
 
     res.json({ success: true, data });
   } catch (err) {
     console.log("loi lay xa:", err.message);
+    res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+};
+
+// lay xa/phuong theo tinh (bo qua huyen, dung cho tab moi -> cu)
+exports.getWardsByProvince = async (req, res) => {
+  try {
+    const { provinceId } = req.params;
+    const isActive = req.query.active !== "false";
+
+    const data = await dropdownService.getWardsByProvince(parseInt(provinceId), isActive);
+
+    res.json({ success: true, data });
+  } catch (err) {
+    console.log("loi lay xa theo tinh:", err.message);
     res.status(500).json({ success: false, message: "Lỗi server" });
   }
 };
