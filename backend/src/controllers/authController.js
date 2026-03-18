@@ -13,8 +13,22 @@ exports.register = async (req, res, next) => {
       phone,
     });
 
-    console.log("register thanh cong:", user.email);
+    console.log("đăng ký thành công:", user.email);
     res.status(201).json({ success: true, data: user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// dang nhap
+exports.login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await authService.login(email, password);
+
+    console.log("đăng nhập thành công:", user.email);
+    res.status(200).json({ success: true, data: user });
   } catch (err) {
     next(err);
   }

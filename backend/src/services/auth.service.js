@@ -32,3 +32,24 @@ exports.register = async ({ username, email, password, fullName, phone }) => {
 
   return newUser;
 };
+
+// dang nhap
+exports.login = async (email, password) => {
+  // tim user theo email
+  const user = await userModel.findByEmail(email);
+  if (!user) {
+    throw new AppError("Email hoặc mật khẩu không đúng", 401);
+  }
+
+  // so sanh password
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    throw new AppError("Email hoặc mật khẩu không đúng", 401);
+  }
+
+  console.log("đăng nhập thành công:", user.email);
+
+  // tra ve user info, bo password
+  const { password: pw, ...userInfo } = user;
+  return userInfo;
+};

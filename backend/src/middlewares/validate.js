@@ -152,6 +152,19 @@ const validateRegister = [
   handleValidation,
 ];
 
+// validate body dang nhap
+const validateLogin = [
+  body("email")
+    .notEmpty()
+    .withMessage("Email không được để trống")
+    .isEmail()
+    .withMessage("Email không hợp lệ"),
+  body("password")
+    .notEmpty()
+    .withMessage("Password không được để trống"),
+  handleValidation,
+];
+
 module.exports = {
   validateProvinceId,
   validateDistrictId,
@@ -160,4 +173,5 @@ module.exports = {
   validateFuzzySearch,
   validateMapping,
   validateRegister,
+  validateLogin,
 };
