@@ -1,4 +1,4 @@
-const { query, param, validationResult } = require("express-validator");
+const { query, param, body, validationResult } = require("express-validator");
 
 // middleware xu ly ket qua validation
 // neu co loi -> tra ve 400 voi message, khong chay controller
@@ -119,6 +119,52 @@ const validateMapping = [
   handleValidation,
 ];
 
+// === Auth validation ===
+
+// validate register body
+const validateRegister = [
+  body("username")
+    .notEmpty()
+    .withMessage("Username không được để trống")
+    .isLength({ min: 3, max: 50 })
+    .withMessage("Username phải từ 3-50 ký tự")
+    .isAlphanumeric()
+    .withMessage("Username chỉ được chứa chữ và số"),
+  body("email")
+    .notEmpty()
+    .withMessage("Email không được để trống")
+    .isEmail()
+    .withMessage("Email không hợp lệ"),
+  body("password")
+    .notEmpty()
+    .withMessage("Password không được để trống")
+    .isLength({ min: 6, max: 100 })
+    .withMessage("Password phải từ 6-100 ký tự"),
+  body("full_name")
+    .notEmpty()
+    .withMessage("Tên đầy đủ không được để trống")
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Tên phải từ 2-100 ký tự"),
+  body("phone")
+    .optional()
+    .isLength({ min: 10, max: 20 })
+    .withMessage("SĐT phải từ 10-20 ký tự"),
+  handleValidation,
+];
+
+// validate login body
+const validateLogin = [
+  body("email")
+    .notEmpty()
+    .withMessage("Email không được để trống")
+    .isEmail()
+    .withMessage("Email không hợp lệ"),
+  body("password")
+    .notEmpty()
+    .withMessage("Password không được để trống"),
+  handleValidation,
+];
+
 module.exports = {
   validateProvinceId,
   validateDistrictId,
@@ -126,4 +172,6 @@ module.exports = {
   validateSuggest,
   validateFuzzySearch,
   validateMapping,
+  validateRegister,
+  validateLogin,
 };
