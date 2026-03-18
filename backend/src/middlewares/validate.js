@@ -16,7 +16,7 @@ const handleValidation = (req, res, next) => {
   next();
 };
 
-// === Dropdown validation ===
+// Dropdown validation
 
 // validate provinceId param
 const validateProvinceId = [
@@ -47,7 +47,7 @@ const validateActiveQuery = [
   handleValidation,
 ];
 
-// === Unit search validation ===
+// Unit search validation 
 
 // validate suggest query params
 const validateSuggest = [
@@ -89,7 +89,7 @@ const validateFuzzySearch = [
   handleValidation,
 ];
 
-// === Mapping validation ===
+// Mapping validation
 
 // validate mapping query params
 const validateMapping = [
@@ -119,9 +119,9 @@ const validateMapping = [
   handleValidation,
 ];
 
-// === Auth validation ===
+// Auth validation
 
-// validate register body
+// validate body dang ky
 const validateRegister = [
   body("username")
     .notEmpty()
@@ -152,19 +152,6 @@ const validateRegister = [
   handleValidation,
 ];
 
-// validate login body
-const validateLogin = [
-  body("email")
-    .notEmpty()
-    .withMessage("Email không được để trống")
-    .isEmail()
-    .withMessage("Email không hợp lệ"),
-  body("password")
-    .notEmpty()
-    .withMessage("Password không được để trống"),
-  handleValidation,
-];
-
 module.exports = {
   validateProvinceId,
   validateDistrictId,
@@ -173,5 +160,4 @@ module.exports = {
   validateFuzzySearch,
   validateMapping,
   validateRegister,
-  validateLogin,
 };

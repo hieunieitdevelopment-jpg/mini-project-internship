@@ -14,7 +14,7 @@ exports.findByUsername = async (username) => {
   return result.rows[0] || null;
 };
 
-// tao user moi, tra ve user (khong tra password)
+// tao user moi, tra ve info (khong tra password)
 exports.createUser = async ({ username, email, hashedPassword, fullName, phone }) => {
   const sql = `
     INSERT INTO users (username, email, password, full_name, phone)
@@ -23,5 +23,6 @@ exports.createUser = async ({ username, email, hashedPassword, fullName, phone }
   `;
   const values = [username, email, hashedPassword, fullName, phone || null];
   const result = await client.query(sql, values);
+  console.log("created user:", result.rows[0].email);
   return result.rows[0];
 };
