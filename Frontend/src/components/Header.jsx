@@ -4,20 +4,31 @@ import { useState } from "react";
 function Header() {
 
   const [showMenu, setShowMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
 
     <header className="sticky top-0 bg-gradient-to-r from-blue-50 to-white shadow-lg border-b border-gray-200 z-[9999]">
 
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-8 py-5">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-8 py-4 md:py-5">
 
         {/* Logo */}
-        <Link to="/" className="text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
+        <Link to="/" className="text-2xl md:text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
           AddressLookup
         </Link>
 
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-gray-700 focus:outline-none"
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+        >
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={showMobileMenu ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"} />
+          </svg>
+        </button>
+
         {/* Menu */}
-        <nav className="flex items-center gap-10 text-gray-700 font-medium">
+        <nav className="hidden md:flex items-center gap-10 text-gray-700 font-medium">
 
           <Link
             to="/"
@@ -107,6 +118,20 @@ function Header() {
         </nav>
 
       </div>
+
+      {/* Mobile Menu */}
+      {showMobileMenu && (
+        <nav className="md:hidden bg-white border-t border-gray-200 py-4 px-6 flex flex-col gap-4 text-gray-700 font-medium shadow-inner">
+          <Link to="/" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">Trang chủ</Link>
+          <Link to="/support" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">Hỗ trợ</Link>
+          <Link to="/api" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">API</Link>
+          <Link to="/admin" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">Admin</Link>
+          <div className="border-t border-gray-100 pt-4 flex flex-col gap-4">
+            <Link to="/login" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 hover:text-blue-600 transition-colors"><span>🔑</span> Đăng nhập</Link>
+            <Link to="/register" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 hover:text-blue-600 transition-colors"><span>📝</span> Đăng ký</Link>
+          </div>
+        </nav>
+      )}
 
     </header>
 

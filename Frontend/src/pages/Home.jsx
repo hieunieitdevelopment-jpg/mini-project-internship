@@ -251,22 +251,22 @@ function Home() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
+    <div className="max-w-6xl mx-auto p-4 md:p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
       {/* Title */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 md:mb-4">
           Tra cứu thay đổi địa giới hành chính
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-base md:text-lg text-gray-600">
           Kiểm tra địa chỉ cũ – mới theo nghị quyết chính thức
         </p>
       </div>
 
       {/* Toggle */}
-      <div className="flex justify-center items-center gap-8 mb-8 bg-white rounded-2xl shadow-lg p-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-8 bg-white rounded-2xl shadow-lg p-4 md:p-6">
+        <div className="flex items-center gap-3 md:gap-4">
           <span
-            className={`text-lg font-medium transition-colors ${
+            className={`text-base md:text-lg font-medium transition-colors ${
               convertType === "oldToNew" ? "text-blue-600" : "text-gray-500"
             }`}
           >
@@ -295,7 +295,7 @@ function Home() {
           </button>
 
           <span
-            className={`text-lg font-medium transition-colors ${
+            className={`text-base md:text-lg font-medium transition-colors ${
               convertType === "newToOld" ? "text-blue-600" : "text-gray-500"
             }`}
           >
@@ -314,11 +314,11 @@ function Home() {
       {/* QUICK SEARCH */}
       {searchMode === "quick" && (
         <div className="mb-10">
-          <div className="flex gap-4 bg-white rounded-2xl shadow-lg p-6 relative">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 bg-white rounded-2xl shadow-lg p-4 md:p-6 relative">
             <input
               type="text"
               placeholder="Gõ tên Xã/Phường (ví dụ: Ea Tam, Phú Lộc, ...)"
-              className="border-2 border-gray-200 p-4 flex-1 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm"
+              className="border-2 border-gray-200 p-3 md:p-4 flex-1 rounded-xl focus:border-blue-400 focus:outline-none transition-colors duration-200 shadow-sm w-full"
               value={keyword}
               onChange={handleQuickSearchChange}
               onKeyDown={(e) => {
@@ -329,7 +329,7 @@ function Home() {
             <button
               onClick={handleQuickSearch}
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-8 py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none"
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none w-full sm:w-auto whitespace-nowrap"
             >
               {loading ? "Đang tra cứu..." : "Tra cứu"}
             </button>
@@ -364,11 +364,11 @@ function Home() {
 
       {/* DROPDOWN SEARCH */}
       {searchMode === "dropdown" && (
-        <div className={`grid grid-cols-1 ${convertType === "newToOld" ? "md:grid-cols-2" : "md:grid-cols-3"} gap-6 mb-10 bg-white rounded-2xl shadow-lg p-8`}>
+        <div className={`grid grid-cols-1 ${convertType === "newToOld" ? "md:grid-cols-2" : "md:grid-cols-3"} gap-4 md:gap-6 mb-10 bg-white rounded-2xl shadow-lg p-4 md:p-8`}>
           <select
             value={selectedProvince}
             onChange={handleProvinceChange}
-            className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors shadow-sm"
+            className="border-2 border-gray-200 p-3 md:p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors shadow-sm w-full"
           >
             <option value="">-- Chọn Tỉnh/Thành phố --</option>
             {provinces.map((p) => (
@@ -383,7 +383,7 @@ function Home() {
               value={selectedDistrict}
               onChange={handleDistrictChange}
               disabled={!selectedProvince}
-              className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors shadow-sm disabled:opacity-50"
+              className="border-2 border-gray-200 p-3 md:p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors shadow-sm disabled:opacity-50 w-full"
             >
               <option value="">-- Chọn Huyện/Quận --</option>
               {districts.map((d) => (
@@ -398,7 +398,7 @@ function Home() {
             value={selectedWard}
             onChange={handleWardChange}
             disabled={convertType === "oldToNew" ? !selectedDistrict : !selectedProvince}
-            className="border-2 border-gray-200 p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors shadow-sm disabled:opacity-50"
+            className="border-2 border-gray-200 p-3 md:p-4 rounded-xl focus:border-blue-400 focus:outline-none transition-colors shadow-sm disabled:opacity-50 w-full"
           >
             <option value="">-- Chọn Xã/Phường --</option>
             {wards.map((w) => (
@@ -412,7 +412,7 @@ function Home() {
             <button
               onClick={handleSearch}
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-12 py-4 rounded-xl font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none"
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-8 md:px-12 py-3 md:py-4 rounded-xl font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none w-full sm:w-auto"
             >
               {loading ? "Đang tra cứu..." : "Tra cứu"}
             </button>
@@ -421,18 +421,18 @@ function Home() {
       )}
 
       {/* RESULTS */}
-      <div className="border-2 border-gray-200 rounded-2xl p-8 bg-white shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
+      <div className="border-2 border-gray-200 rounded-2xl p-4 md:p-8 bg-white shadow-lg overflow-hidden">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-6 md:mb-8 text-gray-800">
           Kết Quả Tra Cứu
         </h2>
 
         {loading ? (
           <p className="text-center text-gray-500">Đang tải...</p>
         ) : results.length > 0 ? (
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             {results.map((mapping, idx) => (
               <div key={idx} className="space-y-4">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 md:p-5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition">
                   <div>
                     <div className="text-sm uppercase tracking-wide text-gray-500 font-medium">
                       Địa chỉ cũ
@@ -443,13 +443,13 @@ function Home() {
                   </div>
                   <Link
                     to={`/address/${mapping.old_unit?.id}`}
-                    className="border-2 border-blue-500 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition font-medium whitespace-nowrap"
+                    className="border-2 border-blue-500 text-blue-600 px-4 md:px-6 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition font-medium whitespace-nowrap text-sm md:text-base w-full sm:w-auto text-center"
                   >
                     Chi tiết
                   </Link>
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-5 bg-blue-50 rounded-xl border border-blue-100 hover:bg-blue-100 transition">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 md:p-5 bg-blue-50 rounded-xl border border-blue-100 hover:bg-blue-100 transition">
                   <div>
                     <div className="text-sm uppercase tracking-wide text-blue-700 font-medium">
                       Địa chỉ mới
@@ -460,7 +460,7 @@ function Home() {
                   </div>
                   <Link
                     to={`/address/${mapping.new_unit?.id}`}
-                    className="border-2 border-blue-600 text-blue-700 px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition font-medium whitespace-nowrap"
+                    className="border-2 border-blue-600 text-blue-700 px-4 md:px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition font-medium whitespace-nowrap text-sm md:text-base w-full sm:w-auto text-center"
                   >
                     Chi tiết
                   </Link>

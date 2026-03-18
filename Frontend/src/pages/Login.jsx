@@ -35,16 +35,16 @@ function Login() {
 
   return (
 
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col md:flex-row">
 
       {/* LEFT SIDE */}
-      <div className="w-1/2 bg-gradient-to-br from-teal-400 to-green-300 flex flex-col justify-center items-center text-white p-10">
+      <div className="w-full md:w-1/2 bg-gradient-to-br from-teal-400 to-green-300 flex flex-col justify-center items-center text-white p-8 md:p-10 min-h-[30vh] md:min-h-screen">
 
-        <h1 className="text-4xl font-bold mb-6 text-center">
+        <h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-center">
           Tra cứu địa chỉ hành chính
         </h1>
 
-        <p className="text-lg text-center mb-10 max-w-md">
+        <p className="text-base md:text-lg text-center mb-8 md:mb-10 max-w-md">
           Hệ thống giúp tra cứu và chuyển đổi địa chỉ hành chính 
           cũ và mới nhanh chóng, chính xác.
         </p>
@@ -52,15 +52,15 @@ function Login() {
         <img
           src="https://cdn-icons-png.flaticon.com/512/3213/3213071.png"
           alt="rocket"
-          className="w-64 opacity-90"
+          className="w-40 md:w-64 opacity-90 hidden sm:block"
         />
 
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="w-1/2 bg-gray-900 flex justify-center items-center">
+      <div className="w-full md:w-1/2 flex-1 bg-gray-900 flex justify-center items-center p-6 md:p-10">
 
-        <div className="w-96">
+        <div className="w-full max-w-sm md:w-96">
 
           <h2 className="text-3xl font-bold text-white mb-8">
             Đăng nhập

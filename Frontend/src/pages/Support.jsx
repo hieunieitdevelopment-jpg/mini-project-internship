@@ -21,26 +21,26 @@ function Support() {
 
   return (
 
-    <div className="max-w-6xl mx-auto p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
+    <div className="max-w-6xl mx-auto p-4 md:p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
 
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
           Hỗ Trợ
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-base md:text-lg text-gray-600">
           Câu hỏi thường gặp và thông tin liên hệ
         </p>
       </div>
 
       {/* Contact Info */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-10">
+      <div className="bg-white rounded-2xl shadow-lg p-5 md:p-8 mb-8 md:mb-10">
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
           <span>📞</span>
           Liên Hệ Chúng Tôi
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
 
           <div>
             <h3 className="text-lg font-medium text-gray-800 mb-2">Email Hỗ Trợ</h3>
@@ -67,9 +67,9 @@ function Support() {
       </div>
 
       {/* FAQ */}
-      <div className="bg-white rounded-2xl shadow-lg p-8">
+      <div className="bg-white rounded-2xl shadow-lg p-5 md:p-8">
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
           <span>❓</span>
           Câu Hỏi Thường Gặp
         </h2>

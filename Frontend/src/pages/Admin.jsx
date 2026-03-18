@@ -9,20 +9,20 @@ function Admin() {
 
   return (
 
-    <div className="max-w-7xl mx-auto p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
+    <div className="max-w-7xl mx-auto p-4 md:p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
 
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
           Quản Lý Người Dùng
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-base md:text-lg text-gray-600">
           Quản lý tài khoản người dùng hệ thống
         </p>
       </div>
 
       {/* Add User Button */}
       <div className="mb-8">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm md:text-base w-full sm:w-auto">
           ➕ Thêm Người Dùng Mới
         </button>
       </div>
@@ -30,14 +30,14 @@ function Admin() {
       {/* Users Table */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-800">
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
             Danh Sách Người Dùng
           </h2>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full min-w-[600px]">
 
             <thead className="bg-gray-50">
               <tr>

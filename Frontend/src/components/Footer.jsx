@@ -4,9 +4,9 @@ function Footer() {
 
     <footer className="bg-gradient-to-r from-blue-900 to-blue-800 text-white">
 
-      <div className="max-w-7xl mx-auto px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
 
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
 
           {/* Company Info */}
           <div className="col-span-1">
@@ -79,11 +79,11 @@ function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-blue-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
 
-          <p className="text-blue-300 text-sm">
+          <p className="text-blue-300 text-sm text-center md:text-left">
             © 2026 AddressLookup. Tất cả quyền được bảo lưu.
           </p>
 
-          <div className="flex space-x-6 mt-4 md:mt-0">
+          <div className="flex space-x-4 md:space-x-6 mt-4 md:mt-0">
 
             <a href="#" className="text-blue-300 hover:text-white transition-colors text-sm">Điều Khoản</a>
 

@@ -26,71 +26,71 @@ function Api() {
 
   return (
 
-    <div className="max-w-7xl mx-auto p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
+    <div className="max-w-7xl mx-auto p-4 md:p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
 
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
           API Documentation
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-base md:text-lg text-gray-600">
           Tài liệu hướng dẫn sử dụng API tra cứu địa chỉ
         </p>
       </div>
 
       {/* Introduction */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-10">
+      <div className="bg-white rounded-2xl shadow-lg p-5 md:p-8 mb-8 md:mb-10">
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6 flex items-center gap-3">
           <span>🚀</span>
           Giới Thiệu
         </h2>
 
-        <p className="text-gray-600 leading-relaxed mb-4">
+        <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-4">
           API AddressLookup cung cấp dịch vụ tra cứu thay đổi địa giới hành chính một cách nhanh chóng và chính xác.
           Dữ liệu được cập nhật theo nghị quyết chính thức của chính phủ.
         </p>
 
-        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
-          <p className="text-blue-800 font-medium">Base URL: https://api.addresslookup.com</p>
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-3 md:p-4 rounded-r-lg break-all">
+          <p className="text-blue-800 font-medium text-sm md:text-base">Base URL: https://api.addresslookup.com</p>
         </div>
 
       </div>
 
       {/* Authentication */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-10">
+      <div className="bg-white rounded-2xl shadow-lg p-5 md:p-8 mb-8 md:mb-10">
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6 flex items-center gap-3">
           <span>🔐</span>
           Xác Thực
         </h2>
 
-        <p className="text-gray-600 leading-relaxed mb-4">
+        <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-4">
           Để sử dụng API, bạn cần đăng ký tài khoản và lấy API Key.
         </p>
 
-        <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
+        <div className="bg-gray-100 p-3 md:p-4 rounded-lg font-mono text-xs md:text-sm break-all">
           Authorization: Bearer YOUR_API_KEY
         </div>
 
       </div>
 
       {/* Endpoints */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-10">
+      <div className="bg-white rounded-2xl shadow-lg p-5 md:p-8 mb-8 md:mb-10">
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6 flex items-center gap-3">
           <span>📋</span>
           Endpoints
         </h2>
 
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
 
           {endpoints.map((endpoint, index) => (
 
-            <div key={index} className="border border-gray-200 rounded-xl p-6">
+            <div key={index} className="border border-gray-200 rounded-xl p-4 md:p-6">
 
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3 md:mb-4">
 
-                <span className={`px-3 py-1 rounded-lg text-sm font-bold ${
+                <span className={`inline-block w-fit px-3 py-1 rounded-lg text-xs md:text-sm font-bold ${
                   endpoint.method === 'GET' ? 'bg-green-100 text-green-800' :
                   endpoint.method === 'POST' ? 'bg-blue-100 text-blue-800' :
                   'bg-yellow-100 text-yellow-800'
@@ -98,20 +98,20 @@ function Api() {
                   {endpoint.method}
                 </span>
 
-                <code className="text-lg font-mono text-gray-800">{endpoint.path}</code>
+                <code className="text-sm md:text-lg font-mono text-gray-800 break-all">{endpoint.path}</code>
 
               </div>
 
-              <p className="text-gray-600 mb-3">{endpoint.description}</p>
+              <p className="text-sm md:text-base text-gray-600 mb-3">{endpoint.description}</p>
 
               <div className="mb-3">
                 <strong className="text-gray-700">Parameters:</strong>
-                <code className="ml-2 bg-gray-100 px-2 py-1 rounded text-sm">{endpoint.params}</code>
+                <code className="ml-2 bg-gray-100 px-2 py-1 rounded text-xs md:text-sm break-all">{endpoint.params}</code>
               </div>
 
               <div>
                 <strong className="text-gray-700">Example:</strong>
-                <div className="mt-2 bg-gray-100 p-3 rounded-lg font-mono text-sm">
+                <div className="mt-2 bg-gray-100 p-3 rounded-lg font-mono text-xs md:text-sm overflow-x-auto">
                   {endpoint.example}
                 </div>
               </div>
@@ -125,14 +125,14 @@ function Api() {
       </div>
 
       {/* Response Example */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-10">
+      <div className="bg-white rounded-2xl shadow-lg p-5 md:p-8 mb-8 md:mb-10">
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6 flex items-center gap-3">
           <span>📄</span>
           Ví Dụ Response
         </h2>
 
-        <div className="bg-gray-100 p-6 rounded-lg font-mono text-sm overflow-x-auto">
+        <div className="bg-gray-100 p-4 md:p-6 rounded-lg font-mono text-xs md:text-sm overflow-x-auto">
 {`{
   "success": true,
   "data": {
@@ -146,14 +146,14 @@ function Api() {
       </div>
 
       {/* Rate Limits */}
-      <div className="bg-white rounded-2xl shadow-lg p-8">
+      <div className="bg-white rounded-2xl shadow-lg p-5 md:p-8">
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6 flex items-center gap-3">
           <span>⚡</span>
           Giới Hạn Sử Dụng
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
           <div>
             <h3 className="text-lg font-medium text-gray-800 mb-2">Free Plan</h3>
