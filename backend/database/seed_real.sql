@@ -3,7 +3,7 @@
 -- Theo NQ 1660/NQ-UBTVQH15 (16/6/2025)
 -- Hiệu lực: 01/07/2025
 -- ============================================
-
+SET client_encoding = 'UTF8';
 -- Xóa dữ liệu cũ (nếu có)
 DELETE FROM administrative_change_mappings;
 DELETE FROM administrative_changes;
