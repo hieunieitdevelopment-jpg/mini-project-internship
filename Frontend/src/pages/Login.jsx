@@ -35,7 +35,7 @@ function Login() {
 
   return (
 
-    <div className="min-h-screen flex pt-20">
+    <div className="min-h-screen flex">
 
       {/* LEFT SIDE */}
       <div className="w-1/2 bg-gradient-to-br from-teal-400 to-green-300 flex flex-col justify-center items-center text-white p-10">

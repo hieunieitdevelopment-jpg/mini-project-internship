@@ -21,7 +21,7 @@ function Support() {
 
   return (
 
-    <div className="max-w-6xl mx-auto p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen pt-20">
+    <div className="max-w-6xl mx-auto p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
 
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
