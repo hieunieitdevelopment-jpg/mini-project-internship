@@ -431,7 +431,18 @@ function Home() {
         ) : results.length > 0 ? (
           <div className="space-y-6 md:space-y-8">
             {results.map((mapping, idx) => (
-              <div key={idx} className="space-y-4">
+              <div key={idx} className="space-y-4 pb-6 border-b border-gray-200 last:border-b-0 last:pb-0">
+                {/* Phần thông tin Nghị quyết */}
+                {mapping.change && (
+                  <div className="bg-yellow-50 text-yellow-800 px-4 md:px-5 py-3 rounded-xl border border-yellow-200 text-sm md:text-base shadow-sm">
+                    <p className="font-semibold mb-1">
+                      📝 Nghị quyết: {mapping.change.resolution_number} 
+                      {mapping.change.effective_date && ` (Hiệu lực: ${new Date(mapping.change.effective_date).toLocaleDateString("vi-VN")})`}
+                    </p>
+                    <p className="text-yellow-700">{mapping.change.description}</p>
+                  </div>
+                )}
+
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 md:p-5 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition">
                   <div>
                     <div className="text-sm uppercase tracking-wide text-gray-500 font-medium">
@@ -443,6 +454,7 @@ function Home() {
                   </div>
                   <Link
                     to={`/address/${mapping.old_unit?.id}`}
+                    state={{ mapping }}
                     className="border-2 border-blue-500 text-blue-600 px-4 md:px-6 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition font-medium whitespace-nowrap text-sm md:text-base w-full sm:w-auto text-center"
                   >
                     Chi tiết
@@ -460,6 +472,7 @@ function Home() {
                   </div>
                   <Link
                     to={`/address/${mapping.new_unit?.id}`}
+                    state={{ mapping }}
                     className="border-2 border-blue-600 text-blue-700 px-4 md:px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition font-medium whitespace-nowrap text-sm md:text-base w-full sm:w-auto text-center"
                   >
                     Chi tiết
