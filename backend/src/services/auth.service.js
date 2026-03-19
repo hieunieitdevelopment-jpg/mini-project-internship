@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
 const AppError = require("../utils/AppError");
 
@@ -47,9 +48,16 @@ exports.login = async (email, password) => {
     throw new AppError("Email hoặc mật khẩu không đúng", 401);
   }
 
+  // tao jwt token
+  const token = jwt.sign(
+    { userId: user.id, email: user.email, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+  );
+
   console.log("đăng nhập thành công:", user.email);
 
-  // tra ve user info, bo password
+  // tra ve user info + token, bo password
   const { password: pw, ...userInfo } = user;
-  return userInfo;
+  return { user: userInfo, token };
 };

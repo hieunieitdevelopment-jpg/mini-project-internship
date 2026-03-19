@@ -25,10 +25,10 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await authService.login(email, password);
+    const { user, token } = await authService.login(email, password);
 
     console.log("đăng nhập thành công:", user.email);
-    res.status(200).json({ success: true, data: user });
+    res.status(200).json({ success: true, data: { user, token } });
   } catch (err) {
     next(err);
   }
