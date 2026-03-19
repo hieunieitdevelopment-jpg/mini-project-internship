@@ -28,7 +28,20 @@ function FitBounds({ geojson, center }) {
 function AddressDetail() {
   const { id } = useParams();
   const location = useLocation();
-  const mapping = location.state?.mapping; // Nhận dữ liệu mapping từ trang tra cứu
+  
+  // Sử dụng sessionStorage để giữ lại dữ liệu mapping khi F5/Reload trang
+  const [mapping] = useState(() => {
+    if (location.state?.mapping) {
+      sessionStorage.setItem(`mapping_${id}`, JSON.stringify(location.state.mapping));
+      return location.state.mapping;
+    }
+    try {
+      const saved = sessionStorage.getItem(`mapping_${id}`);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
   const [unit, setUnit] = useState(null);
   const [loading, setLoading] = useState(true);
   
