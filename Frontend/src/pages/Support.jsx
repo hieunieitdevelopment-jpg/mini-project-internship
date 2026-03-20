@@ -15,7 +15,7 @@ function Support() {
     },
     {
       question: "Làm sao để liên hệ hỗ trợ?",
-      answer: "Gửi email đến support@addresslookup.com hoặc gọi hotline 1900-xxxx."
+      answer: "Gửi email đến khaiskylove45@gmail.com hoặc gọi hotline 0388985684."
     }
   ];
 
@@ -44,12 +44,12 @@ function Support() {
 
           <div>
             <h3 className="text-lg font-medium text-gray-800 mb-2">Email Hỗ Trợ</h3>
-            <p className="text-gray-600">support@addresslookup.com</p>
+            <p className="text-gray-600">khaiskylove45@gmail.com</p>
           </div>
 
           <div>
             <h3 className="text-lg font-medium text-gray-800 mb-2">Hotline</h3>
-            <p className="text-gray-600">1900-XXXX</p>
+            <p className="text-gray-600">0388985684</p>
           </div>
 
           <div>
@@ -59,9 +59,23 @@ function Support() {
 
           <div>
             <h3 className="text-lg font-medium text-gray-800 mb-2">Địa Chỉ</h3>
-            <p className="text-gray-600">123 Đường ABC, Quận XYZ, TP.HCM</p>
+            <p className="text-gray-600">301 Huy Cận, TP. Đà Nẵng</p>
           </div>
 
+        </div>
+
+        {/* Map Section */}
+        <div className="mt-8 rounded-xl overflow-hidden h-64 sm:h-80 shadow-inner border border-gray-200">
+          <iframe
+            title="Bản đồ vị trí"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=301%20Huy%20C%E1%BA%ADn,%20%C4%90%C3%A0%20N%E1%BA%B5ng&t=&z=16&ie=UTF8&iwloc=&output=embed"
+          ></iframe>
         </div>
 
       </div>
