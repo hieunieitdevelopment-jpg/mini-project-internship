@@ -1,27 +1,72 @@
 import { useState } from "react";
-import { register } from "../services/authService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
 
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
 
     try {
 
-      await register({
-        email,
-        password
+      const res = await fetch("http://44.202.66.188:3000/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, full_name: fullName, email, password, phone }),
       });
 
-      alert("Đăng ký thành công");
+      const data = await res.json();
 
-    } catch {
+      if (res.ok) {
+        alert("Đăng ký thành công");
+        
+        // Kiểm tra xem API đăng ký có trả về token luôn không (Tính năng Auto-login)
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          
+          let tokenRole = null;
+          try {
+            const base64Url = data.token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const pad = base64.length % 4;
+            const paddedBase64 = pad ? base64 + '='.repeat(4 - pad) : base64;
+            const jsonPayload = decodeURIComponent(
+              atob(paddedBase64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+            );
+            const decoded = JSON.parse(jsonPayload);
+            tokenRole = decoded.role;
+          } catch (e) {
+            console.error("Lỗi giải mã token:", e);
+          }
 
-      alert("Đăng ký thất bại");
-
+          const userInfo = data.user || data.data || {};
+          const userData = {
+            ...userInfo,
+            username: userInfo.username || data.username,
+            full_name: userInfo.full_name || data.full_name || userInfo.username || email.split("@")[0],
+            role: String(tokenRole || userInfo.role || data.role || "user").toLowerCase()
+          };
+          
+          localStorage.setItem("user", JSON.stringify(userData));
+          window.dispatchEvent(new Event("authChange"));
+          navigate("/"); // Đăng nhập luôn và về trang chủ
+        } else {
+          navigate("/login"); // Nếu không có token, chuyển sang trang Login
+        }
+      } else {
+        alert(data.message || "Đăng ký thất bại. Vui lòng thử lại.");
+      }
+      
+    } catch (error) {
+      console.error("Register error:", error);
+      alert("Lỗi kết nối đến máy chủ.");
     }
 
   };
@@ -58,6 +103,51 @@ function Register() {
           <h2 className="text-3xl font-bold text-white mb-8">
             Đăng ký
           </h2>
+
+          <div className="mb-4">
+
+            <label className="text-gray-400 text-sm">
+              Username
+            </label>
+
+            <input
+              type="text"
+              placeholder="Nhập username (chỉ chữ và số)"
+              className="w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400"
+              onChange={(e) => setUsername(e.target.value)}
+            />
+
+          </div>
+
+          <div className="mb-4">
+
+            <label className="text-gray-400 text-sm">
+              Số điện thoại
+            </label>
+
+            <input
+              type="tel"
+              placeholder="Nhập số điện thoại"
+              className="w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400"
+              onChange={(e) => setPhone(e.target.value)}
+            />
+
+          </div>
+
+          <div className="mb-4">
+
+            <label className="text-gray-400 text-sm">
+              Tên đầy đủ
+            </label>
+
+            <input
+              type="text"
+              placeholder="Nhập tên đầy đủ"
+              className="w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400"
+              onChange={(e) => setFullName(e.target.value)}
+            />
+
+          </div>
 
           <div className="mb-4">
 

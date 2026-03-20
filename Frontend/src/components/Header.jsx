@@ -1,10 +1,41 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Header() {
 
   const [showMenu, setShowMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Quét quyền Admin ở mọi cấp độ dữ liệu đề phòng cấu trúc API bị lồng ghép
+  const isAdmin = user && (
+    String(user.role).toLowerCase() === 'admin' ||
+    String(user.user?.role).toLowerCase() === 'admin' ||
+    String(user.data?.role).toLowerCase() === 'admin'
+  );
+
+  const checkAuth = () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try { setUser(JSON.parse(storedUser)); } catch { setUser(null); }
+    } else {
+      setUser(null);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+    window.addEventListener("authChange", checkAuth);
+    return () => window.removeEventListener("authChange", checkAuth);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("authChange"));
+    setShowMenu(false);
+    setShowMobileMenu(false);
+  };
 
   return (
 
@@ -54,13 +85,15 @@ function Header() {
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
           </Link>
 
-          <Link
-            to="/admin"
-            className="hover:text-blue-600 transition-colors duration-200 relative group"
-          >
-            Admin
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-          </Link>
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="hover:text-blue-600 transition-colors duration-200 relative group"
+            >
+              Admin
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+            </Link>
+          )}
 
           {/* User Dropdown */}
           <div className="relative">
@@ -73,7 +106,9 @@ function Header() {
               {/* Icon */}
               <span className="text-lg">👤</span>
 
-              <span className="font-medium">User</span>
+              <span className="font-medium">
+                {user ? (user.username || user.user?.username || user.full_name || "User") : "User"}
+              </span>
 
               <svg className={`w-4 h-4 transition-transform duration-200 ${showMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -85,29 +120,28 @@ function Header() {
 
               <div className="absolute right-0 mt-4 w-52 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden transform transition-all duration-200 ease-out">
 
-                <Link
-                  to="/login"
-                  className="flex items-center gap-3 px-5 py-4 hover:bg-blue-50 transition-colors duration-200"
-                >
-                  <span>🔑</span>
-                  <span className="font-medium">Đăng nhập</span>
-                </Link>
-
-                <Link
-                  to="/register"
-                  className="flex items-center gap-3 px-5 py-4 hover:bg-blue-50 transition-colors duration-200"
-                >
-                  <span>📝</span>
-                  <span className="font-medium">Đăng ký</span>
-                </Link>
-
-                <Link
-                  to="/admin"
-                  className="flex items-center gap-3 px-5 py-4 hover:bg-blue-50 transition-colors duration-200"
-                >
-                  <span>⚙️</span>
-                  <span className="font-medium">Admin</span>
-                </Link>
+                {user ? (
+                  <>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left flex items-center gap-3 px-5 py-4 hover:bg-red-50 text-red-600 transition-colors duration-200"
+                    >
+                      <span>🚪</span>
+                      <span className="font-medium">Đăng xuất</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" onClick={() => setShowMenu(false)} className="flex items-center gap-3 px-5 py-4 hover:bg-blue-50 transition-colors duration-200">
+                      <span>🔑</span>
+                      <span className="font-medium">Đăng nhập</span>
+                    </Link>
+                    <Link to="/register" onClick={() => setShowMenu(false)} className="flex items-center gap-3 px-5 py-4 hover:bg-blue-50 transition-colors duration-200">
+                      <span>📝</span>
+                      <span className="font-medium">Đăng ký</span>
+                    </Link>
+                  </>
+                )}
 
               </div>
 
@@ -125,10 +159,18 @@ function Header() {
           <Link to="/" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">Trang chủ</Link>
           <Link to="/support" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">Hỗ trợ</Link>
           <Link to="/api" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">API</Link>
-          <Link to="/admin" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">Admin</Link>
+          {isAdmin && <Link to="/admin" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">Admin</Link>}
           <div className="border-t border-gray-100 pt-4 flex flex-col gap-4">
-            <Link to="/login" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 hover:text-blue-600 transition-colors"><span>🔑</span> Đăng nhập</Link>
-            <Link to="/register" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 hover:text-blue-600 transition-colors"><span>📝</span> Đăng ký</Link>
+            {user ? (
+              <button onClick={handleLogout} className="flex items-center gap-3 text-red-600 hover:text-red-700 transition-colors text-left">
+                <span>🚪</span> Đăng xuất
+              </button>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 hover:text-blue-600 transition-colors"><span>🔑</span> Đăng nhập</Link>
+                <Link to="/register" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 hover:text-blue-600 transition-colors"><span>📝</span> Đăng ký</Link>
+              </>
+            )}
           </div>
         </nav>
       )}

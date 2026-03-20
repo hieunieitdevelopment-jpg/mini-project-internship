@@ -6,6 +6,7 @@ import AddressDetail from "../pages/AddressDetail";
 import Admin from "../pages/Admin";
 import Support from "../pages/Support";
 import Api from "../pages/Api";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRouter() {
   return (
@@ -19,7 +20,14 @@ function AppRouter() {
 
       <Route path="/address/:id" element={<AddressDetail />} />
 
-      <Route path="/admin" element={<Admin />} />
+      <Route 
+        path="/admin" 
+        element={
+          <ProtectedRoute>
+            <Admin />
+          </ProtectedRoute>
+        } 
+      />
 
       <Route path="/support" element={<Support />} />
 

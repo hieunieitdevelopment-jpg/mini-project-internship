@@ -1,34 +1,79 @@
 import { useState } from "react";
-import { login } from "../services/authService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
 
     if (email === "admin@gmail.com" && password === "123456") {
       alert("Đăng nhập admin thành công");
+      localStorage.setItem("user", JSON.stringify({ full_name: "Admin User", role: "admin" }));
+      window.dispatchEvent(new Event("authChange"));
+      navigate("/admin");
       return;
     }
 
     try {
 
-      const res = await login({
-        email,
-        password
+      const res = await fetch("http://44.202.66.188:3000/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      console.log(res.data);
+      const data = await res.json();
 
-      alert("Đăng nhập thành công");
+      if (res.ok) {
+        alert("Đăng nhập thành công");
+        if (data.token) localStorage.setItem("token", data.token); // Lưu token nếu API có trả về
+        
+        // 1. Giải mã Token để lấy quyền thật sự (bỏ qua dữ liệu rác bên ngoài của API)
+        let tokenRole = null;
+        if (data.token) {
+          try {
+            // Tự động chuẩn hoá chuỗi Base64Url và bù dấu đệm '=' nếu thiếu
+            const base64Url = data.token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const pad = base64.length % 4;
+            const paddedBase64 = pad ? base64 + '='.repeat(4 - pad) : base64;
+            // Giải mã an toàn với cả Tiếng Việt (UTF-8)
+            const jsonPayload = decodeURIComponent(
+              atob(paddedBase64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+            );
+            const decoded = JSON.parse(jsonPayload);
+            tokenRole = decoded.role;
+          } catch (e) {
+            console.error("Lỗi giải mã token:", e);
+          }
+        }
+        
+        // 2. Lấy đúng object user nằm sâu bên trong
+        const userInfo = data.user || data.data || {}; 
 
-    } catch {
+        const userData = {
+          ...userInfo,
+          username: userInfo.username || data.username,
+          full_name: userInfo.full_name || data.full_name || userInfo.username || email.split("@")[0],
+          // Ép lấy Role từ Token làm chuẩn mực cao nhất
+          role: String(tokenRole || userInfo.role || data.role || "user").toLowerCase()
+        };
+        
+        localStorage.setItem("user", JSON.stringify(userData));
+        window.dispatchEvent(new Event("authChange"));
+        navigate("/");
+      } else {
+        alert(data.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+      }
 
-      alert("Đăng nhập thất bại");
-
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Lỗi kết nối đến máy chủ.");
     }
 
   };
