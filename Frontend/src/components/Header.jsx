@@ -107,7 +107,7 @@ function Header() {
               <span className="text-lg">👤</span>
 
               <span className="font-medium">
-                {user ? (user.username || user.user?.username || user.full_name || "User") : "User"}
+                {user ? (user.username || user.user?.username || user.full_name || "Tài khoản") : "Tài khoản"}
               </span>
 
               <svg className={`w-4 h-4 transition-transform duration-200 ${showMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
