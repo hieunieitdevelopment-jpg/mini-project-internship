@@ -1,26 +1,76 @@
 function Api() {
 
-  const endpoints = [
+  const apiGroups = [
     {
-      method: "GET",
-      path: "/api/addresses",
-      description: "Tra cứu địa chỉ cũ - mới",
-      params: "q: địa chỉ cần tra cứu",
-      example: "GET /api/addresses?q=Phường Hòa Thọ Đông, Đà Nẵng"
+      category: "Xác Thực (Authentication)",
+      endpoints: [
+        {
+          method: "POST",
+          path: "/auth/login",
+          description: "Đăng nhập hệ thống và nhận JWT Token",
+          params: "Body: { email, password }",
+          example: 'POST /auth/login'
+        },
+        {
+          method: "POST",
+          path: "/auth/register",
+          description: "Đăng ký tài khoản người dùng mới",
+          params: "Body: { username, full_name, email, password, phone }",
+          example: 'POST /auth/register'
+        }
+      ]
     },
     {
-      method: "GET",
-      path: "/api/addresses/{id}",
-      description: "Lấy chi tiết địa chỉ theo ID",
-      params: "id: ID của địa chỉ",
-      example: "GET /api/addresses/1"
+      category: "Tra Cứu Địa Giới (Mappings)",
+      endpoints: [
+        {
+          method: "GET",
+          path: "/mappings",
+          description: "Tra cứu sự thay đổi địa giới hành chính (Cũ -> Mới hoặc Mới -> Cũ)",
+          params: "Query: direction (old-to-new | new-to-old), province, district, ward",
+          example: "GET /mappings?direction=old-to-new&province=Đắk Lắk&district=Krông Năng&ward=Phú Xuân"
+        }
+      ]
     },
     {
-      method: "POST",
-      path: "/api/addresses/batch",
-      description: "Tra cứu nhiều địa chỉ cùng lúc",
-      params: "addresses: mảng địa chỉ",
-      example: "POST /api/addresses/batch"
+      category: "Đơn Vị Hành Chính (Units)",
+      endpoints: [
+        {
+          method: "GET",
+          path: "/provinces",
+          description: "Lấy danh sách tất cả Tỉnh/Thành phố",
+          params: "—",
+          example: "GET /provinces"
+        },
+        {
+          method: "GET",
+          path: "/provinces/{id}/districts",
+          description: "Lấy danh sách Huyện/Quận trực thuộc một Tỉnh",
+          params: "Path: id (Mã tỉnh)",
+          example: "GET /provinces/1/districts"
+        },
+        {
+          method: "GET",
+          path: "/districts/{id}/wards",
+          description: "Lấy danh sách Xã/Phường trực thuộc một Huyện",
+          params: "Path: id (Mã huyện), Query: active (true/false)",
+          example: "GET /districts/5/wards?active=true"
+        },
+        {
+          method: "GET",
+          path: "/units/suggest",
+          description: "Gợi ý tìm kiếm nhanh đơn vị hành chính",
+          params: "Query: q (Từ khóa), level (ward/district/province)",
+          example: "GET /units/suggest?q=Phú Xuân&level=ward"
+        },
+        {
+          method: "GET",
+          path: "/units/{id}",
+          description: "Lấy thông tin chi tiết một đơn vị hành chính theo ID",
+          params: "Path: id (Mã đơn vị)",
+          example: "GET /units/10"
+        }
+      ]
     }
   ];
 
@@ -46,12 +96,12 @@ function Api() {
         </h2>
 
         <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-4">
-          API AddressLookup cung cấp dịch vụ tra cứu thay đổi địa giới hành chính một cách nhanh chóng và chính xác.
-          Dữ liệu được cập nhật theo nghị quyết chính thức của chính phủ.
+          API AddressLookup cung cấp dịch vụ xác thực, quản lý và tra cứu thay đổi địa giới hành chính một cách nhanh chóng, chính xác.
+          Dữ liệu được cập nhật tự động theo các nghị quyết chính thức của chính phủ.
         </p>
 
         <div className="bg-blue-50 border-l-4 border-blue-400 p-3 md:p-4 rounded-r-lg break-all">
-          <p className="text-blue-800 font-medium text-sm md:text-base">Base URL: https://api.addresslookup.com</p>
+          <p className="text-blue-800 font-medium text-sm md:text-base">Base URL: http://44.202.66.188:3000/api/v1</p>
         </div>
 
       </div>
@@ -65,11 +115,11 @@ function Api() {
         </h2>
 
         <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-4">
-          Để sử dụng API, bạn cần đăng ký tài khoản và lấy API Key.
+          Các API yêu cầu quyền quản trị (như thêm, sửa, xóa user) cần phải truyền kèm JWT Token thu được sau khi đăng nhập thành công vào header của request.
         </p>
 
         <div className="bg-gray-100 p-3 md:p-4 rounded-lg font-mono text-xs md:text-sm break-all">
-          Authorization: Bearer YOUR_API_KEY
+          Authorization: Bearer YOUR_JWT_TOKEN
         </div>
 
       </div>
@@ -82,40 +132,43 @@ function Api() {
           Endpoints
         </h2>
 
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-8">
 
-          {endpoints.map((endpoint, index) => (
+          {apiGroups.map((group, groupIndex) => (
+            <div key={groupIndex} className="space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl font-bold text-blue-700 border-b-2 border-blue-100 pb-2">
+                {group.category}
+              </h3>
+              
+              {group.endpoints.map((endpoint, index) => (
+                <div key={index} className="border border-gray-200 rounded-xl p-4 md:p-6 hover:shadow-md transition-shadow bg-gray-50">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3 md:mb-4">
+                    <span className={`inline-block w-fit px-3 py-1 rounded-lg text-xs md:text-sm font-bold ${
+                      endpoint.method === 'GET' ? 'bg-green-100 text-green-800' :
+                      endpoint.method === 'POST' ? 'bg-blue-100 text-blue-800' :
+                      endpoint.method === 'PUT' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {endpoint.method}
+                    </span>
+                    <code className="text-sm md:text-lg font-mono text-gray-800 break-all bg-white px-2 py-1 rounded border border-gray-200">{endpoint.path}</code>
+                  </div>
 
-            <div key={index} className="border border-gray-200 rounded-xl p-4 md:p-6">
+                  <p className="text-sm md:text-base text-gray-600 mb-3 font-medium">{endpoint.description}</p>
 
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3 md:mb-4">
+                  <div className="mb-3">
+                    <strong className="text-gray-700 text-sm">Parameters:</strong>
+                    <code className="ml-2 bg-white border border-gray-200 px-2 py-1 rounded text-xs md:text-sm break-all text-blue-600">{endpoint.params}</code>
+                  </div>
 
-                <span className={`inline-block w-fit px-3 py-1 rounded-lg text-xs md:text-sm font-bold ${
-                  endpoint.method === 'GET' ? 'bg-green-100 text-green-800' :
-                  endpoint.method === 'POST' ? 'bg-blue-100 text-blue-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {endpoint.method}
-                </span>
-
-                <code className="text-sm md:text-lg font-mono text-gray-800 break-all">{endpoint.path}</code>
-
-              </div>
-
-              <p className="text-sm md:text-base text-gray-600 mb-3">{endpoint.description}</p>
-
-              <div className="mb-3">
-                <strong className="text-gray-700">Parameters:</strong>
-                <code className="ml-2 bg-gray-100 px-2 py-1 rounded text-xs md:text-sm break-all">{endpoint.params}</code>
-              </div>
-
-              <div>
-                <strong className="text-gray-700">Example:</strong>
-                <div className="mt-2 bg-gray-100 p-3 rounded-lg font-mono text-xs md:text-sm overflow-x-auto">
-                  {endpoint.example}
+                  <div>
+                    <strong className="text-gray-700 text-sm">Example:</strong>
+                    <div className="mt-2 bg-gray-800 text-green-400 p-3 rounded-lg font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
+                      {endpoint.example}
+                    </div>
+                  </div>
                 </div>
-              </div>
-
+              ))}
             </div>
 
           ))}
@@ -132,14 +185,29 @@ function Api() {
           Ví Dụ Response
         </h2>
 
-        <div className="bg-gray-100 p-4 md:p-6 rounded-lg font-mono text-xs md:text-sm overflow-x-auto">
+        <div className="bg-gray-800 text-green-400 p-4 md:p-6 rounded-lg font-mono text-xs md:text-sm overflow-x-auto shadow-inner">
 {`{
-  "success": true,
-  "data": {
-    "oldAddress": "Phường Hòa Thọ Đông, Quận Cẩm Lệ, TP Đà Nẵng",
-    "newAddress": "Phường Cẩm Lệ, TP Đà Nẵng",
-    "date": "03/10/2026"
-  }
+  "data": [
+    {
+      "old_unit": {
+        "id": 1,
+        "name": "Xã Phú Lộc",
+        "level": "ward",
+        "parent": "Huyện Krông Năng"
+      },
+      "new_unit": {
+        "id": 2,
+        "name": "Xã Krông Năng",
+        "level": "ward"
+      },
+      "change": {
+        "type": "merge",
+        "resolution_number": "1660/NQ-UBTVQH15",
+        "effective_date": "2025-07-01T00:00:00.000Z",
+        "description": "Sáp nhập toàn bộ DT và dân số của xã Phú Lộc thành xã Krông Năng mới."
+      }
+    }
+  ]
 }`}
         </div>
 
