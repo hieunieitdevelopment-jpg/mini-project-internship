@@ -15,6 +15,16 @@ const options = {
         description: "API v1",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "Nhập JWT token lấy từ API login",
+        },
+      },
+    },
   },
   apis: ["./src/routes/*.js"],
 };
