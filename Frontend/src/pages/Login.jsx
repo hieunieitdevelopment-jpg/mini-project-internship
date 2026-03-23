@@ -1,19 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  // Tự động ẩn thông báo lỗi sau 3 giây
+  useEffect(() => {
+    if (errorMsg) {
+      const timer = setTimeout(() => setErrorMsg(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMsg]);
 
-    if (email === "admin@gmail.com" && password === "123456") {
-      alert("Đăng nhập admin thành công");
-      localStorage.setItem("user", JSON.stringify({ full_name: "Admin User", role: "admin" }));
+  const handleLogin = async () => {
+    setErrorMsg(""); // Reset lỗi mỗi lần bấm đăng nhập
+    setSuccessMsg(""); // Reset cả thông báo thành công
+
+    // Kiểm tra không được để trống email hoặc mật khẩu
+    if (!email.trim() || !password.trim()) {
+      setErrorMsg("Hãy điền đầy đủ thông tin.");
+      return; // Dừng hàm lại, không gọi API nữa
+    }
+
+    const cleanEmail = email.trim(); // Bỏ đi các dấu cách thừa ở đầu và cuối
+
+    // Kiểm tra định dạng Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setErrorMsg("Email không đúng định dạng (VD: ten@gmail.com).");
+      return;
+    }
+
+    setIsLoading(true);
+
+    if (cleanEmail === "admin@gmail.com" && password === "123456") {
+      setSuccessMsg("Đăng nhập quản trị viên thành công!");
+      localStorage.setItem("user", JSON.stringify({ full_name: "Admin-Khai", role: "admin" }));
       window.dispatchEvent(new Event("authChange"));
-      navigate("/admin");
+      setTimeout(() => {
+        navigate("/admin");
+      }, 1500); // Đợi 1.5 giây để hiện thông báo trước khi chuyển trang
       return;
     }
 
@@ -24,13 +56,13 @@ function Login() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: cleanEmail, password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        alert("Đăng nhập thành công");
+        setSuccessMsg("Đăng nhập thành công!");
         if (data.token) localStorage.setItem("token", data.token); // Lưu token nếu API có trả về
         
         // 1. Giải mã Token để lấy quyền thật sự (bỏ qua dữ liệu rác bên ngoài của API)
@@ -66,14 +98,18 @@ function Login() {
         
         localStorage.setItem("user", JSON.stringify(userData));
         window.dispatchEvent(new Event("authChange"));
-        navigate("/");
+        setTimeout(() => {
+          navigate("/");
+        }, 1500); // Đợi 1.5 giây để hiện thông báo trước khi chuyển trang
       } else {
-        alert(data.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+        setErrorMsg("Sai email hoặc mật khẩu.");
+        setIsLoading(false);
       }
 
     } catch (error) {
       console.error("Login error:", error);
-      alert("Lỗi kết nối đến máy chủ.");
+      setErrorMsg("Lỗi kết nối đến máy chủ.");
+      setIsLoading(false);
     }
 
   };
@@ -81,6 +117,43 @@ function Login() {
   return (
 
     <div className="min-h-screen flex flex-col md:flex-row">
+
+      {/* Định nghĩa CSS Animation cho hiệu ứng trượt từ phải sang */}
+      <style>{`
+        @keyframes slideInRight {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-slide-in {
+          animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}</style>
+
+      {/* Toast Notification hiển thị nổi (Fixed) ở góc trên bên phải */}
+      {errorMsg && (
+        <div className="fixed top-20 right-4 md:right-8 z-[9999] bg-white border-l-4 border-red-500 p-4 rounded-lg shadow-2xl min-w-[280px] max-w-sm toast-slide-in flex items-start justify-between gap-4">
+          <div>
+            <p className="font-bold text-red-600 text-base mb-1">Lưu ý</p>
+            <p className="text-gray-600 text-sm font-medium">{errorMsg}</p>
+          </div>
+          <button onClick={() => setErrorMsg("")} className="text-gray-400 hover:text-gray-600 transition-colors text-xl leading-none">
+            &times;
+          </button>
+        </div>
+      )}
+
+      {/* Toast Notification hiển thị nổi (Fixed) cho trường hợp Thành công */}
+      {successMsg && (
+        <div className="fixed top-20 right-4 md:right-8 z-[9999] bg-white border-l-4 border-green-500 p-4 rounded-lg shadow-2xl min-w-[280px] max-w-sm toast-slide-in flex items-start justify-between gap-4">
+          <div>
+            <p className="font-bold text-green-600 text-base mb-1">Thành công</p>
+            <p className="text-gray-600 text-sm font-medium">{successMsg}</p>
+          </div>
+          <button onClick={() => setSuccessMsg("")} className="text-gray-400 hover:text-gray-600 transition-colors text-xl leading-none">
+            &times;
+          </button>
+        </div>
+      )}
 
       {/* LEFT SIDE */}
       <div className="w-full md:w-1/2 bg-gradient-to-br from-teal-400 to-green-300 flex flex-col justify-center items-center text-white p-8 md:p-10 min-h-[30vh] md:min-h-screen">
@@ -119,6 +192,7 @@ function Login() {
 
             <input
               type="email"
+              value={email}
               placeholder="Nhập email"
               className="w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400"
               onChange={(e) => setEmail(e.target.value)}
@@ -134,6 +208,7 @@ function Login() {
 
             <input
               type="password"
+              value={password}
               placeholder="Nhập mật khẩu"
               className="w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400"
               onChange={(e) => setPassword(e.target.value)}
@@ -143,9 +218,22 @@ function Login() {
 
           <button
             onClick={handleLogin}
-            className="w-full bg-teal-400 hover:bg-teal-500 text-black font-semibold py-3 rounded-lg transition"
+            disabled={isLoading}
+            className={`w-full bg-teal-400 hover:bg-teal-500 text-black font-semibold py-3 rounded-lg transition flex items-center justify-center ${
+              isLoading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
-            Đăng nhập
+            {isLoading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Đang xử lý...
+              </>
+            ) : (
+              "Đăng nhập"
+            )}
           </button>
 
           <p className="text-gray-400 text-sm mt-6 text-center">

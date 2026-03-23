@@ -95,59 +95,53 @@ function Header() {
             </Link>
           )}
 
-          {/* User Dropdown */}
-          <div className="relative">
+          {/* Xác thực (Auth Area) */}
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 px-2 py-1 pr-3 rounded-full transition-all duration-200 font-medium border border-blue-200"
+              >
+                {/* Avatar tròn với chữ cái đầu tiên của tên */}
+                <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  {(user.username || user.user?.username || user.full_name || "U")[0].toUpperCase()}
+                </div>
+                <span className="max-w-[120px] truncate text-sm">
+                  {user.username || user.user?.username || user.full_name || "User"}
+                </span>
+                <svg className={`w-4 h-4 transition-transform duration-200 ${showMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
 
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center gap-3 bg-blue-100 hover:bg-blue-200 px-5 py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-
-              {/* Icon */}
-              <span className="text-lg">👤</span>
-
-              <span className="font-medium">
-                {user ? (user.username || user.user?.username || user.full_name || "Tài khoản") : "Tài khoản"}
-              </span>
-
-              <svg className={`w-4 h-4 transition-transform duration-200 ${showMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-
-            </button>
-
-            {showMenu && (
-
-              <div className="absolute right-0 mt-4 w-52 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden transform transition-all duration-200 ease-out">
-
-                {user ? (
-                  <>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left flex items-center gap-3 px-5 py-4 hover:bg-red-50 text-red-600 transition-colors duration-200"
-                    >
-                      <span>🚪</span>
-                      <span className="font-medium">Đăng xuất</span>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/login" onClick={() => setShowMenu(false)} className="flex items-center gap-3 px-5 py-4 hover:bg-blue-50 transition-colors duration-200">
-                      <span>🔑</span>
-                      <span className="font-medium">Đăng nhập</span>
-                    </Link>
-                    <Link to="/register" onClick={() => setShowMenu(false)} className="flex items-center gap-3 px-5 py-4 hover:bg-blue-50 transition-colors duration-200">
-                      <span>📝</span>
-                      <span className="font-medium">Đăng ký</span>
-                    </Link>
-                  </>
-                )}
-
-              </div>
-
-            )}
-
-          </div>
+              {showMenu && (
+                <div className="absolute right-0 mt-3 w-48 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden transform transition-all duration-200 ease-out py-1">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition-colors duration-200 text-sm font-medium"
+                  >
+                    <span>🚪</span>
+                    <span>Đăng xuất</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-4 ml-2">
+              <Link 
+                to="/login" 
+                className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+              >
+                Đăng nhập
+              </Link>
+              <Link 
+                to="/register" 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 text-sm"
+              >
+                Đăng ký
+              </Link>
+            </div>
+          )}
 
         </nav>
 
