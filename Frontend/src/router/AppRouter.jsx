@@ -7,6 +7,7 @@ import Admin from "../pages/Admin";
 import Support from "../pages/Support";
 import Api from "../pages/Api";
 import ProtectedRoute from "../components/ProtectedRoute";
+import Profile from "../pages/Profile";
 
 function AppRouter() {
   return (
@@ -19,6 +20,8 @@ function AppRouter() {
       <Route path="/register" element={<Register />} />
 
       <Route path="/address/:id" element={<AddressDetail />} />
+
+      <Route path="/profile" element={<Profile />} />
 
       <Route 
         path="/admin" 

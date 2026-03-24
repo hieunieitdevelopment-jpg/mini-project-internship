@@ -1,11 +1,46 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 function Admin() {
 
-  const users = [
-    { id: 1, name: "Nguyễn Văn A", email: "a@example.com", role: "User", status: "Active" },
-    { id: 2, name: "Trần Thị B", email: "b@example.com", role: "Admin", status: "Active" },
-    { id: 3, name: "Lê Văn C", email: "c@example.com", role: "User", status: "Inactive" },
-    { id: 4, name: "Phạm Thị D", email: "d@example.com", role: "User", status: "Active" },
-  ];
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://44.202.66.188/api/v1/auth/users", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        // Xử lý tự động đăng xuất nếu Token hết hạn hoặc không hợp lệ (Lỗi 401)
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.dispatchEvent(new Event("authChange"));
+          navigate("/login");
+          return;
+        }
+
+        const data = await res.json();
+        if (res.ok) {
+          setUsers(data.data || data.users || []);
+        } else {
+          console.error("Lỗi lấy danh sách user:", data.message);
+        }
+      } catch (error) {
+        console.error("Lỗi kết nối:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchUsers();
+  }, []);
 
   return (
 
@@ -52,29 +87,42 @@ function Admin() {
 
             <tbody className="divide-y divide-gray-200">
 
-              {users.map((user) => (
+              {isLoading ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
+                    Đang tải danh sách người dùng...
+                  </td>
+                </tr>
+              ) : users.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
+                    Không có dữ liệu.
+                  </td>
+                </tr>
+              ) : (
+                users.map((user) => (
 
-                <tr key={user.id} className="hover:bg-gray-50 transition-colors duration-200">
+                  <tr key={user.id || user._id || Math.random()} className="hover:bg-gray-50 transition-colors duration-200">
 
-                  <td className="px-6 py-4 text-sm text-gray-900">{user.id}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{user.id || user._id}</td>
 
-                  <td className="px-6 py-4 text-sm text-gray-900">{user.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{user.full_name || user.username || "Chưa có tên"}</td>
 
                   <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
 
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      user.role === 'Admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                      String(user.role).toLowerCase() === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {user.role}
+                      {user.role || 'User'}
                     </span>
                   </td>
 
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      user.active !== false && user.status !== 'Inactive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                     }`}>
-                      {user.status}
+                      {user.active !== false && user.status !== 'Inactive' ? 'Active' : 'Inactive'}
                     </span>
                   </td>
 
@@ -89,9 +137,10 @@ function Admin() {
                     </div>
                   </td>
 
-                </tr>
+                  </tr>
 
-              ))}
+                ))
+              )}
 
             </tbody>
 

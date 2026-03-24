@@ -39,19 +39,9 @@ function Login() {
 
     setIsLoading(true);
 
-    if (cleanEmail === "admin@gmail.com" && password === "123456") {
-      setSuccessMsg("Đăng nhập quản trị viên thành công!");
-      localStorage.setItem("user", JSON.stringify({ full_name: "Admin-Khai", role: "admin" }));
-      window.dispatchEvent(new Event("authChange"));
-      setTimeout(() => {
-        navigate("/admin");
-      }, 1500); // Đợi 1.5 giây để hiện thông báo trước khi chuyển trang
-      return;
-    }
-
     try {
 
-      const res = await fetch("http://44.202.66.188:3000/api/v1/auth/login", {
+      const res = await fetch("http://44.202.66.188/api/v1/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,14 +53,17 @@ function Login() {
 
       if (res.ok) {
         setSuccessMsg("Đăng nhập thành công!");
-        if (data.token) localStorage.setItem("token", data.token); // Lưu token nếu API có trả về
+        
+        // Tìm token linh hoạt theo nhiều cấu trúc API thường gặp
+        const actualToken = data.token || data.access_token || data.data?.token || data.data?.access_token;
+        if (actualToken) localStorage.setItem("token", actualToken);
         
         // 1. Giải mã Token để lấy quyền thật sự (bỏ qua dữ liệu rác bên ngoài của API)
         let tokenRole = null;
-        if (data.token) {
+        if (actualToken) {
           try {
             // Tự động chuẩn hoá chuỗi Base64Url và bù dấu đệm '=' nếu thiếu
-            const base64Url = data.token.split('.')[1];
+            const base64Url = actualToken.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
             const pad = base64.length % 4;
             const paddedBase64 = pad ? base64 + '='.repeat(4 - pad) : base64;

@@ -3,11 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
 
-  const [username, setUsername] = useState("");
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -25,13 +23,17 @@ function Register() {
     setErrorMsg("");
     setSuccessMsg("");
 
-    if (!username.trim() || !fullName.trim() || !email.trim() || !password.trim() || !phone.trim()) {
+    if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
       setErrorMsg("Hãy điền đầy đủ thông tin.");
       return;
     }
 
+    if (password !== confirmPassword) {
+      setErrorMsg("Mật khẩu nhập lại không khớp.");
+      return;
+    }
+
     const cleanEmail = email.trim();
-    const cleanPhone = phone.trim();
 
     // Kiểm tra định dạng Email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,28 +42,18 @@ function Register() {
       return;
     }
 
-    // Kiểm tra định dạng Số điện thoại (Bắt đầu bằng số 0, đủ 10 số)
-    const phoneRegex = /^0\d{9}$/;
-    if (!phoneRegex.test(cleanPhone)) {
-      setErrorMsg("Số điện thoại không hợp lệ (phải bắt đầu bằng số 0 và đủ 10 chữ số).");
-      return;
-    }
-
     setIsLoading(true);
 
     try {
 
-      const res = await fetch("http://44.202.66.188:3000/api/v1/auth/register", {
+      const res = await fetch("http://44.202.66.188/api/v1/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ 
-          username: username.trim(), 
-          full_name: fullName.trim(), 
           email: cleanEmail, 
-          password, 
-          phone: cleanPhone 
+          password 
         }),
       });
 
@@ -70,13 +62,16 @@ function Register() {
       if (res.ok) {
         setSuccessMsg("Đăng ký thành công!");
         
+        // Tìm token linh hoạt
+        const actualToken = data.token || data.access_token || data.data?.token || data.data?.access_token;
+        
         // Kiểm tra xem API đăng ký có trả về token luôn không (Tính năng Auto-login)
-        if (data.token) {
-          localStorage.setItem("token", data.token);
+        if (actualToken) {
+          localStorage.setItem("token", actualToken);
           
           let tokenRole = null;
           try {
-            const base64Url = data.token.split('.')[1];
+            const base64Url = actualToken.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
             const pad = base64.length % 4;
             const paddedBase64 = pad ? base64 + '='.repeat(4 - pad) : base64;
@@ -193,57 +188,6 @@ function Register() {
           <div className="mb-4">
 
             <label className="text-gray-400 text-sm">
-              Username
-            </label>
-
-            <input
-              type="text"
-              value={username}
-              disabled={isLoading}
-              placeholder="Nhập username (chỉ chữ và số)"
-              className={`w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-
-          </div>
-
-          <div className="mb-4">
-
-            <label className="text-gray-400 text-sm">
-              Số điện thoại
-            </label>
-
-            <input
-              type="tel"
-              value={phone}
-              disabled={isLoading}
-              placeholder="Nhập số điện thoại"
-              className={`w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-
-          </div>
-
-          <div className="mb-4">
-
-            <label className="text-gray-400 text-sm">
-              Tên đầy đủ
-            </label>
-
-            <input
-              type="text"
-              value={fullName}
-              disabled={isLoading}
-              placeholder="Nhập tên đầy đủ"
-              className={`w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onChange={(e) => setFullName(e.target.value)}
-            />
-
-          </div>
-
-          <div className="mb-4">
-
-            <label className="text-gray-400 text-sm">
               Email
             </label>
 
@@ -258,7 +202,7 @@ function Register() {
 
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
 
             <label className="text-gray-400 text-sm">
               Mật khẩu
@@ -271,6 +215,23 @@ function Register() {
               placeholder="Nhập mật khẩu"
               className={`w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               onChange={(e) => setPassword(e.target.value)}
+            />
+
+          </div>
+
+          <div className="mb-6">
+
+            <label className="text-gray-400 text-sm">
+              Nhập lại mật khẩu
+            </label>
+
+            <input
+              type="password"
+              value={confirmPassword}
+              disabled={isLoading}
+              placeholder="Nhập lại mật khẩu"
+              className={`w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
 
           </div>

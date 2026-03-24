@@ -44,8 +44,12 @@ function Header() {
       <div className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-8 py-4 md:py-5">
 
         {/* Logo */}
-        <Link to="/" className="text-2xl md:text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200">
-          AddressLookup
+        <Link to="/" className="text-2xl md:text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors duration-200 flex items-center gap-2">
+          <svg className="w-8 h-8 md:w-10 md:h-10 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          TraCứuĐịaGiới
         </Link>
 
         {/* Mobile Menu Button */}
@@ -116,9 +120,18 @@ function Header() {
 
               {showMenu && (
                 <div className="absolute right-0 mt-3 w-48 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden transform transition-all duration-200 ease-out py-1">
+                  <Link
+                    to="/profile"
+                    onClick={() => setShowMenu(false)}
+                    className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-gray-700 transition-colors duration-200 text-sm font-medium border-b border-gray-100"
+                  >
+                    <span>👤</span>
+                    <span>Hồ sơ cá nhân</span>
+                  </Link>
+
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition-colors duration-200 text-sm font-medium"
+                    className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition-colors duration-200 text-sm font-medium border-none"
                   >
                     <span>🚪</span>
                     <span>Đăng xuất</span>
@@ -156,9 +169,14 @@ function Header() {
           {isAdmin && <Link to="/admin" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600 transition-colors">Admin</Link>}
           <div className="border-t border-gray-100 pt-4 flex flex-col gap-4">
             {user ? (
-              <button onClick={handleLogout} className="flex items-center gap-3 text-red-600 hover:text-red-700 transition-colors text-left">
-                <span>🚪</span> Đăng xuất
-              </button>
+              <>
+                <Link to="/profile" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors text-left">
+                  <span>👤</span> Hồ sơ cá nhân
+                </Link>
+                <button onClick={handleLogout} className="flex items-center gap-3 text-red-600 hover:text-red-700 transition-colors text-left">
+                  <span>🚪</span> Đăng xuất
+                </button>
+              </>
             ) : (
               <>
                 <Link to="/login" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 hover:text-blue-600 transition-colors"><span>🔑</span> Đăng nhập</Link>
