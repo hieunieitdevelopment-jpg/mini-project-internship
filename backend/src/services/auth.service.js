@@ -94,3 +94,9 @@ exports.resetPassword = async ({ token, newPassword }) => {
     return { message: "Đổi mật khẩu thành công" };
 };
 
+// lấy tất cả user
+ exports.getAllUsers = async () => {
+    const users = await userModel.getAllUsers();
+    return users;
+ };
+

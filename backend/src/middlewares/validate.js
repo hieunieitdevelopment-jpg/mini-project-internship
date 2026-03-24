@@ -119,6 +119,72 @@ const validateMapping = [
   handleValidation,
 ];
 
+// auth
+const validateRegister = [
+  body("email")
+    .notEmpty()
+    .withMessage("Email không được để trống")
+    .isEmail()
+    .withMessage("Email không hợp lệ"),
+  body("password")
+    .notEmpty()
+    .withMessage("Mật khẩu không được để trống")
+    .isLength({ min: 6 })
+    .withMessage("Mật khẩu phải từ 6 ký tự"),
+  handleValidation,
+];
+
+const validateLogin = [
+  body("email")
+    .notEmpty()
+    .withMessage("Email không được để trống")
+    .isEmail()
+    .withMessage("Email không hợp lệ"),
+  body("password")
+    .notEmpty()
+    .withMessage("Mật khẩu không được để trống")
+    .isLength({ min: 6 })
+    .withMessage("Mật khẩu phải từ 6 ký tự"),
+  handleValidation,
+];
+
+// đổi mật khảu khi đăng nhập
+
+const validateChangePassword = [
+  body("oldPassword")
+    .notEmpty()
+    .withMessage("Mật khẩu cũ không được để trống"),
+  body("newPassword")
+    .notEmpty()
+    .withMessage("Mật khẩu mới không được để trống")
+    .isLength({ min: 6 })
+    .withMessage("Mật khẩu mới tối thiểu 6 ký tự"),
+  handleValidation,
+];
+
+// quên mật khẩu + reset:
+const validateResetRequest = [
+  body("email")
+    .notEmpty()
+    .withMessage("Email không được để trống")
+    .isEmail()
+    .withMessage("Email không hợp lệ"),
+  handleValidation,
+];
+
+const validateResetPassword = [
+  body("token")
+    .notEmpty()
+    .withMessage("Token không được để trống"),
+  body("newPassword")
+    .notEmpty()
+    .withMessage("Mật khẩu mới không được để trống")
+    .isLength({ min: 6 })
+    .withMessage("Mật khẩu mới tối thiểu 6 ký tự"),
+  handleValidation,
+];
+
+
 
 module.exports = {
   validateProvinceId,
@@ -127,4 +193,11 @@ module.exports = {
   validateSuggest,
   validateFuzzySearch,
   validateMapping,
+  // auth validation
+  validateRegister,
+  validateLogin,
+  validateChangePassword,
+  validateResetRequest,
+  validateResetPassword,
+
 };
