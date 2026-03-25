@@ -6,6 +6,8 @@ const userModel = require("../models/user.model");
 
 const passwordResetModel = require("../models/passwordReset.model");
 
+const emailService = require("./email.service");
+
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
@@ -74,8 +76,8 @@ exports.requestPasswordReset = async ({ email }) => {
     const token = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
     await passwordResetModel.createPasswordReset(email, token, expiresAt);
-    // todo gửi email chứa link reset (cài nodemailer sau)
-    return { message: "Token reset đã được tạo", token };
+    await emailService.sendPasswordResetEmail(email, token);
+    return { message: "Vui lòng kiểm tra email để đặt lại mật khẩu" };
 };
 
 // User click link reset -> nhập mật khẩu mới
