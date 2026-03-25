@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_API_URL || "http://44.202.66.188/api/v1/auth";
 
 export const login = async (data) => {
   return axios.post(`${API}/login`, data);
@@ -9,3 +9,7 @@ export const login = async (data) => {
 export const register = async (data) => {
   return axios.post(`${API}/register`, data);
 }; 
+
+export const googleAuth = async (idToken) => {
+  return axios.post(`${API}/google`, { idToken });
+};

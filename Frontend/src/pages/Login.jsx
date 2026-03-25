@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { googleAuth } from "../services/authService";
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function Login() {
 
@@ -8,6 +11,8 @@ function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const googleBtnRef = useRef(null);
   const navigate = useNavigate();
 
   // Tự động ẩn thông báo lỗi sau 3 giây
@@ -17,6 +22,91 @@ function Login() {
       return () => clearTimeout(timer);
     }
   }, [errorMsg]);
+
+  const handleGoogleCredential = async (credentialResponse) => {
+    try {
+      if (!credentialResponse?.credential) {
+        setErrorMsg("Không lấy được Google token.");
+        return;
+      }
+
+      setErrorMsg("");
+      setSuccessMsg("");
+      setIsGoogleLoading(true);
+
+      const res = await googleAuth(credentialResponse.credential);
+      const data = res.data || {};
+
+      const actualToken =
+        data.token ||
+        data.access_token ||
+        data.data?.token ||
+        data.data?.access_token;
+
+      const userInfo = data.user || data.data?.user || data.data || {};
+
+      if (actualToken) localStorage.setItem("token", actualToken);
+      localStorage.setItem("user", JSON.stringify(userInfo));
+
+      window.dispatchEvent(new Event("authChange"));
+      setSuccessMsg("Đăng nhập Google thành công!");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1200);
+    } catch (error) {
+      console.error("Google login error:", error);
+      setErrorMsg(error?.response?.data?.message || "Đăng nhập Google thất bại.");
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!GOOGLE_CLIENT_ID) return;
+
+    const renderGoogleButton = () => {
+      if (!window.google?.accounts?.id || !googleBtnRef.current) return;
+
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredential,
+      });
+
+      googleBtnRef.current.innerHTML = "";
+      window.google.accounts.id.renderButton(googleBtnRef.current, {
+        type: "standard",
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "rectangular",
+        width: 320,
+      });
+    };
+
+    if (window.google?.accounts?.id) {
+      renderGoogleButton();
+      return;
+    }
+
+    const existingScript = document.getElementById("google-identity-script");
+    if (existingScript) {
+      existingScript.addEventListener("load", renderGoogleButton);
+      return () => existingScript.removeEventListener("load", renderGoogleButton);
+    }
+
+    const script = document.createElement("script");
+    script.id = "google-identity-script";
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = renderGoogleButton;
+    document.body.appendChild(script);
+
+    return () => {
+      script.onload = null;
+    };
+  }, []);
 
   const handleLogin = async () => {
     setErrorMsg(""); // Reset lỗi mỗi lần bấm đăng nhập
@@ -234,6 +324,22 @@ function Login() {
               "Đăng nhập"
             )}
           </button>
+
+          <div className="my-4 text-center text-gray-500 text-sm">hoặc</div>
+
+          {GOOGLE_CLIENT_ID ? (
+            <div className="flex justify-center min-h-[44px]">
+              {isGoogleLoading ? (
+                <p className="text-sm text-gray-400">Đang xử lý Google...</p>
+              ) : (
+                <div ref={googleBtnRef} />
+              )}
+            </div>
+          ) : (
+            <p className="text-xs text-red-400 text-center mb-2">
+              Thiếu cấu hình VITE_GOOGLE_CLIENT_ID
+            </p>
+          )}
 
           <p className="text-gray-400 text-sm mt-6 text-center">
             Chưa có tài khoản?{" "}
