@@ -8,6 +8,8 @@ import Support from "../pages/Support";
 import Api from "../pages/Api";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Profile from "../pages/Profile";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 
 function AppRouter() {
   return (
@@ -16,6 +18,10 @@ function AppRouter() {
       <Route path="/" element={<Home />} />
 
       <Route path="/login" element={<Login />} />
+
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route path="/register" element={<Register />} />
 

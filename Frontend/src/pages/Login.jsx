@@ -207,6 +207,12 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
+            <div className="mt-2 text-right">
+              <Link to="/forgot-password" className="text-sm text-teal-400 hover:underline">
+                Quên mật khẩu?
+              </Link>
+            </div>
+
           </div>
 
           <button
