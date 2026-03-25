@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { googleAuth } from "../services/authService";
+import { register as registerRequest, googleAuth } from "../services/authService";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -36,11 +36,16 @@ function Register() {
       setIsGoogleLoading(true);
 
       const res = await googleAuth(credentialResponse.credential);
-      const token = res.data?.data?.token;
-      const user = res.data?.data?.user;
+      const data = res.data || {};
+      const token =
+        data.token ||
+        data.access_token ||
+        data.data?.token ||
+        data.data?.access_token;
+      const user = data.user || data.data?.user || data.data || {};
 
       if (token) localStorage.setItem("token", token);
-      if (user) localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
 
       window.dispatchEvent(new Event("authChange"));
       setSuccessMsg("Đăng ký/đăng nhập Google thành công!");
@@ -128,20 +133,13 @@ function Register() {
 
     try {
 
-      const res = await fetch("http://44.202.66.188/api/v1/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          email: cleanEmail, 
-          password 
-        }),
+      const res = await registerRequest({ 
+        email: cleanEmail, 
+        password 
       });
+      const data = res.data || {};
 
-      const data = await res.json();
-
-      if (res.ok) {
+      if (res.status >= 200 && res.status < 300) {
         setSuccessMsg("Đăng ký thành công!");
         
         // Tìm token linh hoạt
@@ -184,14 +182,11 @@ function Register() {
             navigate("/login"); // Nếu không có token, chuyển sang trang Login
           }, 1500);
         }
-      } else {
-        setErrorMsg(data.message || "Đăng ký thất bại. Vui lòng thử lại.");
-        setIsLoading(false);
       }
       
     } catch (error) {
       console.error("Register error:", error);
-      setErrorMsg("Lỗi kết nối đến máy chủ.");
+      setErrorMsg(error?.response?.data?.message || "Lỗi kết nối đến máy chủ.");
       setIsLoading(false);
     }
 

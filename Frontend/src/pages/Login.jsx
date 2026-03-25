@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { googleAuth } from "../services/authService";
+import { login as loginRequest, googleAuth } from "../services/authService";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -131,17 +131,10 @@ function Login() {
 
     try {
 
-      const res = await fetch("http://44.202.66.188/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: cleanEmail, password }),
-      });
+      const res = await loginRequest({ email: cleanEmail, password });
+      const data = res.data || {};
 
-      const data = await res.json();
-
-      if (res.ok) {
+      if (res.status >= 200 && res.status < 300) {
         setSuccessMsg("Đăng nhập thành công!");
         
         // Tìm token linh hoạt theo nhiều cấu trúc API thường gặp
@@ -184,14 +177,11 @@ function Login() {
         setTimeout(() => {
           navigate("/");
         }, 1500); // Đợi 1.5 giây để hiện thông báo trước khi chuyển trang
-      } else {
-        setErrorMsg("Sai email hoặc mật khẩu.");
-        setIsLoading(false);
       }
 
     } catch (error) {
       console.error("Login error:", error);
-      setErrorMsg("Lỗi kết nối đến máy chủ.");
+      setErrorMsg(error?.response?.data?.message || "Lỗi kết nối đến máy chủ.");
       setIsLoading(false);
     }
 
