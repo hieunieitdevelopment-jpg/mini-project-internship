@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
-const { validateRegister, validateLogin } = require("../middlewares/validate");
+const {
+	validateRegister,
+	validateLogin,
+	validateGoogleAuth,
+} = require("../middlewares/validate");
 
 /**
  * @swagger
@@ -123,5 +127,31 @@ router.post("/register", validateRegister, authController.register);
  *         description: Email hoặc mật khẩu không đúng
  */
 router.post("/login", validateLogin, authController.login);
+
+/**
+ * @swagger
+ * /auth/google:
+ *   post:
+ *     summary: Đăng nhập/đăng ký bằng Google ID Token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - idToken
+ *             properties:
+ *               idToken:
+ *                 type: string
+ *                 example: eyJhbGciOiJSUzI1NiIsImtpZCI6Ij... 
+ *     responses:
+ *       200:
+ *         description: Xác thực Google thành công
+ *       401:
+ *         description: Google token không hợp lệ
+ */
+router.post("/google", validateGoogleAuth, authController.googleAuth);
 
 module.exports = router;

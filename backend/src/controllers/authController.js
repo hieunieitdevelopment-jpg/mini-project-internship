@@ -33,3 +33,16 @@ exports.login = async (req, res, next) => {
     next(err);
   }
 };
+
+// dang nhap / dang ky bang google
+exports.googleAuth = async (req, res, next) => {
+  try {
+    const { idToken } = req.body;
+
+    const { user, token, isNewUser } = await authService.googleAuth(idToken);
+
+    res.status(200).json({ success: true, data: { user, token, isNewUser } });
+  } catch (err) {
+    next(err);
+  }
+};

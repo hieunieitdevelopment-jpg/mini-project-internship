@@ -165,6 +165,17 @@ const validateLogin = [
   handleValidation,
 ];
 
+const validateGoogleAuth = [
+  body("idToken")
+    .notEmpty()
+    .withMessage("idToken không được để trống")
+    .isString()
+    .withMessage("idToken phải là chuỗi")
+    .isLength({ min: 20 })
+    .withMessage("idToken không hợp lệ"),
+  handleValidation,
+];
+
 module.exports = {
   validateProvinceId,
   validateDistrictId,
@@ -174,4 +185,5 @@ module.exports = {
   validateMapping,
   validateRegister,
   validateLogin,
+  validateGoogleAuth,
 };
