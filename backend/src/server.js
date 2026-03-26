@@ -7,6 +7,7 @@ const swaggerSpec = require("./config/swagger");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
 const passport = require("./config/passport"); 
+const cookieParser = require("cookie-parser");
 
  
 
@@ -18,6 +19,7 @@ const helmet = require("helmet");
 app.use(cors());
 app.use(helmet()); 
 app.use(express.json());
+app.use(cookieParser());
 app.use(passport.initialize());
 
 // swagger docs

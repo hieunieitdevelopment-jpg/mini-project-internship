@@ -46,10 +46,36 @@ exports.login = async ({ email, password }) => {
         throw new Error("Tài khoản đã bị khóa");
     }
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-
+    const accessToken = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "15m" });
+    const refreshToken = crypto.randomBytes(40).toString("hex");
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await refreshTokenModel.createRefreshToken(user.id, refreshToken, expiresAt);
     delete user.password;
-    return { user, token };
+    return { user, token, accessToken, refreshToken };
 };
+
+// cấp Access token mới từ refresh token
+exports.refreshToken = async ({ refreshToken }) => {
+    const tokenRecord = await refreshTokenModel.findValidToken(refreshToken);
+    if (!tokenRecord) {
+        throw new Error("Refresh token không hợp lệ hoặc đã hết hạn");
+    }
+    const user = await userModel.findById(tokenRecord.user_id);
+    if (!user || !user.is_active) {
+        throw new Error("Tài khoản không tồn tại hoặc đã bị xóa");
+    }
+    const accessToken = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "15m" });
+    return { accessToken };
+};
+
+// đăng xuất - xóa refresh token khỏi db
+exports.logout = async ({ refreshToken }) => {
+        await refreshTokenModel.deleteRefreshToken(refreshToken);
+    return { message: "Đăng xuất thành công" };
+};
+
+
+
 
 // đổi mật khẩu khi đã đăng nhập
 exports.changePassword = async ({ userId, oldPassword, newPassword }) => {
@@ -65,6 +91,7 @@ exports.changePassword = async ({ userId, oldPassword, newPassword }) => {
         throw new Error("Mật khẩu mới không được trùng với mật khẩu cũ");
     }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await refreshTokenModel.deleteAllByUserId(userId);
     await userModel.updatePassword(userId, hashedPassword);
     return { message: "Đổi mật khẩu thành công" };
 };
@@ -94,6 +121,7 @@ exports.resetPassword = async ({ token, newPassword }) => {
     }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await userModel.updatePassword(user.id, hashedPassword);
+    await refreshTokenModel.deleteAllByUserId(user.id);
     await passwordResetModel.markTokenAsUsed(token);
     return { message: "Đổi mật khẩu thành công" };
 };
