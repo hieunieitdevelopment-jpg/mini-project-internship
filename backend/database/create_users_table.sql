@@ -1,5 +1,4 @@
 -- BẢNG USERS: Lưu thông tin tài khoản người dùng
-DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

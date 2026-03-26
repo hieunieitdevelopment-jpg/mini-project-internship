@@ -4,6 +4,9 @@ const authController = require("../controllers/auth.controller");
 const { verifyToken, requireAdmin } =  require("../middlewares/auth.middleware");
 const { validateRegister, validateLogin, validateChangePassword, validateResetRequest, validateResetPassword} = require("../middlewares/validate");
 const passport = require("passport");
+const rateLimit = require("express-rate-limit");
+
+
 
 router.post("/register", validateRegister, authController.register);
 router.post("/login", validateLogin, authController.login);
