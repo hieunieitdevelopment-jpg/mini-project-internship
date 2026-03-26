@@ -61,6 +61,9 @@ exports.changePassword = async ({ userId, oldPassword, newPassword }) => {
     if (!isMatch) {
         throw new Error("Mật khẩu cũ không đúng");
     }
+    if (oldPassword === newPassword) {
+        throw new Error("Mật khẩu mới không được trùng với mật khẩu cũ");
+    }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await userModel.updatePassword(userId, hashedPassword);
     return { message: "Đổi mật khẩu thành công" };
@@ -70,14 +73,13 @@ exports.changePassword = async ({ userId, oldPassword, newPassword }) => {
 
 exports.requestPasswordReset = async ({ email }) => {
     const user = await userModel.findByEmail(email);
-    if (!user) {
-        throw new Error(" không tìm thấy tài khoản");
+    if (user) {
+        const token = crypto.randomBytes(32).toString("hex");
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+        await passwordResetModel.createPasswordReset(email, token, expiresAt);
+        await emailService.sendPasswordResetEmail(email, token);
     }
-    const token = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
-    await passwordResetModel.createPasswordReset(email, token, expiresAt);
-    await emailService.sendPasswordResetEmail(email, token);
-    return { message: "Vui lòng kiểm tra email để đặt lại mật khẩu" };
+    return { message: "Nếu email của bạn tồn tại trong hệ thống , chúng tôi sẽ gửi link để đặt lại mật khẩu" };
 };
 
 // User click link reset -> nhập mật khẩu mới
