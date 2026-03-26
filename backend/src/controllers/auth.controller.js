@@ -1,4 +1,5 @@
 const authService = require("../services/auth.service");
+const jwt = require("jsonwebtoken");
 
 // đăng ký tài khoản mới cho người dùng
 exports.register = async (req, res, next) => {
@@ -67,4 +68,17 @@ exports.getAllUsers = async (req, res, next) => {
     } catch (error){
         next(error);
     }
+};
+// xử lý callback sau khi Google xác thực thành công -> tạo JWT và redirect về Frontend
+exports.googleCallback = (req, res) => {
+    const user = req.user;
+    const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+
+    // Redirect về Frontend kèm token trên URL
+    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+    res.redirect(`${FRONTEND_URL}?token=${token}`);
 };
