@@ -63,3 +63,21 @@ exports.findByIdWithPassword = async (id) => {
     const result = await client.query(sql, [id]);
     return result.rows[0] || null;
 };
+// tìm user theo google_id (dùng khi đăng nhập bằng Google)
+exports.findByGoogleId = async (googleId) => {
+    const sql = "SELECT id, username, email, avatar, google_id, role, is_active, created_at FROM users WHERE google_id = $1";
+    const result = await client.query(sql, [googleId]);
+    return result.rows[0] || null;
+};
+// gộp tài khoản Google vào user đã có sẵn email (cập nhật google_id và avatar)
+exports.updateGoogleId = async (id, googleId, avatar) => {
+    const sql = "UPDATE users SET google_id = $1, avatar = $2 WHERE id = $3 RETURNING id, username, email, avatar, google_id, role, is_active, created_at";
+    const result = await client.query(sql, [googleId, avatar, id]);
+    return result.rows[0];
+};
+// tạo tài khoản mới từ Google (không có password)
+exports.createGoogleUser = async ({ username, email, google_id, avatar }) => {
+    const sql = "INSERT INTO users (username, email, google_id, avatar) VALUES ($1, $2, $3, $4) RETURNING id, username, email, avatar, google_id, role, is_active, created_at";
+    const result = await client.query(sql, [username, email, google_id, avatar]);
+    return result.rows[0];
+};
