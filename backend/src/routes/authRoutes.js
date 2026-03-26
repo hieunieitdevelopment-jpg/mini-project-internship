@@ -8,7 +8,7 @@ const rateLimit = require("express-rate-limit");
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, 
-    max: 5, // limit each IP to 5 requests per windowMs
+    max: 5, 
     message: { success: false, message: "Bạn đăng nhập quá nhiều lần thất bại, vui lòng thử lại sau 15 phút"}
 });
     

@@ -8,10 +8,15 @@ const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
 const passport = require("./config/passport"); 
 
+ 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set("trust proxy", 1); 
+const helmet = require("helmet");
 
 app.use(cors());
+app.use(helmet()); 
 app.use(express.json());
 app.use(passport.initialize());
 
