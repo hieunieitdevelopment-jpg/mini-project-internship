@@ -18,7 +18,7 @@ exports.verifyToken = (req, res, next) => {
         next();
     } catch (error){
        return  res.status(401).json({success: false, message: "Token không hợp lệ hoặc hết hạn" });
-        }
+    }
 };
 
 exports.requireAdmin = (req, res, next) => {
