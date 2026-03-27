@@ -17,11 +17,58 @@ exports.login = async (req, res, next ) => {
     try {
         const { email, password } = req.body;
         const result = await authService.login({ email, password });
-        res.status(200).json({success: true, message: "Đăng nhập thành công", data: result });
+        res.cookie("accessToken", result.accessToken,{
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 15 * 60 * 1000,
+        });
+        res.cookie("refreshToken", result.refreshToken,{
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        res.status(200).json({success: true, message: "Đăng nhập thành công", data: result.user });
     } catch (error){
         next(error);
     }
 
+};
+
+// cấp access token mới
+exports.refreshToken = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) {
+            return res.status(401).json({ success: false, message: "Không có refresh token" });
+        }
+        const result = await authService.refreshToken({ refreshToken });
+        res.cookie("accessToken", result.accessToken,{
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 15 * 60 * 1000,
+        });
+        res.status(200).json({success: true, message: "Refresh token thành công", data: result.user });
+    } catch (error){
+        next(error);
+    }
+};  
+
+// đăng xuất
+exports.logout = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        if (refreshToken) { 
+            await authService.logout({ refreshToken });
+        }
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");
+        res.status(200).json({success: true, message: "Đăng xuất thành công" });
+    } catch (error){
+        next(error);
+    }
 };
 
 // đổi mật khẩu khi đang ở trạng thái đăng nhập

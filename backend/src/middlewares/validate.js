@@ -129,8 +129,16 @@ const validateRegister = [
   body("password")
     .notEmpty()
     .withMessage("Mật khẩu không được để trống")
-    .isLength({ min: 6 })
-    .withMessage("Mật khẩu phải từ 6 ký tự"),
+    .isLength({ min: 8 })
+    .withMessage("Mật khẩu tối thiểu 8 ký tự")
+    .matches(/[a-z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái thường")
+    .matches(/[A-Z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái hoa")
+    .matches(/[0-9]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 số")
+    .matches(/[!@#$%^&*]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 ký tự đặc biệt"),
   handleValidation,
 ];
 
@@ -143,8 +151,8 @@ const validateLogin = [
   body("password")
     .notEmpty()
     .withMessage("Mật khẩu không được để trống")
-    .isLength({ min: 6 })
-    .withMessage("Mật khẩu phải từ 6 ký tự"),
+    .isLength({ min: 8 })
+    .withMessage("Mật khẩu tối thiểu 8 ký tự"),
   handleValidation,
 ];
 
@@ -157,8 +165,16 @@ const validateChangePassword = [
   body("newPassword")
     .notEmpty()
     .withMessage("Mật khẩu mới không được để trống")
-    .isLength({ min: 6 })
-    .withMessage("Mật khẩu mới tối thiểu 6 ký tự"),
+    .isLength({ min: 8 })
+    .withMessage("Mật khẩu tối thiểu 8 ký tự")
+    .matches(/[a-z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái thường")
+    .matches(/[A-Z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái hoa")
+    .matches(/[0-9]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 số")
+    .matches(/[!@#$%^&*]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 ký tự đặc biệt"),
   handleValidation,
 ];
 
@@ -179,8 +195,16 @@ const validateResetPassword = [
   body("newPassword")
     .notEmpty()
     .withMessage("Mật khẩu mới không được để trống")
-    .isLength({ min: 6 })
-    .withMessage("Mật khẩu mới tối thiểu 6 ký tự"),
+    .isLength({ min: 8 })
+    .withMessage("Mật khẩu tối thiểu 8 ký tự")
+    .matches(/[a-z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái thường")
+    .matches(/[A-Z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái hoa")
+    .matches(/[0-9]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 số")
+    .matches(/[!@#$%^&*]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 ký tự đặc biệt"),
   handleValidation,
 ];
 
