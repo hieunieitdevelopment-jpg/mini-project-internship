@@ -210,6 +210,46 @@ router.post("/logout", authController.logout);
  *         description: Chưa đăng nhập hoặc token hết hạn
  */
 router.post("/change-password", verifyToken, validateChangePassword, authController.changePassword);
+/**
+ * @swagger
+ * /auth/request-password-reset:
+ *   post:
+ *     summary: Yêu cầu reset mật khẩu (gửi link qua email)
+ *     description: Rate limit 5 lần / 15 phút
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Đã gửi link reset mật khẩu qua email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Đã gửi link reset mật khẩu qua email"
+ *       400:
+ *         description: Email không hợp lệ
+ *       429:
+ *         description: Quá nhiều yêu cầu, thử lại sau 15 phút
+ */
+
 router.post("/request-password-reset",loginLimiter, validateResetRequest, authController.requestPasswordReset);
 router.post("/reset-password", validateResetPassword, authController.resetPassword);
 router.get("/users", verifyToken, requireAdmin, authController.getAllUsers);
