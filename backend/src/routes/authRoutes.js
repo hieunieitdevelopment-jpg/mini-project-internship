@@ -15,7 +15,104 @@ const loginLimiter = rateLimit({
 
 
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Đăng ký tài khoản mới cho người dùng
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 description: " tối thiểu 8 ký tự , gồm chữ hoa, chữ thường, số và ký tự đặc biệt"
+ *                 example: "Mypass@123"
+ *     responses:
+ *       201:
+ *         description: "tài khoản đăng ký thành công"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true 
+ *                 message:
+ *                   type: string
+ *                   example: " Đăng ký thành công "
+ *                 data:
+ *                   type: object
+ *       400: 
+ *         description: validation thất bại ( email hoặc password không hợp lệ)
+ *       409: 
+ *         description: email đã tồn tại
+ *       500: 
+ *         description: lỗi server
+ */
 router.post("/register", validateRegister, authController.register);
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Đăng nhập tài khoản cho người dùng
+ *     description: Đăng nhập và nhận token qua httpOnly cookie. Rate limit 5 lần/15 phút
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "Mypass@123"
+ *     responses:
+ *       200:
+ *         description: "Đăng nhập thành công (accessToken và refreshToken được set qua cookie)"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true 
+ *                 message:
+ *                   type: string
+ *                   example: " Đăng nhập thành công "
+ *                 data:
+ *                   type: object
+ *                   description: "Thông tin user ( không bao gồm passwword)"
+ *       400: 
+ *         description: validation thất bại ( email hoặc password không hợp lệ)
+ *       401: 
+ *         description: email hoặc password không đúng
+ *       429: 
+ *         description: "Bạn đăng nhập quá nhiều lần thất bại, vui lòng thử lại sau 15 phút"
+ *       
+ */
 router.post("/login",loginLimiter, validateLogin, authController.login);
 router.post("/refresh-token", authController.refreshToken);
 router.post("/logout", authController.logout);
