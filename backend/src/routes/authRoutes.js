@@ -114,7 +114,56 @@ router.post("/register", validateRegister, authController.register);
  *       
  */
 router.post("/login",loginLimiter, validateLogin, authController.login);
+
+/**
+ * @swagger
+ * /auth/refresh-token:
+ *   post:
+ *     summary: Cấp access token mới
+ *     description: Sử dụng refreshToken từ cookie để lấy accessToken mới. Không cần body.
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Refresh thành công (accessToken mới được set qua cookie)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Refresh token thành công"
+ *                 data:
+ *                   type: object
+ *       401:
+ *         description: Không có refresh token hoặc token không hợp lệ
+ */
 router.post("/refresh-token", authController.refreshToken);
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Đăng xuất
+ *     description: Xóa accessToken và refreshToken khỏi cookie. Không cần body.
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Đăng xuất thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Đăng xuất thành công"
+ */
 router.post("/logout", authController.logout);
 router.post("/change-password", verifyToken, validateChangePassword, authController.changePassword);
 router.post("/request-password-reset",loginLimiter, validateResetRequest, authController.requestPasswordReset);
