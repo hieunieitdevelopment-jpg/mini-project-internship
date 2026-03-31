@@ -249,7 +249,6 @@ router.post("/change-password", verifyToken, validateChangePassword, authControl
  *       429:
  *         description: Quá nhiều yêu cầu, thử lại sau 15 phút
  */
-
 router.post("/request-password-reset",loginLimiter, validateResetRequest, authController.requestPasswordReset);
 /**
  * @swagger
@@ -293,10 +292,72 @@ router.post("/request-password-reset",loginLimiter, validateResetRequest, authCo
  *       400:
  *         description: Token hoặc mật khẩu không hợp lệ
  */
-
 router.post("/reset-password", validateResetPassword, authController.resetPassword);
+/**
+ * @swagger
+ * /auth/users:
+ *   get:
+ *     summary: Lấy danh sách tất cả user (chỉ Admin)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Danh sách user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "lấy tất cả user"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       email:
+ *                         type: string
+ *                       role:
+ *                         type: string
+ *                         enum: [user, admin]
+ *       401:
+ *         description: Chưa đăng nhập
+ *       403:
+ *         description: Không có quyền admin
+ */
 router.get("/users", verifyToken, requireAdmin, authController.getAllUsers);
+/**
+ * @swagger
+ * /auth/google:
+ *   get:
+ *     summary: Đăng nhập bằng Google OAuth2
+ *     description: Redirect đến trang đăng nhập Google. Không gọi trực tiếp từ Swagger, mở bằng trình duyệt.
+ *     tags: [Auth]
+ *     responses:
+ *       302:
+ *         description: Redirect đến Google login page
+ */
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }));
+/**
+ * @swagger
+ * /auth/google/callback:
+ *   get:
+ *     summary: Google OAuth2 callback
+ *     description: Google gọi lại URL này sau khi user xác thực. Tạo JWT và redirect về Frontend.
+ *     tags: [Auth]
+ *     responses:
+ *       302:
+ *         description: Redirect về Frontend kèm token
+ *       401:
+ *         description: Xác thực Google thất bại
+ */
 router.get("/google/callback",
     passport.authenticate("google", { session: false, failureRedirect: "/api/v1/auth/google" }),
     authController.googleCallback
