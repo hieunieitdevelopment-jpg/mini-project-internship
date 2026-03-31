@@ -165,6 +165,50 @@ router.post("/refresh-token", authController.refreshToken);
  *                   example: "Đăng xuất thành công"
  */
 router.post("/logout", authController.logout);
+/**
+ * @swagger
+ * /auth/change-password:
+ *   post:
+ *     summary: Đổi mật khẩu (cần đăng nhập)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: "MyPass@123"
+ *               newPassword:
+ *                 type: string
+ *                 description: "Tối thiểu 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt"
+ *                 example: "NewPass@456"
+ *     responses:
+ *       200:
+ *         description: Đổi mật khẩu thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Đổi mật khẩu thành công"
+ *       400:
+ *         description: Validation thất bại
+ *       401:
+ *         description: Chưa đăng nhập hoặc token hết hạn
+ */
 router.post("/change-password", verifyToken, validateChangePassword, authController.changePassword);
 router.post("/request-password-reset",loginLimiter, validateResetRequest, authController.requestPasswordReset);
 router.post("/reset-password", validateResetPassword, authController.resetPassword);
