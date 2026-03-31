@@ -251,6 +251,49 @@ router.post("/change-password", verifyToken, validateChangePassword, authControl
  */
 
 router.post("/request-password-reset",loginLimiter, validateResetRequest, authController.requestPasswordReset);
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset mật khẩu bằng token
+ *     description: Dùng token nhận được từ email để đặt mật khẩu mới
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - newPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: Token nhận từ email
+ *                 example: "abc123resettoken"
+ *               newPassword:
+ *                 type: string
+ *                 description: "Tối thiểu 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt"
+ *                 example: "NewPass@789"
+ *     responses:
+ *       200:
+ *         description: Đổi mật khẩu thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Đổi mật khẩu thành công"
+ *       400:
+ *         description: Token hoặc mật khẩu không hợp lệ
+ */
+
 router.post("/reset-password", validateResetPassword, authController.resetPassword);
 router.get("/users", verifyToken, requireAdmin, authController.getAllUsers);
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }));
