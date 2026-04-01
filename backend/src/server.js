@@ -16,7 +16,14 @@ const PORT = process.env.PORT || 3000;
 app.set("trust proxy", 1); 
 const helmet = require("helmet");
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        "https://vngovsync.lozido.com",
+        "http://localhost:3000",
+        "http://localhost:5173"
+    ],
+    credentials: true  
+}));
 app.use(
   helmet({
     contentSecurityPolicy: false,
