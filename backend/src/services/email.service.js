@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const path = require("path");
+const fs = require("fs");
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -15,17 +17,14 @@ const transporter = nodemailer.createTransport({
 
 exports.sendPasswordResetEmail = async (to, token) => {
     const resetLink = `http://3.26.153.101/reset-password?token=${token}`;
-
+    const templatePath = path.join(__dirname, "../templates/resetPassword.html");
+    let html = fs.readFileSync(templatePath, "utf-8");
+    html = html.replace(/\{\{resetLink\}\}/g, resetLink);
     const mailOptions = {
-        from: `"Tra cứu hành chính" <${process.env.EMAIL_USER}>`,
+        from: `"Tra cứu hành chính Việt Nam" <${process.env.EMAIL_USER}>`,
         to,
-        subject: " đặt lại mật khẩu",
-        html: `<h2>Đặt lại mật khẩu</h2>
-        <p>Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng click vào link dưới đây để đặt lại mật khẩu:</p>
-        <a href="${resetLink}">${resetLink}</a>
-        <p>Link này sẽ hết hạn sau 15 phút</p>
-        <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này</p>
-        `,  
+        subject: "Đặt lại mật khẩu - Tra cứu hành chính Việt Nam",
+        html,
     };
     await transporter.sendMail(mailOptions);
 };

@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const userModel = require("../models/user.model");
 
 const passwordResetModel = require("../models/passwordReset.model");
+const refreshTokenModel = require("../models/refreshToken.model");
 
 const emailService = require("./email.service");
 

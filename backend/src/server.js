@@ -17,7 +17,14 @@ app.set("trust proxy", 1);
 const helmet = require("helmet");
 
 app.use(cors());
-app.use(helmet()); 
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
