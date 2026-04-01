@@ -65,8 +65,14 @@ exports.refreshToken = async ({ refreshToken }) => {
     if (!user || !user.is_active) {
         throw new Error("Tài khoản không tồn tại hoặc đã bị xóa");
     }
+    // xóa token cũ 
+    await refreshTokenModel.deleteRefreshToken(refreshToken);
+    // tạo token mới
+    const newRefreshToken = crypto.randomBytes(40).toString("hex");
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await refreshTokenModel.createRefreshToken(user.id, newRefreshToken, expiresAt);
     const accessToken = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "15m" });
-    return { accessToken };
+    return { accessToken, refreshToken: newRefreshToken };
 };
 
 // đăng xuất - xóa refresh token khỏi db

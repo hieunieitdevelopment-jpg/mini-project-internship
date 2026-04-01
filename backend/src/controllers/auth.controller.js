@@ -1,5 +1,6 @@
 const authService = require("../services/auth.service");
 const jwt = require("jsonwebtoken");
+const { accessTokenOptions, refreshTokenOptions } = require("../config/cookie");
 
 // đăng ký tài khoản mới cho người dùng
 exports.register = async (req, res, next) => {
@@ -17,18 +18,8 @@ exports.login = async (req, res, next ) => {
     try {
         const { email, password } = req.body;
         const result = await authService.login({ email, password });
-        res.cookie("accessToken", result.accessToken,{
-            httpOnly: true,
-            secure: true,
-            sameSite: "lax",
-            maxAge: 15 * 60 * 1000,
-        });
-        res.cookie("refreshToken", result.refreshToken,{
-            httpOnly: true,
-            secure: true,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("accessToken", result.accessToken, accessTokenOptions);
+        res.cookie("refreshToken", result.refreshToken, refreshTokenOptions);
         res.status(200).json({success: true, message: "Đăng nhập thành công", data: result.user });
     } catch (error){
         next(error);
@@ -44,12 +35,8 @@ exports.refreshToken = async (req, res, next) => {
             return res.status(401).json({ success: false, message: "Không có refresh token" });
         }
         const result = await authService.refreshToken({ refreshToken });
-        res.cookie("accessToken", result.accessToken,{
-            httpOnly: true,
-            secure: true,
-            sameSite: "lax",
-            maxAge: 15 * 60 * 1000,
-        });
+        res.cookie("accessToken", result.accessToken, accessTokenOptions);
+        res.cookie("refreshToken", result.refreshToken, refreshTokenOptions);
         res.status(200).json({success: true, message: "Refresh token thành công", data: result.user });
     } catch (error){
         next(error);
@@ -63,8 +50,8 @@ exports.logout = async (req, res, next) => {
         if (refreshToken) { 
             await authService.logout({ refreshToken });
         }
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
+        res.clearCookie("accessToken", accessTokenOptions);
+        res.clearCookie("refreshToken", refreshTokenOptions);
         res.status(200).json({success: true, message: "Đăng xuất thành công" });
     } catch (error){
         next(error);
