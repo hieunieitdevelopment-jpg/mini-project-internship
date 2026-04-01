@@ -36,6 +36,7 @@ exports.refreshToken = async (req, res, next) => {
         }
         const result = await authService.refreshToken({ refreshToken });
         res.cookie("accessToken", result.accessToken, accessTokenOptions);
+        res.cookie("refreshToken", result.refreshToken, refreshTokenOptions);
         res.status(200).json({success: true, message: "Refresh token thành công", data: result.user });
     } catch (error){
         next(error);
@@ -49,8 +50,8 @@ exports.logout = async (req, res, next) => {
         if (refreshToken) { 
             await authService.logout({ refreshToken });
         }
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
+        res.clearCookie("accessToken", accessTokenOptions);
+        res.clearCookie("refreshToken", refreshTokenOptions);
         res.status(200).json({success: true, message: "Đăng xuất thành công" });
     } catch (error){
         next(error);
