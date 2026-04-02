@@ -3,6 +3,7 @@ const router = express.Router();
 const dropdownController = require("../controllers/dropdownController");
 const { validateProvinceId } = require("../middlewares/validate");
 
+
 /**
  * @swagger
  * /provinces:

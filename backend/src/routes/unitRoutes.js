@@ -4,6 +4,7 @@ const suggestController = require("../controllers/suggestController");
 const fuzzyController = require("../controllers/fuzzyController");
 const { validateSuggest, validateFuzzySearch } = require("../middlewares/validate");
 
+
 /**
  * @swagger
  * /units/suggest:
@@ -140,4 +141,4 @@ router.get("/suggest", validateSuggest, suggestController.suggestUnits);
  */
 router.get("/search", validateFuzzySearch, fuzzyController.fuzzySearch);
 
-module.exports = router;
+module.exports = router;    
