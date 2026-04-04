@@ -66,6 +66,99 @@ Công ty áp dụng quy trình phát triển phần mềm theo chuẩn quốc t�
 - Thu thập phản hồi từ người dùng
 - Cải tiến sản phẩm dựa trên dữ liệu
 
+### 1.5 Quá trình thực tập chi tiết
+
+#### 1.5.1 Tháng 1: Orientation, Learning & Basic Development (Tuần 1-8)
+Mục tiêu: Làm quen với công ty, học hỏi công nghệ, setup môi trường và phát triển các tính năng cơ bản.
+Nhiệm vụ cụ thể:
+•	Tham gia orientation về quy trình làm việc, công cụ và quy tắc của công ty
+•	Học React.js, modern JavaScript (ES6+), và các thư viện liên quan
+•	Setup môi trường phát triển: Node.js, VS Code, Git workflow
+•	Nghiên cứu project structure và codebase hiện tại
+•	Tham gia daily standup và sprint planning meetings
+•	Học về Agile/Scrum methodology và sử dụng Jira/Trello
+•	Phát triển trang Login và Register với form validation
+•	Triển khai Google OAuth integration
+•	Xây dựng ProtectedRoute component cho route guarding
+•	Tạo Header và Footer components với navigation
+•	Implement JWT token handling và localStorage persistence
+•	Viết unit tests cho authentication components
+•	Tham gia code review và fix bugs
+Kỹ năng học được:
+•	React fundamentals (components, props, state)
+•	JavaScript ES6+ features (arrow functions, destructuring, async/await)
+•	Git workflow và branching strategy
+•	Agile development practices
+•	React Router DOM cho client-side routing
+•	Form handling và validation với React Hook Form
+•	OAuth 2.0 flow và Google Sign-In
+•	JWT authentication và security best practices
+•	React Testing Library cho component testing
+•	CSS-in-JS và responsive design với Tailwind CSS
+Kết quả đạt được:
+•	Hoàn thành setup môi trường phát triển cá nhân
+•	Tạo được React component đầu tiên
+•	Hiểu được architecture của dự án
+•	Tham gia được 8 sprint planning meetings
+•	Hoàn thành hệ thống authentication với Google OAuth
+•	Tạo được 4 trang cơ bản (Login, Register, Home, Profile)
+•	Test coverage đạt 60% cho auth components
+•	Tham gia fix 15+ bugs và cải thiện UX
+
+#### 1.5.2 Tháng 2: Advanced Features, Integration & Deployment (Tuần 9-16)
+Mục tiêu: Phát triển tính năng nâng cao, tích hợp backend và hoàn thiện testing, deployment.
+Nhiệm vụ cụ thể:
+•	Phát triển trang Home với address search form
+•	Implement cascading dropdown cho Tỉnh/Quận/Phường
+•	Tích hợp Leaflet map với markers và popups
+•	Xây dựng Admin dashboard với user management
+•	Implement API integration với Axios và error handling
+•	Thêm loading states và error boundaries
+•	Viết integration tests và E2E tests
+•	Optimize performance và accessibility
+•	Viết comprehensive unit và integration tests
+•	Setup CI/CD pipeline với GitHub Actions
+•	Deploy ứng dụng lên AWS EC2
+•	Configure Nginx reverse proxy và SSL
+•	Viết documentation cho components và APIs
+•	Tham gia UAT và bug fixing
+•	Performance monitoring và optimization
+•	Retrospective và project handover
+Kỹ năng học được:
+•	API integration patterns và error handling
+•	Map integration với Leaflet/React-Leaflet
+•	State management với Context API
+•	Performance optimization (lazy loading, code splitting)
+•	Accessibility (WCAG guidelines)
+•	Cypress cho E2E testing
+•	Docker basics cho local development
+•	Advanced testing strategies (mocking, coverage)
+•	CI/CD với GitHub Actions
+•	AWS EC2 deployment và server configuration
+•	Nginx setup và SSL certificates
+•	Technical documentation writing
+•	Performance monitoring tools
+•	Production debugging và maintenance
+Kết quả đạt được:
+•	Hoàn thành address search và map integration
+•	Admin panel với user statistics
+•	API error handling và loading states
+•	Test coverage đạt 80%
+•	Performance score 90+ trên Lighthouse
+•	Test coverage đạt 85%
+•	Deploy thành công lên production
+•	Documentation hoàn chỉnh cho 20+ components
+•	Uptime 99.9% trong tháng cuối
+•	Tham gia handover cho team maintain
+Tổng kết 2 tháng:
+•	Phát triển 6+ pages và 15+ reusable components
+•	Implement đầy đủ authentication và authorization
+•	Tích hợp map và API với error handling
+•	Viết 50+ test cases với coverage 85%
+•	Deploy và maintain production application
+•	Học được 15+ technologies và best practices
+•	Tham gia 16 sprint meetings và 4 retrospectives
+
 ---
 
 ## CHƯƠNG 2. BÀI TOÁN/ĐỀ TÀI/DỰ ÁN
