@@ -8,7 +8,7 @@
 **Khoa:** Công nghệ Thông tin  
 **Trường:** [Tên trường]  
 
-**Đơn vị thực tập:** Công ty TNHH Phát Triển Phần Mềm ABC  
+**Đơn vị thực tập:** CÔNG TY TNHH GIẢI PHÁP THÔNG MINH POPIPLUS  
 **Thời gian thực tập:** Tháng 2/2026 - Tháng 4/2026  
 
 ---
@@ -17,33 +17,49 @@
 
 ### 1.1 Giới thiệu đơn vị thực tập
 
-Công ty TNHH Phát Triển Phần Mềm ABC là một doanh nghiệp công nghệ thông tin chuyên cung cấp các giải pháp phần mềm cho các tổ chức và doanh nghiệp tại Việt Nam. Công ty được thành lập từ năm 2018, với đội ngũ kỹ sư giàu kinh nghiệm trong lĩnh vực phát triển ứng dụng web và di động. Công ty có trụ sở chính tại Thành phố Hồ Chí Minh và chi nhánh tại Hà Nội, với số lượng nhân viên khoảng 50 người.
+•	Tên công ty: CÔNG TY TNHH GIẢI PHÁP THÔNG MINH POPIPLUS
+•	Mã số doanh nghiệp: 0318272823
+•	Ngày cấp giấy chứng nhận đăng ký kinh doanh: 19/01/2024 (cấp bởi Sở Kế hoạch và Đầu tư TP HCM)
+•	Địa chỉ trụ sở: Verosa Park, Số 39 Đường số 10, Khu phố 2, Phường Phú Hữu, TP Thủ Đức, TP HCM
+•	Nền tảng chủ lực: LOZIDO – nền tảng số hoá quản lý nhà trọ, phòng trọ và việc làm.
+POPIPLUS được thành lập với mục tiêu xây dựng một hệ sinh thái số hoá toàn diện, giúp người dùng nhanh chóng tìm kiếm, đăng tin và quản lý bất động sản cũng như việc làm một cách an toàn và hiệu quả.
+POPIPLUS hiện có quy mô khoảng 15–20 nhân viên, chia thành 3–4 nhóm phát triển song song. Mỗi nhóm gồm từ 3 đến 5 thành viên, bao gồm trưởng nhóm, backend developer, frontend developer và tester. Công ty sử dụng Trello làm công cụ quản lý công việc chính, kết hợp với Slack để giao tiếp và Google Meet để họp hằng ngày. Dự án VN Address Converter được giao cho một nhóm gồm 3 thành viên: 2 backend developer và 1 frontend developer, dưới sự hướng dẫn trực tiếp của mentor.
 
 ### 1.2 Lĩnh vực hoạt động
 
-Công ty hoạt động chủ yếu trong các lĩnh vực sau:
-- Phát triển ứng dụng web và di động
-- Tư vấn và triển khai hệ thống quản lý doanh nghiệp
-- Phát triển giải pháp địa chỉ và bản đồ số
-- Dịch vụ đám mây và hosting
-- Tư vấn chuyển đổi số cho doanh nghiệp
-
-Công ty đã thực hiện thành công nhiều dự án cho các khách hàng lớn như các ngân hàng, công ty logistics, và các cơ quan chính phủ.
+Bảng 1.1: Các lĩnh vực hoạt động của POPIPLUS
+Lĩnh vực	Mô tả ngắn gọn
+Nền tảng tìm trọ & căn hộ	Website và ứng dụng đăng tin, tìm kiếm, liên hệ chủ nhà/môi giới.
+Dịch vụ tuyển dụng	Đăng tuyển, tìm việc và quản lý hồ sơ ứng viên.
+Công nghệ dữ liệu địa lý	CSDL địa chỉ, tích hợp bản đồ và API tra cứu.
+Giải pháp phần mềm	Thiết kế, phát triển và bảo trì hệ thống theo yêu cầu.
+Nguồn: Tác giả tự tổng hợp
 
 ### 1.3 Văn hóa và môi trường làm việc
 
-Văn hóa công ty đề cao sự sáng tạo, học hỏi liên tục và tinh thần teamwork. Môi trường làm việc hiện đại với không gian mở, trang bị máy tính và công cụ làm việc tiên tiến. Công ty áp dụng phương pháp Agile Scrum trong quản lý dự án, khuyến khích nhân viên tham gia đào tạo và hội thảo công nghệ.
-
-Môi trường làm việc thân thiện, hỗ trợ cân bằng giữa công việc và cuộc sống cá nhân. Nhân viên được khuyến khích đề xuất ý tưởng mới và tham gia vào các dự án open-source.
+Giá trị cốt lõi: Sáng tạo – Chất lượng – Trách nhiệm – Hợp tác.
+Kênh giao tiếp chính: Slack – chat nhanh, tạo kênh dự án, chia sẻ tài liệu; Google Meet – họp hằng ngày, review code, demo tính năng.
+Quản lý công việc: Trello – board Kanban để tạo, phân công và theo dõi task cho sprint và báo cáo tiến độ.
+Môi trường phát triển đồng nhất: Docker hoặc VS Code Remote Containers, giúp mọi thành viên có cùng cấu hình môi trường dù ở bất kỳ địa điểm nào.
+Giờ làm việc linh hoạt: Thống nhất khung giờ 8h đến 12h và 13h đến 17h để dễ sắp xếp cuộc họp chung ngày nghỉ và nghỉ phép được ghi nhận trong Trello.
+Đào tạo và phát triển:
+•	Workshop / webinar hàng tháng Google Meet, nội dung công nghệ mới, best-practice và kỹ năng mềm.
+•	Mentoring trực tuyến: mỗi thành viên có mentor riêng, gặp gỡ 1-1 qua video call để giải đáp thắc mắc.
+Hoạt động gắn kết:
+•	Virtual coffee break mỗi tuần để trò chuyện phi công việc.
+•	Online hackathon mỗi 6 tháng, khuyến khích sáng tạo và thử nghiệm ý tưởng mới.
+Bảo mật và truy cập: VPN hoặc SSH key để kết nối an toàn tới tài nguyên nội bộ; MFA cho tài khoản Git, cloud và các công cụ quản lý dự án.
+Công cụ hỗ trợ tài liệu: Confluence / Notion để lưu trữ tài liệu, kiến trúc và hướng dẫn; liên kết tài liệu trong các thẻ Trello để dễ truy cập.
 
 ### 1.4 Các quy trình làm việc
 
 Công ty áp dụng quy trình phát triển phần mềm theo chuẩn quốc tế với các giai đoạn chính:
 
-#### 1.4.1 Nghiên cứu và phân tích:
-- Thu thập yêu cầu từ khách hàng
-- Phân tích nghiệp vụ và kỹ thuật
-- Đánh giá tính khả thi của dự án
+#### 1.4.1 Đề xuất dự án
+Thành viên đưa ra ý tưởng dự án hoặc tính năng mới trên Trello (thẻ "Idea").
+Trưởng nhóm xem xét, bổ sung thông tin chi tiết (mục tiêu, phạm vi, lợi ích).
+Đánh giá tính khả thi và ưu tiên trong Sprint Planning (Google Meet).
+Khi được phê duyệt, thẻ chuyển sang cột "Backlog" và gán nhãn Priority tương ứng.
 
 #### 1.4.2 Thiết kế và xây dựng hệ thống:
 - Thiết kế kiến trúc hệ thống
@@ -402,7 +418,7 @@ Tôi cảm thấy tự tin hơn trong việc phát triển ứng dụng web và 
 
 **Kết luận**
 
-Kỳ thực tập 3 tháng tại Công ty TNHH Phát Triển Phần Mềm ABC đã mang lại cho tôi nhiều kinh nghiệm quý báu trong lĩnh vực phát triển phần mềm. Tôi đã được áp dụng kiến thức học được vào dự án thực tế, đồng thời học hỏi thêm nhiều kỹ năng mới. Dự án phát triển frontend cho hệ thống địa chỉ Việt Nam đã hoàn thành thành công và sẵn sàng cho việc triển khai thương mại.
+Kỳ thực tập 3 tháng tại CÔNG TY TNHH GIẢI PHÁP THÔNG MINH POPIPLUS đã mang lại cho tôi nhiều kinh nghiệm quý báu trong lĩnh vực phát triển phần mềm. Tôi đã được áp dụng kiến thức học được vào dự án thực tế, đồng thời học hỏi thêm nhiều kỹ năng mới. Dự án phát triển frontend cho hệ thống địa chỉ Việt Nam đã hoàn thành thành công và sẵn sàng cho việc triển khai thương mại.
 
 **Tài liệu tham khảo**
 1. React Documentation - https://react.dev
