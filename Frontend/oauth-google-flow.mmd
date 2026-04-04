@@ -1,0 +1,33 @@
+flowchart TD
+  U[User] --> FE[Frontend App]
+
+  FE --> BTN[Click Login or Register with Google]
+  BTN --> G[Google OAuth Origin Validation]
+
+  subgraph DEV[Development]
+    L[Origin: http://localhost:5173]
+    L --> G
+    G -->|Allowed| DEVOK[Google returns credential]
+  end
+
+  subgraph PROD_NOW[Current Production]
+    IP[Origin: http://AWS-IP]
+    IP --> G
+    G -->|Blocked or invalid_request| PRODFAIL[Login fails before API call]
+  end
+
+  subgraph PROD_TARGET[Target Production]
+    D[Origin: https://app.yourdomain.com]
+    D --> G
+    G -->|Allowed| PRODOK[Google returns credential]
+  end
+
+  DEVOK --> FEPOST[Frontend POST idToken to Backend]
+  PRODOK --> FEPOST
+
+  FEPOST --> BE[Backend /auth/google]
+  BE --> GV[Verify token with Google]
+  GV --> ISSUE[Issue internal JWT and user]
+  ISSUE --> DONE[Login or Register success]
+
+  PRODFAIL --> ACTION[Action: Use real domain + HTTPS and add origin in Google Console]

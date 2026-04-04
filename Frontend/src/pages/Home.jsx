@@ -250,6 +250,75 @@ function Home() {
     }
   };
 
+  const buildExportRows = () => {
+    return results.map((mapping) => ({
+      old_unit_name: mapping.old_unit?.name || "",
+      old_unit_level: mapping.old_unit?.level || "",
+      old_parent: mapping.old_unit?.parent || "",
+      old_grandparent: mapping.old_unit?.grandparent || "",
+      new_unit_name: mapping.new_unit?.name || "",
+      new_unit_level: mapping.new_unit?.level || "",
+      new_parent: mapping.new_unit?.parent || "",
+      new_grandparent: mapping.new_unit?.grandparent || "",
+      change_type: mapping.change?.type || "",
+      resolution_number: mapping.change?.resolution_number || "",
+      effective_date: mapping.change?.effective_date || "",
+      description: mapping.change?.description || "",
+    }));
+  };
+
+  const getExportFileName = (extension) => {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    return `ket-qua-tra-cuu-${timestamp}.${extension}`;
+  };
+
+  const downloadFile = (content, fileName, mimeType) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportJson = () => {
+    if (!results.length) {
+      alert("Không có dữ liệu để export.");
+      return;
+    }
+
+    const rows = buildExportRows();
+    const jsonContent = JSON.stringify(rows, null, 2);
+    downloadFile(jsonContent, getExportFileName("json"), "application/json;charset=utf-8;");
+  };
+
+  const handleExportCsv = () => {
+    if (!results.length) {
+      alert("Không có dữ liệu để export.");
+      return;
+    }
+
+    const rows = buildExportRows();
+    const headers = Object.keys(rows[0]);
+
+    const escapeCsvValue = (value) => {
+      const text = String(value ?? "");
+      const escaped = text.replace(/"/g, '""');
+      return `"${escaped}"`;
+    };
+
+    const csvLines = [
+      headers.join(","),
+      ...rows.map((row) => headers.map((header) => escapeCsvValue(row[header])).join(",")),
+    ];
+
+    const csvContent = "\uFEFF" + csvLines.join("\n");
+    downloadFile(csvContent, getExportFileName("csv"), "text/csv;charset=utf-8;");
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
       {/* Title */}
@@ -425,6 +494,23 @@ function Home() {
         <h2 className="text-xl md:text-2xl font-bold text-center mb-6 md:mb-8 text-gray-800">
           Kết Quả Tra Cứu
         </h2>
+
+        <div className="flex flex-col sm:flex-row justify-end gap-3 mb-6">
+          <button
+            onClick={handleExportCsv}
+            disabled={!results.length || loading}
+            className="px-4 py-2 rounded-lg border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Export CSV
+          </button>
+          <button
+            onClick={handleExportJson}
+            disabled={!results.length || loading}
+            className="px-4 py-2 rounded-lg border-2 border-indigo-600 text-indigo-700 hover:bg-indigo-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Export JSON
+          </button>
+        </div>
 
         {loading ? (
           <p className="text-center text-gray-500">Đang tải...</p>
