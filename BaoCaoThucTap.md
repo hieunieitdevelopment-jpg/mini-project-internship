@@ -1,82 +1,81 @@
-# BÁO CÁO THỰC TẬP TỐT NGHIỆP
-
-## PHẦN FRONTEND ỨNG DỤNG TRA CỨU VÀ CHUYỂN ĐỔI ĐỊA CHỈ VIỆT NAM
-
-**Sinh viên thực tập:** [Tên của bạn]  
-**Mã sinh viên:** [Mã SV]  
-**Chuyên ngành:** Công nghệ thông tin/Kỹ thuật phần mềm  
-**Thời gian thực tập:** [Thời gian bắt đầu] - [Thời gian kết thúc]  
-**Công ty thực tập:** [Tên công ty]  
-**Vị trí:** Frontend Developer Intern  
-**Người hướng dẫn:** [Tên người hướng dẫn]  
-
-**Ngày báo cáo:** 4 tháng 4 năm 2026
-
----
-
-## LỜI CẢM ƠN
-
-Trước tiên, tôi xin gửi lời cảm ơn sâu sắc đến Ban Giám đốc và toàn thể cán bộ, nhân viên Công ty [Tên công ty] đã tạo điều kiện thuận lợi để tôi hoàn thành kỳ thực tập tại đây.
-
-Tôi xin bày tỏ lòng biết ơn đặc biệt đến anh/chị [Tên người hướng dẫn] - [Chức vụ] đã trực tiếp hướng dẫn, chỉ bảo và hỗ trợ tôi trong suốt quá trình thực tập. Những kiến thức và kinh nghiệm quý báu mà anh/chị đã truyền đạt đã giúp tôi rất nhiều trong việc hoàn thiện kỹ năng chuyên môn.
-
-Tôi cũng xin cảm ơn đội ngũ backend đã cung cấp API ổn định và hỗ trợ tích cực, cũng như các đồng nghiệp đã chia sẻ kiến thức và tạo môi trường làm việc thân thiện.
-
-Cuối cùng, tôi xin cảm ơn gia đình và nhà trường đã luôn động viên, khích lệ tôi trong suốt quá trình học tập và thực tập.
-
----
-
-## CHƯƠNG 1: TỔNG QUAN VỀ ĐƠN VỊ THỰC TẬP
-
-### 1.1. Giới thiệu đơn vị thực tập
-
-[Tên công ty] là một công ty công nghệ hàng đầu tại Việt Nam, chuyên cung cấp các giải pháp phần mềm và dịch vụ công nghệ thông tin. Công ty được thành lập từ năm [năm thành lập], với sứ mệnh "Đổi mới công nghệ, nâng tầm cuộc sống".
-
-Công ty có trụ sở chính tại [địa chỉ], với đội ngũ nhân sự gồm [số lượng] thành viên bao gồm kỹ sư phần mềm, chuyên gia QA/QC, đội ngũ DevOps và quản lý dự án. Công ty đã thực hiện thành công nhiều dự án lớn trong lĩnh vực công nghệ thông tin.
-
-### 1.2. Lĩnh vực hoạt động
-
-Công ty hoạt động chủ yếu trong các lĩnh vực sau:
-
-- **Phát triển phần mềm doanh nghiệp:** Xây dựng các hệ thống quản lý nội bộ cho doanh nghiệp
-- **Giải pháp đám mây (Cloud Computing):** Triển khai và quản lý hạ tầng trên AWS, Azure
-- **Trí tuệ nhân tạo và Big Data:** Phát triển các ứng dụng AI và phân tích dữ liệu
-- **Ứng dụng di động và web:** Phát triển app mobile và website responsive
-- **Tư vấn và triển khai hệ thống CNTT:** Tư vấn giải pháp và triển khai hệ thống cho khách hàng
-
-### 1.3. Văn hóa và môi trường làm việc
-
-Công ty xây dựng văn hóa làm việc dựa trên các giá trị cốt lõi:
-
-- **Đổi mới (Innovation):** Luôn khuyến khích sáng tạo và áp dụng công nghệ mới
-- **Chất lượng (Quality):** Cam kết cung cấp sản phẩm và dịch vụ đạt chất lượng cao
-- **Hợp tác (Collaboration):** Tạo môi trường làm việc nhóm hiệu quả
-- **Học hỏi (Learning):** Khuyến khích nhân viên học tập và phát triển bản thân
-- **Trách nhiệm (Responsibility):** Có trách nhiệm với khách hàng, xã hội và môi trường
-
-Môi trường làm việc tại công ty rất chuyên nghiệp với:
-- Không gian làm việc hiện đại, tiện nghi
-- Văn phòng mở tạo sự tương tác giữa các team
-- Các hoạt động team building định kỳ
-- Chính sách đãi ngộ hấp dẫn cho nhân viên
-
-### 1.4. Các quy trình làm việc
-
-Công ty áp dụng quy trình Agile Scrum với các giai đoạn sau:
-
-#### 1.4.1. Đề xuất dự án
-- Thu thập yêu cầu từ khách hàng
-- Phân tích tính khả thi của dự án
-- Ước lượng effort và timeline
-- Lập đề xuất chi tiết với báo giá
-
-#### 1.4.2. Phân tích yêu cầu
-- Thu thập và phân tích yêu cầu chi tiết
-- Viết User Stories và Acceptance Criteria
-- Ước lượng story points
-- Tạo Product Backlog
-
-#### 1.4.3. Thiết kế kiến trúc
+LỜI CẢM ƠN
+Sau quãng thời gian học tập và rèn luyện dưới mái trường Đại học Đông Á, chúng em đã được truyền đạt những kiến thức nền tảng và những kinh nghiệm thực tiễn quý báu trong lĩnh vực Công nghệ Thông tin. Đây chính là hành trang vững chắc giúp chúng em tự tin bước vào thời gian thực tập tại doanh nghiệp.
+Chúng em xin gửi lời biết ơn sâu sắc tới các Thầy Cô giảng viên, đặc biệt là ThS. Tạ Quốc Ý, người đã luôn đồng hành, theo sát và hỗ trợ chúng em từng bước trong quá trình thực hiện báo cáo thực tập.
+Chúng em cũng xin bày tỏ lòng cảm ơn chân thành tới Ban Giám đốc và các anh/chị đang công tác tại CÔNG TY TNHH GIẢI PHÁP THÔNG MINH POPIPLUS, đặc biệt là các anh/chị trong bộ phận kỹ thuật. Nhờ sự tạo điều kiện thuận lợi, hướng dẫn nhiệt tình và chia sẻ kinh nghiệm thực tế, chúng em đã có cơ hội được thực hành các kỹ năng chuyên môn, tiếp cận quy trình phát triển phần mềm và áp dụng kiến thức vào công việc thực tế.
+Mặc dù kiến thức và kinh nghiệm của chúng em còn hạn chế, nên báo cáo này không tránh khỏi những thiếu sót. Chúng em rất mong nhận được những góp ý, chỉ dẫn chân thành từ quý Thầy Cô để hoàn thiện hơn.
+Một lần nữa, xin chân thành cảm ơn tất cả những người đã đồng hành, hỗ trợ và truyền cảm hứng cho chúng em trong suốt thời gian thực tập.
+Chúng em xin trân trọng cảm ơn!
+ 
+CHƯƠNG 1: TỔNG QUAN VỀ ĐƠN VỊ THỰC TẬP
+1.1. Giới thiệu đơn vị thực tập
+•	Tên công ty: CÔNG TY TNHH GIẢI PHÁP THÔNG MINH POPIPLUS
+•	Mã số doanh nghiệp: 0318272823
+•	Ngày cấp giấy chứng nhận đăng ký kinh doanh: 19/01/2024 (cấp bởi Sở Kế hoạch và Đầu tư TP HCM)
+•	Địa chỉ trụ sở: Verosa Park, Số 39 Đường số 10, Khu phố 2, Phường Phú Hữu, TP Thủ Đức, TP HCM
+•	Nền tảng chủ lực: LOZIDO – nền tảng số hoá quản lý nhà trọ, phòng trọ và việc làm.
+POPIPLUS được thành lập với mục tiêu xây dựng một hệ sinh thái số hoá toàn diện, giúp người dùng nhanh chóng tìm kiếm, đăng tin và quản lý bất động sản cũng như việc làm một cách an toàn và hiệu quả.
+POPIPLUS hiện có quy mô khoảng 15–20 nhân viên, chia thành 3–4 nhóm phát triển song song. Mỗi nhóm gồm từ 3 đến 5 thành viên, bao gồm trưởng nhóm, backend developer, frontend developer và tester. Công ty sử dụng Trello làm công cụ quản lý công việc chính, kết hợp với Slack để giao tiếp và Google Meet để họp hằng ngày. Dự án VN Address Converter được giao cho một nhóm gồm 3 thành viên: 2 backend developer và 1 frontend developer, dưới sự hướng dẫn trực tiếp của mentor.
+1.2. Lĩnh vực hoạt động
+Bảng 1.1: Các lĩnh vực hoạt động của POPIPLUS
+Lĩnh vực	Mô tả ngắn gọn
+Nền tảng tìm trọ & căn hộ	Website và ứng dụng đăng tin, tìm kiếm, liên hệ chủ nhà/môi giới.
+Dịch vụ tuyển dụng	Đăng tuyển, tìm việc và quản lý hồ sơ ứng viên.
+Công nghệ dữ liệu địa lý	CSDL địa chỉ, tích hợp bản đồ và API tra cứu.
+Giải pháp phần mềm	Thiết kế, phát triển và bảo trì hệ thống theo yêu cầu.
+Nguồn: Tác giả tự tổng hợp
+1.3. Văn hóa và môi trường làm việc
+Giá trị cốt lõi: Sáng tạo – Chất lượng – Trách nhiệm – Hợp tác.
+Kênh giao tiếp chính: Slack – chat nhanh, tạo kênh dự án, chia sẻ tài liệu; Google Meet – họp hằng ngày, review code, demo tính năng.
+Quản lý công việc: Trello – board Kanban để tạo, phân công và theo dõi task cho sprint và báo cáo tiến độ.
+Môi trường phát triển đồng nhất: Docker hoặc VS Code Remote Containers, giúp mọi thành viên có cùng cấu hình môi trường dù ở bất kỳ địa điểm nào.
+Giờ làm việc linh hoạt: Thống nhất khung giờ 8h đến 12h và 13h đến 17h để dễ sắp xếp cuộc họp chung ngày nghỉ và nghỉ phép được ghi nhận trong Trello.
+Đào tạo và phát triển:
+•	Workshop / webinar hàng tháng Google Meet, nội dung công nghệ mới, best-practice và kỹ năng mềm.
+•	Mentoring trực tuyến: mỗi thành viên có mentor riêng, gặp gỡ 1-1 qua video call để giải đáp thắc mắc.
+Hoạt động gắn kết:
+•	Virtual coffee break mỗi tuần để trò chuyện phi công việc.
+•	Online hackathon mỗi 6 tháng, khuyến khích sáng tạo và thử nghiệm ý tưởng mới.
+Bảo mật và truy cập: VPN hoặc SSH key để kết nối an toàn tới tài nguyên nội bộ; MFA cho tài khoản Git, cloud và các công cụ quản lý dự án.
+Công cụ hỗ trợ tài liệu: Confluence / Notion để lưu trữ tài liệu, kiến trúc và hướng dẫn; liên kết tài liệu trong các thẻ Trello để dễ truy cập.
+1.4. Các quy trình làm việc
+1.4.1. Đề xuất dự án
+Thành viên đưa ra ý tưởng dự án hoặc tính năng mới trên Trello (thẻ "Idea").
+Trưởng nhóm xem xét, bổ sung thông tin chi tiết (mục tiêu, phạm vi, lợi ích).
+Đánh giá tính khả thi và ưu tiên trong Sprint Planning (Google Meet).
+Khi được phê duyệt, thẻ chuyển sang cột "Backlog" và gán nhãn Priority tương ứng.
+1.4.2. Phân tích yêu cầu
+Gathering: Thu thập yêu cầu từ khách hàng hoặc bộ phận kinh doanh qua Slack và tài liệu Google Docs.
+User Stories: Viết User Story trong Trello (cột "To-Do") kèm Acceptance Criteria rõ ràng.
+Review: Buổi họp ngắn (15-30 phút) trên Meet để xác nhận yêu cầu, sau đó lưu trữ tài liệu trên Confluence.
+1.4.3. Thiết kế kiến trúc
+ERD & Database Design: Sử dụng Excalidraw để vẽ sơ đồ quan hệ, lưu trong thư mục design/ trên repo.
+API Specification: Tạo file OpenAPI/Swagger mô tả các endpoint, chia sẻ qua GitHub và Slack.
+UI/UX Wireframe: Thiết kế nhanh trong Figma, liên kết vào thẻ Trello để đội frontend tham khảo.
+1.4.4. Phát triển (Sprint)
+Sprint Length: 1 tuần, bắt đầu bằng Sprint Planning (Google Meet) và kết thúc bằng Sprint Review + Retrospective.
+Branching Strategy: Mỗi tính năng có một branch feature/<tên-tính-năng>; tạo Pull Request (PR) ngay khi hoàn thành.
+Code Review: Các thành viên khác review PR trên GitHub, để lại comment trong Slack.
+CI/CD: Khi PR được merge, GitHub Actions tự động chạy unit test, lint và deploy lên môi trường Staging.
+1.4.5. Kiểm thử
+Unit Test: Viết test bằng Jest (backend) và React Testing Library (frontend).
+Integration Test: Sử dụng Supertest cho API, chạy trong pipeline CI.
+E2E Test: Thực hiện bằng Cypress, lưu kết quả trong thư mục cypress/reports.
+Bug Tracking: Khi phát hiện lỗi, tạo thẻ "Bug" trên Trello, gán người chịu trách nhiệm và đặt deadline.
+1.4.6. Triển khai (Release)
+Staging Deploy: Sau khi CI passes, hệ thống tự động deploy lên server staging (Docker/Kubernetes).
+Smoke Test: Nhóm QA thực hiện kiểm tra nhanh qua Slack.
+Production Release: Khi QA ký duyệt, thực hiện Release bằng GitHub Actions hoặc GitLab CI tới môi trường production.
+Post-Release Monitoring: Giám sát log và metric bằng Grafana/Prometheus, thông báo bất thường qua Slack.
+1.4.7. Bảo trì & Hỗ trợ
+Incident Management: Khi có sự cố, mở thẻ "Incident" trên Trello, ghi lại thời gian, nguyên nhân và bước khắc phục.
+Patch & Update: Đưa các bản vá vào branch hotfix/<tên-vấn-đề>, tạo PR và triển khai nhanh.
+Documentation Update: Mọi thay đổi đều phải cập nhật tài liệu trên Confluence và API docs.
+1.4.8. Đánh giá & Cải tiến (Retrospective)
+Buổi Retrospective: Diễn ra vào cuối mỗi sprint (Google Meet), mọi thành viên chia sẻ "What went well", "What didn't go well" và "Action items".
+Action Tracking: Các hành động cải tiến được ghi lại trong Trello (cột "Improvement") và theo dõi tiến độ.
+Continuous Improvement: Áp dụng các đề xuất vào quy trình kế tiếp, cập nhật SOP (Standard Operating Procedure) trong Confluence.
+1.5. Vai trò của bản thân
+Trong thời gian thực tập, tôi đảm nhận vị trí Backend Developer trong nhóm phát triển dự án VN Address Converter. Nhiệm vụ chính của tôi là thiết kế và xây dựng các API phục vụ cho việc chuyển đổi địa chỉ, tìm kiếm mờ và gợi ý tự động. Cụ thể, tôi chịu trách nhiệm phát triển 5 service cốt lõi (dropdown, fuzzy search, new-to-old mapping, old-to-new mapping, suggest) và hệ thống xác thực người dùng (authentication). Ngoài ra, tôi cũng tham gia viết unit test, integration test và cập nhật tài liệu Swagger cho toàn bộ API. Mentor hướng dẫn tôi là một Senior Developer tại công ty, hỗ trợ review code và giải đáp các vấn đề kỹ thuật qua các buổi meeting 1-1 hằng tuần trên Google Meet.úc
 - Thiết kế kiến trúc hệ thống tổng thể
 - Thiết kế database schema
 - Thiết kế API endpoints
