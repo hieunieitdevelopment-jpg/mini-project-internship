@@ -9,7 +9,7 @@
 **Trường:** [Tên trường]  
 
 **Đơn vị thực tập:** Công ty TNHH Phát Triển Phần Mềm ABC  
-**Thời gian thực tập:** [Tháng/Năm] - [Tháng/Năm]  
+**Thời gian thực tập:** Tháng 1/2026 - Tháng 2/2026  
 
 ---
 
@@ -118,8 +118,8 @@ Nhiệm vụ cụ thể:
 •	Optimize performance và accessibility
 •	Viết comprehensive unit và integration tests
 •	Setup CI/CD pipeline với GitHub Actions
-•	Deploy ứng dụng lên AWS EC2
-•	Configure Nginx reverse proxy và SSL
+•	Deploy ứng dụng lên AWS S3 và CloudFront
+•	Configure SSL và performance optimization
 •	Viết documentation cho components và APIs
 •	Tham gia UAT và bug fixing
 •	Performance monitoring và optimization
@@ -134,8 +134,8 @@ Kỹ năng học được:
 •	Docker basics cho local development
 •	Advanced testing strategies (mocking, coverage)
 •	CI/CD với GitHub Actions
-•	AWS EC2 deployment và server configuration
-•	Nginx setup và SSL certificates
+•	AWS deployment và cloud configuration
+•	SSL setup và security best practices
 •	Technical documentation writing
 •	Performance monitoring tools
 •	Production debugging và maintenance
@@ -346,7 +346,7 @@ src/
 
 ### 4.1 Những kết quả đạt được/ cải thiện được và các đóng góp cho dự án/ đội nhóm của doanh nghiệp
 
-Trong quá trình thực tập, tôi đã đóng góp tích cực vào dự án bằng cách:
+Trong quá trình thực tập 2 tháng, tôi đã đóng góp tích cực vào dự án bằng cách:
 - Phát triển hoàn chỉnh frontend cho hệ thống địa chỉ
 - Áp dụng best practices trong React development
 - Đề xuất cải tiến UX/UI
@@ -370,7 +370,7 @@ Dự án đã được triển khai thành công và nhận được phản hồ
 
 ### 4.3 Bài học/ cảm nghĩ rút ra, đúc kết cho bản thân sau khi thực tập
 
-Qua kỳ thực tập, tôi đã học được:
+Qua kỳ thực tập 2 tháng, tôi đã học được:
 - Cách làm việc chuyên nghiệp trong môi trường doanh nghiệp
 - Áp dụng kiến thức lý thuyết vào thực tế
 - Kỹ năng teamwork và communication
@@ -396,7 +396,7 @@ Tôi cảm thấy tự tin hơn trong việc phát triển ứng dụng web và 
 
 **Kết luận**
 
-Kỳ thực tập tại Công ty TNHH Phát Triển Phần Mềm ABC đã mang lại cho tôi nhiều kinh nghiệm quý báu trong lĩnh vực phát triển phần mềm. Tôi đã được áp dụng kiến thức học được vào dự án thực tế, đồng thời học hỏi thêm nhiều kỹ năng mới. Dự án phát triển frontend cho hệ thống địa chỉ Việt Nam đã hoàn thành thành công và sẵn sàng cho việc triển khai thương mại.
+Kỳ thực tập 2 tháng tại Công ty TNHH Phát Triển Phần Mềm ABC đã mang lại cho tôi nhiều kinh nghiệm quý báu trong lĩnh vực phát triển phần mềm. Tôi đã được áp dụng kiến thức học được vào dự án thực tế, đồng thời học hỏi thêm nhiều kỹ năng mới. Dự án phát triển frontend cho hệ thống địa chỉ Việt Nam đã hoàn thành thành công và sẵn sàng cho việc triển khai thương mại.
 
 **Tài liệu tham khảo**
 1. React Documentation - https://react.dev
