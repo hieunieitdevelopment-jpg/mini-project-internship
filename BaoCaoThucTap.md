@@ -300,233 +300,75 @@ Frontend/
 
 #### 6.1.1. Register Component
 
-```jsx
-// src/pages/Register.jsx - Key implementation
-const handleRegister = async () => {
-  // Validation logic
-  if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
-    setErrorMsg("Hãy điền đầy đủ thông tin.");
-    return;
-  }
+**Mô tả logic đăng ký:**
+- Kiểm tra validation cho email, mật khẩu và xác nhận mật khẩu
+- Gọi API đăng ký và xử lý response
+- Tự động đăng nhập sau khi đăng ký thành công
+- Decode JWT token để lấy thông tin user role
 
-  if (password !== confirmPassword) {
-    setErrorMsg("Mật khẩu nhập lại không khớp.");
-    return;
-  }
-
-  // Email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(cleanEmail)) {
-    setErrorMsg("Email không đúng định dạng (VD: ten@gmail.com).");
-    return;
-  }
-
-  // API call
-  try {
-    const res = await registerRequest({ 
-      email: cleanEmail, 
-      password 
-    });
-    
-    // Auto-login after registration
-    if (actualToken) {
-      localStorage.setItem("token", actualToken);
-      // Decode JWT to get user role
-      const decoded = JSON.parse(jsonPayload);
-      const userData = {
-        ...userInfo,
-        role: String(decoded.role || "user").toLowerCase()
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
-      navigate("/");
-    }
-  } catch (error) {
-    setErrorMsg(error?.response?.data?.message || "Lỗi kết nối đến máy chủ.");
-  }
-};
-```
+*(Hình 6.1: Code logic đăng ký - src/pages/Register.jsx, hàm handleRegister)*
 
 #### 6.1.2. Google OAuth Integration
 
-```jsx
-// Google OAuth setup in Register/Login components
-useEffect(() => {
-  if (!GOOGLE_CLIENT_ID) return;
+**Mô tả tích hợp Google OAuth:**
+- Load Google Identity Services script
+- Khởi tạo Google Sign-In button
+- Xử lý callback từ Google
+- Lưu token và thông tin user
 
-  const renderGoogleButton = () => {
-    window.google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: handleGoogleCredential,
-    });
-
-    window.google.accounts.id.renderButton(googleBtnRef.current, {
-      type: "standard",
-      theme: "outline",
-      size: "large",
-      text: "signup_with", // or "signin_with"
-      shape: "rectangular",
-      width: 280,
-    });
-  };
-
-  // Load Google Identity Services script
-  const script = document.createElement("script");
-  script.src = "https://accounts.google.com/gsi/client";
-  script.async = true;
-  document.body.appendChild(script);
-}, []);
-```
+*(Hình 6.2: Code tích hợp Google OAuth - src/pages/Register.jsx, useEffect hook)*
 
 #### 6.1.3. Protected Routes
 
-```jsx
-// src/components/ProtectedRoute.jsx
-function ProtectedRoute({ children }) {
-  const storedUser = localStorage.getItem("user");
-  let isAdmin = false;
+**Mô tả bảo vệ route:**
+- Kiểm tra role admin từ localStorage
+- Chuyển hướng về trang chủ nếu không có quyền
+- Xử lý các cấu trúc dữ liệu khác nhau của user object
 
-  if (storedUser) {
-    try {
-      const user = JSON.parse(storedUser);
-      isAdmin = user && (
-        String(user.role).toLowerCase() === 'admin' ||
-        String(user.user?.role).toLowerCase() === 'admin' ||
-        String(user.data?.role).toLowerCase() === 'admin'
-      );
-    } catch (e) {
-      isAdmin = false;
-    }
-  }
-
-  if (!isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
-}
-```
+*(Hình 6.3: Code ProtectedRoute component - src/components/ProtectedRoute.jsx)*
 
 ### 6.2. Address Search System
 
 #### 6.2.1. Home Component Logic
 
-```jsx
-// src/pages/Home.jsx - Address search implementation
-const fetchProvinces = async () => {
-  try {
-    const res = await fetch("http://44.202.66.188:3000/api/v1/provinces");
-    const json = await res.json();
-    setProvinces(json.data || []);
-  } catch (error) {
-    console.error("Error fetching provinces:", error);
-  }
-};
+**Mô tả logic tìm kiếm địa chỉ:**
+- Fetch danh sách tỉnh/thành phố
+- Xử lý sự kiện thay đổi dropdown
+- Fetch quận/huyện và phường/xã theo cấp
+- Hỗ trợ cả chế độ chuyển đổi cũ-mới và mới-cũ
 
-const handleProvinceChange = (e) => {
-  const id = e.target.value;
-  setSelectedProvince(id);
-  setSelectedDistrict("");
-  setSelectedWard("");
-  setDistricts([]);
-  setWards([]);
-  if (id) {
-    if (convertType === "newToOld") {
-      fetchWardsByProvince(id, true);
-    } else {
-      fetchDistricts(id);
-    }
-  }
-};
-```
+*(Hình 6.4: Code logic tìm kiếm - src/pages/Home.jsx, các hàm fetch và handleChange)*
 
 #### 6.2.2. Address Conversion Logic
 
-```jsx
-// Address conversion functions
-const fetchOldToNew = async (province, district, ward) => {
-  const url = `http://44.202.66.188:3000/api/v1/mappings?direction=old-to-new&province=${encodeURIComponent(province || "")}&district=${encodeURIComponent(district || "")}&ward=${encodeURIComponent(ward || "")}`;
-  const res = await fetch(url);
-  return res.json();
-};
+**Mô tả logic chuyển đổi địa chỉ:**
+- API calls để chuyển đổi old-to-new và new-to-old
+- Xử lý parameters và encoding URL
+- Parse response và hiển thị kết quả
 
-const fetchNewToOld = async (province, district, ward) => {
-  const url = `http://44.202.66.188:3000/api/v1/mappings?direction=new-to-old&province=${encodeURIComponent(province || "")}&district=${encodeURIComponent(district || "")}&ward=${encodeURIComponent(ward || "")}`;
-  const res = await fetch(url);
-  return res.json();
-};
-```
+*(Hình 6.5: Code chuyển đổi địa chỉ - src/pages/Home.jsx, hàm fetchOldToNew và fetchNewToOld)*
 
 ### 6.3. Admin Management System
 
 #### 6.3.1. Admin Component
 
-```jsx
-// src/pages/Admin.jsx - User management
-useEffect(() => {
-  const fetchUsers = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://44.202.66.188/api/v1/auth/users", {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
+**Mô tả quản lý người dùng:**
+- Fetch danh sách users với authentication
+- Xử lý token hết hạn tự động logout
+- Hiển thị thông tin users trong bảng
 
-      if (res.status === 401) {
-        // Auto logout on token expiry
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        window.dispatchEvent(new Event("authChange"));
-        navigate("/login");
-        return;
-      }
-
-      const data = await res.json();
-      if (res.ok) {
-        setUsers(data.data || data.users || []);
-      }
-    } catch (error) {
-      console.error("Lỗi lấy danh sách user:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  fetchUsers();
-}, []);
-```
+*(Hình 6.6: Code Admin component - src/pages/Admin.jsx, useEffect hook)*
 
 ### 6.4. Navigation and Layout
 
 #### 6.4.1. Header Component
 
-```jsx
-// src/components/Header.jsx - Navigation logic
-const checkAuth = () => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    try { 
-      setUser(JSON.parse(storedUser)); 
-    } catch { 
-      setUser(null); 
-    }
-  } else {
-    setUser(null);
-  }
-};
+**Mô tả navigation:**
+- Kiểm tra trạng thái authentication
+- Hiển thị menu theo role (admin/user)
+- Xử lý logout và clear localStorage
 
-const isAdmin = user && (
-  String(user.role).toLowerCase() === 'admin' ||
-  String(user.user?.role).toLowerCase() === 'admin' ||
-  String(user.data?.role).toLowerCase() === 'admin'
-);
-
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  window.dispatchEvent(new Event("authChange"));
-};
-```
+*(Hình 6.7: Code Header component - src/components/Header.jsx, hàm checkAuth và handleLogout)*
 
 ---
 
@@ -553,42 +395,13 @@ const handleLogout = () => {
 
 #### 7.2.1. ESLint Configuration
 
-```js
-// eslint.config.js
-export default [
-  {
-    files: ["**/*.{js,jsx}"],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
-    settings: { react: { version: "detect" } },
-    plugins: {
-      react: react,
-      "react-hooks": reactHooks,
-      "react-refresh": reactRefresh,
-    },
-    rules: {
-      ...js.configs.recommended.rules,
-      ...react.configs.recommended.rules,
-      ...react.configs["jsx-runtime"].rules,
-      ...reactHooks.configs.recommended.rules,
-      "react/jsx-no-target-blank": "off",
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowConstantExport: true },
-      ],
-    },
-  },
-];
-```
+**Mô tả cấu hình ESLint:**
+- Cấu hình rules cho React và JavaScript
+- Sử dụng recommended rules từ ESLint và React
+- Cấu hình parser options cho JSX
+- Thiết lập globals cho browser environment
+
+*(Hình 7.1: File cấu hình ESLint - eslint.config.js)*
 
 #### 7.2.2. Performance Testing
 - Bundle size analysis
@@ -627,18 +440,14 @@ git push origin feature/new-feature
 ```
 
 #### 8.1.2. Build Process
-```json
-// package.json scripts
-{
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
-    "deploy": "npm run build && aws s3 sync dist/ s3://your-frontend-bucket --delete && aws cloudfront create-invalidation --distribution-id YOUR_CLOUDFRONT_ID --paths '/*'"
-  }
-}
-```
+
+**Mô tả scripts trong package.json:**
+- Script dev để chạy development server
+- Script build để tạo production build
+- Script lint để kiểm tra code quality
+- Script deploy để tự động deploy lên AWS
+
+*(Hình 8.1: Scripts trong package.json)*
 
 ### 8.2. Deployment Architecture
 
@@ -690,58 +499,26 @@ sudo systemctl start nginx
 
 #### 8.2.3. Nginx Configuration
 
-```nginx
-# /etc/nginx/sites-available/default
-server {
-    listen 80;
-    server_name 3.26.153.101;
-    root /var/www/html;
-    index index.html;
+**Mô tả cấu hình Nginx:**
+- Cấu hình server block cho domain
+- Thiết lập root directory và index file
+- Cấu hình SPA routing với try_files
+- Proxy pass cho API calls
 
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    location /api {
-        proxy_pass http://44.202.66.188;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
+*(Hình 8.2: Cấu hình Nginx - /etc/nginx/sites-available/default)*
 
 ### 8.3. CI/CD Pipeline
 
 #### 8.3.1. GitHub Actions Workflow
 
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy to AWS
-on:
-  push:
-    branches: [ main ]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
-    - name: Install dependencies
-      run: npm ci
-    - name: Run tests
-      run: npm test
-    - name: Build
-      run: npm run build
-    - name: Deploy to S3
-      run: |
-        aws s3 sync dist/ s3://your-frontend-bucket --delete
-        aws cloudfront create-invalidation --distribution-id YOUR_CLOUDFRONT_ID --paths '/*'
-```
+**Mô tả CI/CD pipeline:**
+- Trigger khi push lên branch main
+- Setup Node.js environment
+- Install dependencies và run tests
+- Build application
+- Deploy lên AWS S3 và invalidate CloudFront
+
+*(Hình 8.3: GitHub Actions workflow - .github/workflows/deploy.yml)*
 
 ---
 
@@ -760,21 +537,14 @@ jobs:
 ### 9.2. Optimization Techniques
 
 #### 9.2.1. Code Splitting
-```js
-// vite.config.js
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          leaflet: ['leaflet', 'react-leaflet'],
-        },
-      },
-    },
-  },
-});
-```
+
+**Mô tả cấu hình code splitting:**
+- Chia bundle thành các chunks riêng biệt
+- Tách vendor libraries (React, React DOM)
+- Tách Leaflet library riêng biệt
+- Giảm initial bundle size
+
+*(Hình 9.1: Cấu hình Vite - vite.config.js)*
 
 #### 9.2.2. Image Optimization
 - Sử dụng WebP format cho images
@@ -789,25 +559,22 @@ export default defineConfig({
 ### 9.3. SEO Optimization
 
 #### 9.3.1. Meta Tags
-```html
-<!-- index.html -->
-<meta name="description" content="Tra cứu và chuyển đổi địa chỉ Việt Nam">
-<meta name="keywords" content="địa chỉ, tra cứu, Việt Nam, địa giới">
-<meta property="og:title" content="TraCứuĐịaGiới">
-<meta property="og:description" content="Ứng dụng tra cứu địa chỉ Việt Nam">
-```
+
+**Mô tả meta tags trong HTML:**
+- Meta description cho SEO
+- Meta keywords cho tìm kiếm
+- Open Graph tags cho social sharing
+
+*(Hình 9.2: Meta tags trong index.html)*
 
 #### 9.3.2. Structured Data
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "TraCứuĐịaGiới",
-  "description": "Ứng dụng tra cứu và chuyển đổi địa chỉ Việt Nam",
-  "url": "http://3.26.153.101/",
-  "applicationCategory": "Utility"
-}
-```
+
+**Mô tả JSON-LD structured data:**
+- Schema.org markup cho WebApplication
+- Thông tin về ứng dụng và chức năng
+- Cải thiện hiển thị trong kết quả tìm kiếm
+
+*(Hình 9.3: Structured data trong index.html)*
 
 ---
 
@@ -816,44 +583,34 @@ export default defineConfig({
 ### 10.1. Technical Challenges
 
 #### 10.1.1. Authentication State Management
-**Vấn đề:** Quản lý trạng thái authentication giữa các component
-**Giải pháp:** Sử dụng localStorage và custom events
-```js
-// Dispatch auth change event
-window.dispatchEvent(new Event("authChange"));
 
-// Listen for auth changes in components
-useEffect(() => {
-  window.addEventListener("authChange", checkAuth);
-  return () => window.removeEventListener("authChange", checkAuth);
-}, []);
-```
+**Vấn đề:** Quản lý trạng thái authentication giữa các component
+
+**Giải pháp:** Sử dụng localStorage và custom events để đồng bộ trạng thái
+
+*(Hình 10.1: Code xử lý auth state - src/components/Header.jsx, hàm checkAuth)*
 
 #### 10.1.2. Google OAuth Integration
+
 **Vấn đề:** Xử lý callback từ Google OAuth trong SPA
-**Giải pháp:** Sử dụng Google Identity Services SDK
-```js
-window.google.accounts.id.initialize({
-  client_id: GOOGLE_CLIENT_ID,
-  callback: handleGoogleCredential,
-});
-```
+
+**Giải pháp:** Sử dụng Google Identity Services SDK với proper initialization
+
+*(Hình 10.2: Code Google OAuth - src/pages/Register.jsx, useEffect hook)*
 
 #### 10.1.3. CORS Issues
+
 **Vấn đề:** CORS errors khi call API từ domain khác
+
 **Giải pháp:** Cấu hình CORS trên backend và sử dụng proxy trong development
 
 #### 10.1.4. JWT Token Decoding
+
 **Vấn đề:** Decode JWT token để lấy user role
-**Giải pháp:** Manual JWT decoding
-```js
-const base64Url = actualToken.split('.')[1];
-const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-const jsonPayload = decodeURIComponent(
-  atob(paddedBase64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
-);
-const decoded = JSON.parse(jsonPayload);
-```
+
+**Giải pháp:** Manual JWT decoding với base64url và JSON parsing
+
+*(Hình 10.3: Code JWT decoding - src/pages/Register.jsx, logic decode token)*
 
 ### 10.2. Project Management Challenges
 
