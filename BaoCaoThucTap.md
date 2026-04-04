@@ -9,7 +9,7 @@
 **Trường:** [Tên trường]  
 
 **Đơn vị thực tập:** CÔNG TY TNHH GIẢI PHÁP THÔNG MINH POPIPLUS  
-**Thời gian thực tập:** Tháng 2/2026 - Tháng 3/2026  
+**Thời gian thực tập:** Tháng 2/2026 - Tháng 4/2026  
 
 ---
 
