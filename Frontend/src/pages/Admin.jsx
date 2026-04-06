@@ -11,7 +11,7 @@ function Admin() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://44.202.66.188/api/v1/auth/users", {
+        const res = await fetch("/api/v1/auth/users", {
           headers: {
             "Authorization": `Bearer ${token}`
           }

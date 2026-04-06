@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 const AUTH_API_BASE_URL =
-  import.meta.env.VITE_AUTH_API_BASE_URL || "http://44.202.66.188";
+  import.meta.env.VITE_AUTH_API_BASE_URL || "/api/v1";
 
 function ResetPassword() {
   const [searchParams] = useSearchParams();

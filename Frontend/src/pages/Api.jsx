@@ -101,7 +101,7 @@ function Api() {
         </p>
 
         <div className="bg-blue-50 border-l-4 border-blue-400 p-3 md:p-4 rounded-r-lg break-all">
-          <p className="text-blue-800 font-medium text-sm md:text-base">Base URL: http://44.202.66.188:3000/api/v1</p>
+          <p className="text-blue-800 font-medium text-sm md:text-base">Base URL: /api/v1</p>
         </div>
 
       </div>

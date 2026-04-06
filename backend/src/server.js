@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const { connectDB } = require("./config/db");
@@ -36,17 +37,21 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
+// Serve frontend static files (React build)
+app.use(express.static(path.join(__dirname, "../public")));
+
 // swagger docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/v1", routes);
 
-app.get("/", (req, res) => {
-  res.send("Admin Map Backend Running");
-});
-
 // centralized error handler - phai dat sau routes
 app.use(errorHandler);
+
+// SPA fallback - moi route khong match API se tra ve index.html (React Router xu ly)
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
 
 async function startServer() {
   await connectDB();

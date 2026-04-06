@@ -46,7 +46,7 @@ function Profile() {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://44.202.66.188/api/v1/auth/change-password", {
+      const res = await fetch("/api/v1/auth/change-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

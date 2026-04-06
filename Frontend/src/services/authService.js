@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = import.meta.env.VITE_API_URL || "http://44.202.66.188/api/v1/auth";
+const API = import.meta.env.VITE_API_URL || "/api/v1/auth";
 const GOOGLE_AUTH_CALLBACK_URL =
   import.meta.env.VITE_GOOGLE_AUTH_CALLBACK_URL || `${API}/google/callback`;
 

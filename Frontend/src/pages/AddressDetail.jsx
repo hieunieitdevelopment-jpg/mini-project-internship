@@ -58,7 +58,7 @@ function AddressDetail() {
       try {
         setLoading(true);
         // 1. Lấy thông tin đơn vị từ Database của bạn
-        const res = await fetch(`http://44.202.66.188:3000/api/v1/units/${id}`);
+        const res = await fetch(`/api/v1/units/${id}`);
         const json = await res.json();
         const unitData = json.data;
 

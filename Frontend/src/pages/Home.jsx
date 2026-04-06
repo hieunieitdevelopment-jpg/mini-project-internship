@@ -24,7 +24,7 @@ function Home() {
 
   const fetchProvinces = async () => {
     try {
-      const res = await fetch("http://44.202.66.188:3000/api/v1/provinces");
+      const res = await fetch("/api/v1/provinces");
       const json = await res.json();
       setProvinces(json.data || []);
     } catch (error) {
@@ -51,7 +51,7 @@ function Home() {
   const fetchDistricts = async (provinceId) => {
     try {
       const res = await fetch(
-        `http://44.202.66.188:3000/api/v1/provinces/${provinceId}/districts`
+        `/api/v1/provinces/${provinceId}/districts`
       );
       const json = await res.json();
       setDistricts(json.data || []);
@@ -71,7 +71,7 @@ function Home() {
   const fetchWards = async (districtId, active) => {
     try {
       const res = await fetch(
-        `http://44.202.66.188:3000/api/v1/districts/${districtId}/wards?active=${active}`
+        `/api/v1/districts/${districtId}/wards?active=${active}`
       );
       const json = await res.json();
       setWards(json.data || []);
@@ -83,7 +83,7 @@ function Home() {
   const fetchWardsByProvince = async (provinceId, active) => {
     try {
       const res = await fetch(
-        `http://44.202.66.188:3000/api/v1/provinces/${provinceId}/wards?active=${active}`
+        `/api/v1/provinces/${provinceId}/wards?active=${active}`
       );
       const json = await res.json();
       setWards(json.data || []);
@@ -93,13 +93,13 @@ function Home() {
   };
 
   const fetchOldToNew = async (province, district, ward) => {
-    const url = `http://44.202.66.188:3000/api/v1/mappings?direction=old-to-new&province=${encodeURIComponent(province || "")}&district=${encodeURIComponent(district || "")}&ward=${encodeURIComponent(ward || "")}`;
+    const url = `/api/v1/mappings?direction=old-to-new&province=${encodeURIComponent(province || "")}&district=${encodeURIComponent(district || "")}&ward=${encodeURIComponent(ward || "")}`;
     const res = await fetch(url);
     return res.json();
   };
 
   const fetchNewToOld = async (province, district, ward) => {
-    const url = `http://44.202.66.188:3000/api/v1/mappings?direction=new-to-old&province=${encodeURIComponent(province || "")}&district=${encodeURIComponent(district || "")}&ward=${encodeURIComponent(ward || "")}`;
+    const url = `/api/v1/mappings?direction=new-to-old&province=${encodeURIComponent(province || "")}&district=${encodeURIComponent(district || "")}&ward=${encodeURIComponent(ward || "")}`;
     const res = await fetch(url);
     return res.json();
   };
@@ -144,7 +144,7 @@ function Home() {
       // We mainly want ward suggestions → force level=ward
       // API doesn't seem to support parent filtering reliably, so we keep it simple
       const q = encodeURIComponent(value.trim());
-      const url = `http://44.202.66.188:3000/api/v1/units/suggest?q=${q}&level=ward`;
+      const url = `/api/v1/units/suggest?q=${q}&level=ward`;
 
       const res = await fetch(url);
       const json = await res.json();
@@ -179,7 +179,7 @@ function Home() {
 
     try {
       const direction = convertType === "oldToNew" ? "old-to-new" : "new-to-old";
-      const url = `http://44.202.66.188:3000/api/v1/mappings?direction=${direction}&ward=${encodeURIComponent(
+      const url = `/api/v1/mappings?direction=${direction}&ward=${encodeURIComponent(
         wardName
       )}`;
 
