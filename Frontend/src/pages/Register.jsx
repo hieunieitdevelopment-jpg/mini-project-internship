@@ -194,7 +194,7 @@ function Register() {
 
   return (
 
-    <div className="min-h-screen flex flex-row bg-gray-950">
+    <div className="min-h-screen w-screen flex flex-row bg-gray-950 overflow-hidden">
 
       {/* Định nghĩa CSS Animation cho hiệu ứng trượt từ phải sang */}
       <style>{`
