@@ -24,7 +24,8 @@ const validateProvinceId = [
     .notEmpty()
     .withMessage("provinceId không được để trống")
     .isInt({ min: 1 })
-    .withMessage("provinceId phải là số nguyên dương"),
+    .withMessage("provinceId phải là số nguyên dương")
+    .toInt(),
   handleValidation,
 ];
 
@@ -34,7 +35,8 @@ const validateDistrictId = [
     .notEmpty()
     .withMessage("districtId không được để trống")
     .isInt({ min: 1 })
-    .withMessage("districtId phải là số nguyên dương"),
+    .withMessage("districtId phải là số nguyên dương")
+    .toInt(),
   handleValidation,
 ];
 
@@ -119,51 +121,144 @@ const validateMapping = [
   handleValidation,
 ];
 
-// Auth validation
-
-// validate body dang ky
+// auth
 const validateRegister = [
-  body("username")
-    .notEmpty()
-    .withMessage("Username không được để trống")
-    .isLength({ min: 3, max: 50 })
-    .withMessage("Username phải từ 3-50 ký tự")
-    .isAlphanumeric()
-    .withMessage("Username chỉ được chứa chữ và số"),
   body("email")
     .notEmpty()
     .withMessage("Email không được để trống")
     .isEmail()
-    .withMessage("Email không hợp lệ"),
+    .withMessage("Email không hợp lệ")
+    .normalizeEmail(),
   body("password")
     .notEmpty()
-    .withMessage("Password không được để trống")
-    .isLength({ min: 6, max: 100 })
-    .withMessage("Password phải từ 6-100 ký tự"),
-  body("full_name")
-    .notEmpty()
-    .withMessage("Tên đầy đủ không được để trống")
-    .isLength({ min: 2, max: 100 })
-    .withMessage("Tên phải từ 2-100 ký tự"),
-  body("phone")
-    .optional()
-    .isLength({ min: 10, max: 20 })
-    .withMessage("SĐT phải từ 10-20 ký tự"),
+    .withMessage("Mật khẩu không được để trống")
+    .isLength({ min: 8 })
+    .withMessage("Mật khẩu tối thiểu 8 ký tự")
+    .matches(/[a-z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái thường")
+    .matches(/[A-Z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái hoa")
+    .matches(/[0-9]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 số")
+    .matches(/[!@#$%^&*]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 ký tự đặc biệt"),
   handleValidation,
 ];
 
-// validate body dang nhap
 const validateLogin = [
   body("email")
     .notEmpty()
     .withMessage("Email không được để trống")
     .isEmail()
-    .withMessage("Email không hợp lệ"),
+    .withMessage("Email không hợp lệ")
+    .normalizeEmail(),
   body("password")
     .notEmpty()
-    .withMessage("Password không được để trống"),
+    .withMessage("Mật khẩu không được để trống"),
   handleValidation,
 ];
+
+// đổi mật khảu khi đăng nhập
+
+const validateChangePassword = [
+  body("oldPassword")
+    .notEmpty()
+    .withMessage("Mật khẩu cũ không được để trống"),
+  body("newPassword")
+    .notEmpty()
+    .withMessage("Mật khẩu mới không được để trống")
+    .custom((value, { req }) => {
+      if (value === req.body.oldPassword) {
+        throw new Error("Mật khẩu mới phải khác mật khẩu cũ");
+      }
+      return true;
+    })
+    .isLength({ min: 8 })
+    .withMessage("Mật khẩu tối thiểu 8 ký tự")
+    .matches(/[a-z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái thường")
+    .matches(/[A-Z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái hoa")
+    .matches(/[0-9]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 số")
+    .matches(/[!@#$%^&*]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 ký tự đặc biệt"),
+  handleValidation,
+];
+
+// quên mật khẩu + reset:
+const validateResetRequest = [
+  body("email")
+    .notEmpty()
+    .withMessage("Email không được để trống")
+    .isEmail()
+    .withMessage("Email không hợp lệ")
+    .normalizeEmail(),
+  handleValidation,
+];
+
+const validateResetPassword = [
+  body("token")
+    .notEmpty()
+    .withMessage("Token không được để trống"),
+  body("newPassword")
+    .notEmpty()
+    .withMessage("Mật khẩu mới không được để trống")
+    .isLength({ min: 8 })
+    .withMessage("Mật khẩu tối thiểu 8 ký tự")
+    .matches(/[a-z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái thường")
+    .matches(/[A-Z]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 chữ cái hoa")
+    .matches(/[0-9]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 số")
+    .matches(/[!@#$%^&*]/)
+    .withMessage("Mật khẩu phải có ít nhất 1 ký tự đặc biệt"),
+  handleValidation,
+];
+
+
+
+
+
+const validateBatch = (req, res, next) => {
+  const { direction, items } = req.body;
+
+  // kiểm tra direction
+  if (!direction || !["old-to-new", "new-to-old"].includes(direction)){
+    return res.status(400).json({
+      success: false,
+      message: "direction phải là 'old-to-new' hoặc 'new-to-old'",
+    });
+
+  }
+  // kiểm mảng items phải là mảng
+  if (!items || !Array.isArray(items) || items.length === 0 ){
+    return res.status(400).json({
+      success:false,
+      message: "items phải là mảng và không được rỗng"
+    });
+  }
+
+  if (items.length > 500 ){
+    return res.status(400).json({
+      success: false,
+      message: `Tối đa 500 items mỗi lần. Bạn gửi ${items.length} items`
+    });
+  }
+
+  for (let i = 0; i < items.length; i++ ) {
+    const item = items[i];
+    if (!item.province && !item.district && !item.ward){
+      return res.status(400).json({
+        success: false,
+        message: `Item thứ ${i + 1} phải có ít nhất 1 trong: province, district, ward`
+      })
+    }
+  }
+
+  next();
+};
 
 module.exports = {
   validateProvinceId,
@@ -172,6 +267,13 @@ module.exports = {
   validateSuggest,
   validateFuzzySearch,
   validateMapping,
+  // auth validation
   validateRegister,
   validateLogin,
+  validateChangePassword,
+  validateResetRequest,
+  validateResetPassword,
+  //  Batch Conversion
+  validateBatch,
+
 };

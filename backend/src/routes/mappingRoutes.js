@@ -3,6 +3,7 @@ const router = express.Router();
 const mappingController = require("../controllers/mappingController");
 const { validateMapping } = require("../middlewares/validate");
 
+
 /**
  * @swagger
  * /mappings:
