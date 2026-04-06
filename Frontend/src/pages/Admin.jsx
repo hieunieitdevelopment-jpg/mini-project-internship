@@ -1,0 +1,157 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+function Admin() {
+
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://44.202.66.188/api/v1/auth/users", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        // Xử lý tự động đăng xuất nếu Token hết hạn hoặc không hợp lệ (Lỗi 401)
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.dispatchEvent(new Event("authChange"));
+          navigate("/login");
+          return;
+        }
+
+        const data = await res.json();
+        if (res.ok) {
+          setUsers(data.data || data.users || []);
+        } else {
+          console.error("Lỗi lấy danh sách user:", data.message);
+        }
+      } catch (error) {
+        console.error("Lỗi kết nối:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchUsers();
+  }, []);
+
+  return (
+
+    <div className="max-w-7xl mx-auto p-4 md:p-10 bg-gradient-to-br from-blue-50 to-white min-h-screen">
+
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+          Quản Lý Người Dùng
+        </h1>
+        <p className="text-base md:text-lg text-gray-600">
+          Quản lý tài khoản người dùng hệ thống
+        </p>
+      </div>
+
+      {/* Add User Button */}
+      <div className="mb-8">
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 text-sm md:text-base w-full sm:w-auto">
+          ➕ Thêm Người Dùng Mới
+        </button>
+      </div>
+
+      {/* Users Table */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-800">
+            Danh Sách Người Dùng
+          </h2>
+        </div>
+
+        <div className="overflow-x-auto w-full">
+          <table className="w-full min-w-[600px]">
+
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">ID</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Tên</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Email</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Vai Trò</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Trạng Thái</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Hành Động</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200">
+
+              {isLoading ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
+                    Đang tải danh sách người dùng...
+                  </td>
+                </tr>
+              ) : users.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
+                    Không có dữ liệu.
+                  </td>
+                </tr>
+              ) : (
+                users.map((user) => (
+
+                  <tr key={user.id || user._id || Math.random()} className="hover:bg-gray-50 transition-colors duration-200">
+
+                    <td className="px-6 py-4 text-sm text-gray-900">{user.id || user._id}</td>
+
+                    <td className="px-6 py-4 text-sm text-gray-900">{user.full_name || user.username || "Chưa có tên"}</td>
+
+                  <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
+
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      String(user.role).toLowerCase() === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {user.role || 'User'}
+                    </span>
+                  </td>
+
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      user.active !== false && user.status !== 'Inactive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {user.active !== false && user.status !== 'Inactive' ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
+
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <div className="flex gap-2">
+                      <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors duration-200">
+                        Sửa
+                      </button>
+                      <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors duration-200">
+                        Xóa
+                      </button>
+                    </div>
+                  </td>
+
+                  </tr>
+
+                ))
+              )}
+
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+  );
+}
+
+export default Admin;
