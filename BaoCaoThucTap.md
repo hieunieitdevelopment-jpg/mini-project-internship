@@ -358,6 +358,230 @@ src/
 
 ---
 
+## DEMO
+
+### Hình 1: Sơ đồ luồng đăng nhập bằng Google OAuth
+
+```mermaid
+flowchart TD
+  U[User] --> FE[Frontend App]
+
+  FE --> BTN[Click Login or Register with Google]
+  BTN --> G[Google OAuth Origin Validation]
+
+  subgraph DEV[Development]
+    L[Origin: http://localhost:5173]
+    L --> G
+    G -->|Allowed| DEVOK[Google returns credential]
+  end
+
+  subgraph PROD_NOW[Current Production]
+    IP[Origin: http://AWS-IP]
+    IP --> G
+    G -->|Blocked or invalid_request| PRODFAIL[Login fails before API call]
+  end
+
+  subgraph PROD_TARGET[Target Production]
+    D[Origin: https://app.yourdomain.com]
+    D --> G
+    G -->|Allowed| PRODOK[Google returns credential]
+  end
+
+  DEVOK --> FEPOST[Frontend POST idToken to Backend]
+  PRODOK --> FEPOST
+
+  FEPOST --> BE[Backend /auth/google]
+  BE --> GV[Verify token with Google]
+  GV --> ISSUE[Issue internal JWT and user]
+  ISSUE --> DONE[Login or Register success]
+
+  PRODFAIL --> ACTION[Action: Use real domain + HTTPS and add origin in Google Console]
+```
+
+*Nguồn: Tác giả tự vẽ dựa trên luồng OAuth 2.0 của Google*
+
+### Hình 2: Kiến trúc hệ thống dự án VN Address Converter
+
+```mermaid
+graph TB
+  U[User] --> F[Frontend React App<br/>Vite + React 19.2.0]
+  F --> B[Backend API<br/>Node.js/Express]
+  B --> DB[(PostgreSQL Database<br/>Address Data)]
+  F --> G[Google OAuth API<br/>Authentication]
+  F --> M[Leaflet Maps API<br/>Map Integration]
+  B --> AWS[AWS S3 & CloudFront<br/>Deployment & CDN]
+  F --> R[React Router DOM<br/>Client-side Routing]
+  F --> T[Tailwind CSS<br/>Styling & Responsive]
+  F --> A[Axios<br/>HTTP Client]
+  F --> J[JWT<br/>Token Management]
+```
+
+*Nguồn: Tác giả tự vẽ dựa trên kiến trúc dự án*
+
+### Hình 3: Luồng tìm kiếm và chuyển đổi địa chỉ
+
+```mermaid
+flowchart TD
+  U[User] --> H[Home Page]
+  H --> SF[Address Search Form]
+  SF --> P[Select Province/Tỉnh]
+  P --> D[Select District/Quận]
+  D --> W[Select Ward/Phường]
+  W --> SUB[Submit Search]
+  SUB --> API[Send API Request to Backend<br/>/api/addresses/search]
+  API --> PROC[Backend Process Query]
+  PROC --> RES[Return Address Results<br/>+ Coordinates]
+  RES --> DISP[Display Results List]
+  DISP --> MAP[Show on Leaflet Map<br/>with Markers & Popups]
+  MAP --> CONV[Convert Old/New Address<br/>if requested]
+  CONV --> DONE[Search Complete]
+  API --> ERR[Error Handling<br/>No results found]
+  ERR --> MSG[Show Error Message]
+```
+
+*Nguồn: Tác giả tự vẽ dựa trên luồng nghiệp vụ dự án*
+
+### Hình 4: Cấu trúc component của ứng dụng React
+
+```mermaid
+graph TD
+  MAIN[main.jsx<br/>Entry Point] --> APP[App.jsx<br/>Root Component]
+  APP --> ROUTER[router/AppRouter.jsx<br/>Routing Configuration]
+  ROUTER --> PAGES[pages/]
+  PAGES --> HOME[Home.jsx<br/>Address Search Page]
+  PAGES --> LOGIN[Login.jsx<br/>Login Page]
+  PAGES --> REG[Register.jsx<br/>Registration Page]
+  PAGES --> PROF[Profile.jsx<br/>User Profile Page]
+  PAGES --> ADMIN[Admin.jsx<br/>Admin Dashboard]
+  PAGES --> ADD[AddressDetail.jsx<br/>Address Details Page]
+  PAGES --> SUP[Support.jsx<br/>Support Page]
+  PAGES --> FORG[ForgotPassword.jsx<br/>Forgot Password]
+  PAGES --> RES[ResetPassword.jsx<br/>Reset Password]
+  PAGES --> API[Api.jsx<br/>API Documentation Page]
+  APP --> COMP[components/]
+  COMP --> HEAD[Header.jsx<br/>Site Header]
+  COMP --> FOOT[Footer.jsx<br/>Site Footer]
+  COMP --> NAV[Navbar.jsx<br/>Navigation Menu]
+  COMP --> PROT[ProtectedRoute.jsx<br/>Route Protection]
+  APP --> SERV[services/]
+  SERV --> AUTH[authService.js<br/>Authentication API]
+  APP --> ASSET[assets/<br/>Static Assets]
+  APP --> CSS[App.css<br/>Global Styles]
+  APP --> IDX[index.css<br/>Base Styles]
+```
+
+*Nguồn: Tác giả tự vẽ dựa trên cấu trúc thư mục src/ thực tế của dự án*
+
+### Hình 5: Luồng đăng nhập và đăng ký chi tiết của ứng dụng
+
+```mermaid
+flowchart TD
+  U[User] --> CHOICE{Choose Action}
+  CHOICE -->|Login| L[Go to Login Page]
+  CHOICE -->|Register| R[Go to Register Page]
+  
+  L --> LF[Fill Login Form<br/>Email + Password]
+  LF --> LV[Form Validation<br/>Check required fields]
+  LV -->|Invalid| LERR[Show Error Message]
+  LERR --> LF
+  LV -->|Valid| LSUB[Submit Login]
+  
+  R --> RF[Fill Register Form<br/>Email + Password + Confirm]
+  RF --> RV[Form Validation<br/>Check email format,<br/>password strength,<br/>confirm match]
+  RV -->|Invalid| RERR[Show Error Message]
+  RERR --> RF
+  RV -->|Valid| RSUB[Submit Register]
+  
+  LSUB --> LAPI[POST /auth/login<br/>to Backend]
+  RSUB --> RAPI[POST /auth/register<br/>to Backend]
+  
+  LAPI --> LAUTH[Backend Authenticate<br/>Check credentials]
+  RAPI --> RCHECK[Backend Check<br/>Email exists?]
+  
+  LAUTH -->|Invalid| LFAIL[Return Error<br/>Invalid credentials]
+  RCHECK -->|Exists| RFAIL[Return Error<br/>Email already exists]
+  
+  LFAIL --> LMSG[Show Login Error<br/>on Frontend]
+  RFAIL --> RMSG[Show Register Error<br/>on Frontend]
+  
+  LMSG --> LF
+  RMSG --> RF
+  
+  LAUTH -->|Valid| LJWT[Generate JWT Token<br/>+ User Data]
+  RCHECK -->|Not Exists| RJWT[Create User<br/>Generate JWT Token]
+  
+  LJWT --> LSTORE[Store Token in<br/>localStorage]
+  RJWT --> RSTORE[Store Token in<br/>localStorage]
+  
+  LSTORE --> LREDIR[Redirect to Home/Dashboard]
+  RSTORE --> RREDIR[Redirect to Home/Dashboard]
+  
+  CHOICE -->|Google Login/Register| G[Click Google OAuth Button]
+  G --> GVALID[Google Origin Validation<br/>Check domain/HTTPS]
+  GVALID -->|Invalid| GERR[Show Error<br/>Invalid origin]
+  GERR --> G
+  
+  GVALID -->|Valid| GPOP[Google OAuth Popup<br/>User login to Google]
+  GPOP -->|Success| GTOKEN[Google returns<br/>idToken + userInfo]
+  GTOKEN --> GPOST[POST idToken to<br/>Backend /auth/google]
+  
+  GPOST --> GVERIFY[Backend Verify<br/>Google idToken]
+  GVERIFY -->|Invalid| GFAIL[Return Error<br/>Invalid token]
+  GFAIL --> GMSG[Show Google Auth Error]
+  GMSG --> G
+  
+  GVERIFY -->|Valid| GUSER[Check/Create User<br/>in Database]
+  GUSER --> GJWT[Generate JWT Token<br/>+ User Data]
+  GJWT --> GSTORE[Store Token in<br/>localStorage]
+  GSTORE --> GREDIR[Redirect to Home/Dashboard]
+  
+  LREDIR --> DONE[Authentication Success]
+  RREDIR --> DONE
+  GREDIR --> DONE
+```
+
+*Nguồn: Tác giả tự vẽ dựa trên luồng authentication thực tế của dự án*
+
+### Hình 6: Sơ đồ Use Case cho hệ thống tra cứu địa chỉ
+
+```mermaid
+graph TD
+  U[User] --> UC1[Login to System]
+  U --> UC2[Register Account]
+  U --> UC3[Search Address]
+  U --> UC4[View Address Details]
+  U --> UC5[Convert Address Format]
+  U --> UC6[View Map Location]
+  U --> UC7[Update Profile]
+  U --> UC8[Logout]
+  
+  A[Admin] --> UC9[Login as Admin]
+  A --> UC10[Manage Users]
+  A --> UC11[View System Statistics]
+  A --> UC12[Monitor Address Database]
+  
+  UC1 --> S[System]
+  UC2 --> S
+  UC3 --> S
+  UC4 --> S
+  UC5 --> S
+  UC6 --> S
+  UC7 --> S
+  UC8 --> S
+  UC9 --> S
+  UC10 --> S
+  UC11 --> S
+  UC12 --> S
+  
+  S --> DB[(Address Database)]
+  S --> G[Google OAuth]
+  S --> M[Leaflet Maps API]
+```
+
+*Nguồn: Tác giả tự vẽ dựa trên yêu cầu chức năng của dự án*
+
+---
+
 ## CHƯƠNG 4. ĐÁNH GIÁ KẾT QUẢ THỰC TẬP
 
 ### 4.1 Những kết quả đạt được/ cải thiện được và các đóng góp cho dự án/ đội nhóm của doanh nghiệp
