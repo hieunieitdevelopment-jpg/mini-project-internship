@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 */
 
 exports.sendPasswordResetEmail = async (to, token) => {
-    const resetLink = `http://3.26.153.101/reset-password?token=${token}`;
+    const resetLink = `https://vngovsync.lozido.com/reset-password?token=${token}`;
     const templatePath = path.join(__dirname, "../templates/resetPassword.html");
     let html = fs.readFileSync(templatePath, "utf-8");
     html = html.replace(/\{\{resetLink\}\}/g, resetLink);

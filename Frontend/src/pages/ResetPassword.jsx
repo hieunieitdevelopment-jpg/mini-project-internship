@@ -45,7 +45,7 @@ function ResetPassword() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${AUTH_API_BASE_URL}/api/v1/auth/reset-password`, {
+      const res = await fetch(`/api/v1/auth/reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
