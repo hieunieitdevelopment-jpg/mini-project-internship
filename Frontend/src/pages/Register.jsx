@@ -194,7 +194,7 @@ function Register() {
 
   return (
 
-    <div className="min-h-screen flex flex-col md:flex-row">
+    <div className="min-h-screen flex flex-row bg-gray-950">
 
       {/* Định nghĩa CSS Animation cho hiệu ứng trượt từ phải sang */}
       <style>{`
@@ -233,14 +233,14 @@ function Register() {
         </div>
       )}
 
-      {/* LEFT SIDE */}
-      <div className="w-full md:w-1/2 bg-gradient-to-br from-teal-400 to-green-300 flex flex-col justify-center items-center text-white p-8 md:p-10 min-h-[30vh] md:min-h-screen">
+      {/* LEFT SIDE - Hidden on small screens */}
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-teal-400 via-teal-500 to-green-400 flex-col justify-center items-center text-white px-12 py-16">
 
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-center">
+        <h1 className="text-5xl font-bold mb-6 text-center">
           Tạo tài khoản mới
         </h1>
 
-        <p className="text-base md:text-lg text-center mb-8 md:mb-10 max-w-md">
+        <p className="text-xl text-center mb-12 max-w-md leading-relaxed">
           Đăng ký để sử dụng hệ thống tra cứu địa chỉ hành chính 
           và chuyển đổi địa chỉ cũ sang mới một cách nhanh chóng.
         </p>
@@ -248,69 +248,65 @@ function Register() {
         <img
           src="https://cdn-icons-png.flaticon.com/512/942/942748.png"
           alt="register"
-          className="w-40 md:w-64 opacity-90 hidden sm:block"
+          className="w-72 opacity-95 drop-shadow-lg"
         />
 
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="w-full md:w-1/2 flex-1 bg-gray-900 flex justify-center items-center p-6 md:p-10">
+      <div className="w-full lg:w-1/2 flex justify-center items-center p-4 sm:p-8 bg-gray-900">
 
-        <div className="w-full max-w-sm md:w-96">
+        <div className="w-full max-w-md">
 
-          <h2 className="text-3xl font-bold text-white mb-8">
-            Đăng ký
-          </h2>
+          <h2 className="text-3xl font-bold text-white mb-2">Đăng ký</h2>
+          <p className="text-gray-400 text-sm mb-8">Tạo tài khoản mới để bắt đầu</p>
 
-          <div className="mb-4">
-
-            <label className="text-gray-400 text-sm">
+          <div className="mb-5">
+            <label className="text-gray-300 text-sm font-medium block mb-2">
               Email
             </label>
-
             <input
               type="email"
               value={email}
               disabled={isLoading}
               placeholder="Nhập email"
-              className={`w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 hover:border-gray-600 focus:border-teal-400 focus:ring-2 focus:ring-teal-400 focus:ring-opacity-20 outline-none transition-all ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               onChange={(e) => setEmail(e.target.value)}
             />
-
           </div>
 
-          <div className="mb-4">
-
-            <label className="text-gray-400 text-sm">
+          <div className="mb-5">
+            <label className="text-gray-300 text-sm font-medium block mb-2">
               Mật khẩu
             </label>
-
             <input
               type="password"
               value={password}
               disabled={isLoading}
               placeholder="Nhập mật khẩu"
-              className={`w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 hover:border-gray-600 focus:border-teal-400 focus:ring-2 focus:ring-teal-400 focus:ring-opacity-20 outline-none transition-all ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               onChange={(e) => setPassword(e.target.value)}
             />
-
           </div>
 
           <div className="mb-6">
-
-            <label className="text-gray-400 text-sm">
+            <label className="text-gray-300 text-sm font-medium block mb-2">
               Nhập lại mật khẩu
             </label>
-
             <input
               type="password"
               value={confirmPassword}
               disabled={isLoading}
               placeholder="Nhập lại mật khẩu"
-              className={`w-full p-3 mt-1 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-teal-400 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 hover:border-gray-600 focus:border-teal-400 focus:ring-2 focus:ring-teal-400 focus:ring-opacity-20 outline-none transition-all ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
-
           </div>
 
           <button
