@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const dropdownController = require("../controllers/dropdownController");
-const { validateProvinceId } = require("../middlewares/validate");
+const { validateProvinceId, validateActiveQuery } = require("../middlewares/validate");
+
 
 /**
  * @swagger
@@ -95,6 +96,6 @@ router.get("/:provinceId/districts", validateProvinceId, dropdownController.getD
  *       200:
  *         description: Danh sách xã/phường thuộc tỉnh
  */
-router.get("/:provinceId/wards", validateProvinceId, dropdownController.getWardsByProvince);
+router.get("/:provinceId/wards", validateProvinceId, validateActiveQuery, dropdownController.getWardsByProvince);
 
 module.exports = router;

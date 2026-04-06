@@ -24,7 +24,8 @@ const validateProvinceId = [
     .notEmpty()
     .withMessage("provinceId không được để trống")
     .isInt({ min: 1 })
-    .withMessage("provinceId phải là số nguyên dương"),
+    .withMessage("provinceId phải là số nguyên dương")
+    .toInt(),
   handleValidation,
 ];
 
@@ -34,7 +35,8 @@ const validateDistrictId = [
     .notEmpty()
     .withMessage("districtId không được để trống")
     .isInt({ min: 1 })
-    .withMessage("districtId phải là số nguyên dương"),
+    .withMessage("districtId phải là số nguyên dương")
+    .toInt(),
   handleValidation,
 ];
 
@@ -125,7 +127,8 @@ const validateRegister = [
     .notEmpty()
     .withMessage("Email không được để trống")
     .isEmail()
-    .withMessage("Email không hợp lệ"),
+    .withMessage("Email không hợp lệ")
+    .normalizeEmail(),
   body("password")
     .notEmpty()
     .withMessage("Mật khẩu không được để trống")
@@ -147,12 +150,11 @@ const validateLogin = [
     .notEmpty()
     .withMessage("Email không được để trống")
     .isEmail()
-    .withMessage("Email không hợp lệ"),
+    .withMessage("Email không hợp lệ")
+    .normalizeEmail(),
   body("password")
     .notEmpty()
-    .withMessage("Mật khẩu không được để trống")
-    .isLength({ min: 8 })
-    .withMessage("Mật khẩu tối thiểu 8 ký tự"),
+    .withMessage("Mật khẩu không được để trống"),
   handleValidation,
 ];
 
@@ -165,6 +167,12 @@ const validateChangePassword = [
   body("newPassword")
     .notEmpty()
     .withMessage("Mật khẩu mới không được để trống")
+    .custom((value, { req }) => {
+      if (value === req.body.oldPassword) {
+        throw new Error("Mật khẩu mới phải khác mật khẩu cũ");
+      }
+      return true;
+    })
     .isLength({ min: 8 })
     .withMessage("Mật khẩu tối thiểu 8 ký tự")
     .matches(/[a-z]/)
@@ -184,7 +192,8 @@ const validateResetRequest = [
     .notEmpty()
     .withMessage("Email không được để trống")
     .isEmail()
-    .withMessage("Email không hợp lệ"),
+    .withMessage("Email không hợp lệ")
+    .normalizeEmail(),
   handleValidation,
 ];
 
@@ -210,6 +219,47 @@ const validateResetPassword = [
 
 
 
+
+
+const validateBatch = (req, res, next) => {
+  const { direction, items } = req.body;
+
+  // kiểm tra direction
+  if (!direction || !["old-to-new", "new-to-old"].includes(direction)){
+    return res.status(400).json({
+      success: false,
+      message: "direction phải là 'old-to-new' hoặc 'new-to-old'",
+    });
+
+  }
+  // kiểm mảng items phải là mảng
+  if (!items || !Array.isArray(items) || items.length === 0 ){
+    return res.status(400).json({
+      success:false,
+      message: "items phải là mảng và không được rỗng"
+    });
+  }
+
+  if (items.length > 500 ){
+    return res.status(400).json({
+      success: false,
+      message: `Tối đa 500 items mỗi lần. Bạn gửi ${items.length} items`
+    });
+  }
+
+  for (let i = 0; i < items.length; i++ ) {
+    const item = items[i];
+    if (!item.province && !item.district && !item.ward){
+      return res.status(400).json({
+        success: false,
+        message: `Item thứ ${i + 1} phải có ít nhất 1 trong: province, district, ward`
+      })
+    }
+  }
+
+  next();
+};
+
 module.exports = {
   validateProvinceId,
   validateDistrictId,
@@ -223,5 +273,7 @@ module.exports = {
   validateChangePassword,
   validateResetRequest,
   validateResetPassword,
+  //  Batch Conversion
+  validateBatch,
 
 };
