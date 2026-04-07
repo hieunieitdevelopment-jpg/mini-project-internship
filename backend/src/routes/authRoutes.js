@@ -363,4 +363,31 @@ router.get("/google/callback",
     authController.googleCallback
 );
 
+/**
+ * @swagger
+ * /auth/google/callback:
+ *   post:
+ *     summary: Google OAuth2 callback (dành cho Frontend React/Vite)
+ *     description: Nhận idToken từ frontend, xác thực và trả về JWT trực tiếp giúp hoàn tất quy trình đăng nhập mà không cần chuyển hướng.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - idToken
+ *             properties:
+ *               idToken:
+ *                 type: string
+ *                 description: Token nhận từ Google Identity Services
+ *     responses:
+ *       200:
+ *         description: Trả về thông tin đăng nhập thành công
+ *       400:
+ *         description: Thiếu token hoặc token không hợp lệ
+ */
+router.post("/google/callback", authController.googleCallbackPost);
+
 module.exports = router;

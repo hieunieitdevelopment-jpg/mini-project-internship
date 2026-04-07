@@ -116,3 +116,27 @@ exports.googleCallback = (req, res) => {
     const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
     res.redirect(`${FRONTEND_URL}?token=${token}`);
 };
+
+// xử lý POST từ frontend (React) nhận idToken và trả về API response
+exports.googleCallbackPost = async (req, res, next) => {
+    try {
+        const { idToken } = req.body;
+        const result = await authService.googleLoginOrRegister({ idToken });
+        res.cookie("accessToken", result.accessToken, accessTokenOptions);
+        res.cookie("refreshToken", result.refreshToken, refreshTokenOptions);
+        res.status(200).json({ 
+            success: true, 
+            message: "Xác thực Google thành công", 
+            data: { 
+                user: result.user,
+                token: result.token,
+                access_token: result.accessToken
+            },
+            token: result.token,
+            access_token: result.accessToken,
+            user: result.user
+        });
+    } catch (error) {
+        next(error);
+    }
+};

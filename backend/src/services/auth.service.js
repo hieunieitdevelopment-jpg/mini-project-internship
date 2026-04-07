@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const { OAuth2Client } = require("google-auth-library");
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const AppError = require("../utils/AppError");
 
 const userModel = require("../models/user.model");
@@ -29,8 +31,8 @@ exports.register = async ({ email, password }) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await userModel.createUser({ username, email, hashedPassword });
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-    return { user, token };
+    if (user.password) delete user.password;
+    return { user };
 };
 
 // người dùng đăng nhập
@@ -143,3 +145,50 @@ exports.resetPassword = async ({ token, newPassword }) => {
     return users;
  };
 
+// Đăng nhập / Đăng ký trực tiếp qua Google idToken
+exports.googleLoginOrRegister = async ({ idToken }) => {
+    if (!idToken) {
+        throw new AppError("Thiếu idToken", 400);
+    }
+    
+    // Xác thực chữ ký token từ Google
+    const ticket = await googleClient.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { sub: google_id, email, name: username, picture: avatar } = payload;
+    
+    // 1. Kiểm tra user đã tồn tại qua google_id chưa
+    let user = await userModel.findByGoogleId(google_id);
+    
+    if (!user) {
+        // 2. Chư có -> Kiểm tra xem email này đã đăng ký thường chưa
+        const existingUser = await userModel.findByEmail(email);
+        if (existingUser) {
+            // Có email -> Cập nhật google_id và avatar để gộp tài khoản
+            user = await userModel.updateGoogleId(existingUser.id, google_id, avatar);
+        } else {
+            // 3. Chưa có gì -> Đăng ký mới tài khoản bằng Google
+            user = await userModel.createGoogleUser({ username, email, google_id, avatar });
+        }
+    }
+    
+    // 4. Kiểm tra trạng thái tài khoản
+    if (!user.is_active) {
+        throw new AppError("Tài khoản đã bị khóa", 403);
+    }
+    
+    // 5. Sinh tokens
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const accessToken = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "15m" });
+    const refreshToken = crypto.randomBytes(40).toString("hex");
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await refreshTokenModel.createRefreshToken(user.id, refreshToken, expiresAt);
+    
+    if (user.password) {
+        delete user.password;
+    }
+    
+    return { user, token, accessToken, refreshToken };
+};
