@@ -1,51 +1,70 @@
 const { client } = require("../config/db");
 
 // lay tinh/thanh pho (is_active)
-exports.findProvinces = async () => {
-  const sql = `
-    SELECT id, name, code
+exports.findProvinces = async (isActive = true) => {
+  let sql = `
+    SELECT id, name, code, is_active
     FROM administrative_units
-    WHERE level = 'province' AND is_active = TRUE
-    ORDER BY name
+    WHERE level = 'province'
   `;
-  const result = await client.query(sql);
+  if (isActive !== null) {
+    sql += ` AND is_active = $1`;
+  }
+  sql += ` ORDER BY name`;
+  const params = isActive !== null ? [isActive] : [];
+  const result = await client.query(sql, params);
   return result.rows;
 };
 
 // lay quan/huyen theo tinh
-exports.findDistricts = async (provinceId) => {
-  const sql = `
-    SELECT id, name, code
-    FROM administrative_units
-    WHERE level = 'district' AND parent_id = $1 AND is_active = TRUE
-    ORDER BY name
+exports.findDistricts = async (provinceId, isActive = true) => {
+  let sql = `
+    SELECT DISTINCT d.id, d.name, d.code, d.is_active
+    FROM administrative_units d
+    LEFT JOIN administrative_change_mappings map_gp ON map_gp.old_unit_id = d.parent_id
+    WHERE d.level = 'district' AND (d.parent_id = $1 OR map_gp.new_unit_id = $1)
   `;
-  const result = await client.query(sql, [provinceId]);
+  if (isActive !== null) {
+    sql += ` AND d.is_active = $2`;
+  }
+  sql += ` ORDER BY d.name`;
+  const params = isActive !== null ? [provinceId, isActive] : [provinceId];
+  const result = await client.query(sql, params);
   return result.rows;
 };
 
 // lay xa/phuong theo huyen
-// isActive = true -> xa moi, false -> xa cu
 exports.findWards = async (districtId, isActive = true) => {
-  const sql = `
-    SELECT id, name, code
+  let sql = `
+    SELECT id, name, code, is_active
     FROM administrative_units
-    WHERE level = 'ward' AND parent_id = $1 AND is_active = $2
-    ORDER BY name
+    WHERE level = 'ward' AND parent_id = $1
   `;
-  const result = await client.query(sql, [districtId, isActive]);
+  if (isActive !== null) {
+    sql += ` AND is_active = $2`;
+  }
+  sql += ` ORDER BY name`;
+  const params = isActive !== null ? [districtId, isActive] : [districtId];
+  const result = await client.query(sql, params);
   return result.rows;
 };
 
 // lay xa/phuong theo tinh (join qua huyen)
 exports.findWardsByProvince = async (provinceId, isActive = true) => {
-  const sql = `
-    SELECT w.id, w.name, w.code
+  let sql = `
+    SELECT DISTINCT w.id, w.name, w.code, w.is_active
     FROM administrative_units w
     JOIN administrative_units d ON w.parent_id = d.id
-    WHERE w.level = 'ward' AND d.parent_id = $1 AND w.is_active = $2
-    ORDER BY w.name
+    JOIN administrative_units p ON d.parent_id = p.id
+    LEFT JOIN administrative_change_mappings map_gp ON map_gp.old_unit_id = p.id
+    LEFT JOIN administrative_change_mappings map_w ON map_w.new_unit_id = w.id
+    WHERE w.level = 'ward' AND (p.id = $1 OR (map_gp.new_unit_id = $1 AND map_w.id IS NOT NULL))
   `;
-  const result = await client.query(sql, [provinceId, isActive]);
+  if (isActive !== null) {
+    sql += ` AND w.is_active = $2`;
+  }
+  sql += ` ORDER BY w.name`;
+  const params = isActive !== null ? [provinceId, isActive] : [provinceId];
+  const result = await client.query(sql, params);
   return result.rows;
 };

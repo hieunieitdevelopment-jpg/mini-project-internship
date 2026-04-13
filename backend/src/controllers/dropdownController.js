@@ -4,7 +4,10 @@ const AppError = require("../utils/AppError");
 // lay tat ca tinh/thanh pho
 exports.getProvinces = async (req, res, next) => {
   try {
-    const data = await dropdownService.getProvinces();
+    let isActive = true;
+    if (req.query.active === "false") isActive = false;
+    else if (req.query.active === "all") isActive = null;
+    const data = await dropdownService.getProvinces(isActive);
     res.json({ success: true, data });
   } catch (err) {
     next(err);
@@ -14,8 +17,11 @@ exports.getProvinces = async (req, res, next) => {
 // lay quan/huyen theo tinh
 exports.getDistricts = async (req, res, next) => {
   try {
+    let isActive = true;
+    if (req.query.active === "false") isActive = false;
+    else if (req.query.active === "all") isActive = null;
     const { provinceId } = req.params;
-    const data = await dropdownService.getDistricts(parseInt(provinceId));
+    const data = await dropdownService.getDistricts(parseInt(provinceId), isActive);
     res.json({ success: true, data });
   } catch (err) {
     next(err);
@@ -26,7 +32,9 @@ exports.getDistricts = async (req, res, next) => {
 exports.getWards = async (req, res, next) => {
   try {
     const { districtId } = req.params;
-    const isActive = req.query.active !== "false";
+    let isActive = true;
+    if (req.query.active === "false") isActive = false;
+    else if (req.query.active === "all") isActive = null;
     const data = await dropdownService.getWards(parseInt(districtId), isActive);
     res.json({ success: true, data });
   } catch (err) {
@@ -38,7 +46,9 @@ exports.getWards = async (req, res, next) => {
 exports.getWardsByProvince = async (req, res, next) => {
   try {
     const { provinceId } = req.params;
-    const isActive = req.query.active !== "false";
+    let isActive = true;
+    if (req.query.active === "false") isActive = false;
+    else if (req.query.active === "all") isActive = null;
     const data = await dropdownService.getWardsByProvince(parseInt(provinceId), isActive);
     res.json({ success: true, data });
   } catch (err) {

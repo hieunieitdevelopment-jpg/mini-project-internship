@@ -4,6 +4,13 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
+// Ngăn lỗi không load được icon Maker của Leaflet trên Webpack/Vite
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 function FitBounds({ geojson, center }) {
   const map = useMap();
 
@@ -80,21 +87,23 @@ function AddressDetail() {
 
           // --- NEW STRATEGY ---
           // Hàm thực hiện tìm kiếm và trả về kết quả nếu có
-          const nominatimSearch = async (params) => {
+          const nominatimSearch = async (queryString) => {
             const searchParams = new URLSearchParams({
-              ...params,
+              q: queryString,
               format: 'json',
               polygon_geojson: 1,
-              limit: 1,
+              limit: 5,
               countrycodes: 'vn' // Luôn giới hạn trong Việt Nam
             });
             const url = `https://nominatim.openstreetmap.org/search?${searchParams.toString()}`;
             try {
-              const res = await fetch(url);
+              const res = await fetch(url, { headers: { "Accept-Language": "vi-VN" } });
               if (!res.ok) return null;
               const data = await res.json();
-              if (Array.isArray(data) && data.length > 0) {
-                return data[0];
+              if (Array.isArray(data)) {
+                // Chỉ lấy những kết quả thực sự là ranh giới vùng hoặc địa danh hành chính
+                const validItem = data.find(item => item.class === "boundary" || item.class === "place");
+                if (validItem) return validItem;
               }
             } catch (e) {
               console.error(`Nominatim search failed for ${url}`, e);
@@ -102,30 +111,41 @@ function AddressDetail() {
             return null;
           };
           
-          // 1. Tìm kiếm có cấu trúc (ưu tiên cao nhất): Xã/Phường (q) + Huyện/Quận (county) + Tỉnh/TP (state)
+          let searchLevel = "";
+
+          // 1. Tìm kiếm cấp Xã/Phường -> Tỉnh
           if (cleanName && cleanParent && cleanGrandparent) {
-            location = await nominatimSearch({ state: cleanGrandparent, county: cleanParent, q: cleanName });
+            location = await nominatimSearch(`${unitData.name}, ${unitData.parent}, ${unitData.grandparent}`);
+            if (location) searchLevel = "ward_exact";
           }
           
-          // 2. Dự phòng: Bỏ qua Huyện/Quận (do dữ liệu có thể thiếu)
+          // 2. Dự phòng: Chỉ Xã/Phường và Tỉnh
           if (!location && cleanName && cleanGrandparent) {
             await new Promise(r => setTimeout(r, 600)); // Delay để tránh rate limit
-            location = await nominatimSearch({ state: cleanGrandparent, q: cleanName });
+            location = await nominatimSearch(`${unitData.name}, ${unitData.grandparent}`);
+            if (location) searchLevel = "ward_fallback";
           }
           
           // 3. Dự phòng: Tìm theo Huyện/Quận + Tỉnh/TP
           if (!location && cleanParent && cleanGrandparent) {
             await new Promise(r => setTimeout(r, 600));
-            location = await nominatimSearch({ state: cleanGrandparent, county: cleanParent });
+            location = await nominatimSearch(`${unitData.parent}, ${unitData.grandparent}`);
+            if (location) searchLevel = "district";
           }
           
-          // 4. Dự phòng cuối cùng: Tìm theo tên Tỉnh/TP
+          // 4. Dự phòng cuối cùng: Tìm Tỉnh/TP
           if (!location && cleanGrandparent) {
             await new Promise(r => setTimeout(r, 600));
-            location = await nominatimSearch({ state: cleanGrandparent });
+            location = await nominatimSearch(`${unitData.grandparent}`);
+            if (location) searchLevel = "province";
           }
 
           if (location) {
+            let note = "";
+            if (unitData.level === "ward" && (searchLevel === "district" || searchLevel === "province")) {
+              note = `(OpenStreetMap chưa có nạp dữ liệu Polygon cho cấp Xã này, bản đồ đang hiển thị ranh giới cấp ${searchLevel === "district" ? "Huyện" : "Tỉnh"})`;
+            }
+            
             setMapData({
               lat: parseFloat(location.lat),
               lng: parseFloat(location.lon),
@@ -134,10 +154,11 @@ function AddressDetail() {
                 properties: { name: fullAddress },
                 geometry: location.geojson
               } : null,
-              displayName: location.display_name
+              displayName: location.display_name,
+              note: note
             });
           } else {
-            setMapData((prev) => ({ ...prev, displayName: "Không tìm thấy toạ độ chính xác trên bản đồ." }));
+            setMapData((prev) => ({ ...prev, displayName: "Không tìm thấy ranh giới địa lý trên Bản đồ OpenStreetMap." }));
           }
         }
       } catch (error) {
@@ -164,8 +185,11 @@ function AddressDetail() {
     const parts = [u.name];
     if (u.level === "ward") {
       if (isNew) {
-        const province = u.grandparent || u.parent;
-        if (province) parts.push(province);
+        if (u.grandparent) {
+          parts.push(u.grandparent);
+        } else if (u.parent) {
+          parts.push(u.parent);
+        }
       } else {
         if (u.parent) parts.push(u.parent);
         if (u.grandparent) parts.push(u.grandparent);
@@ -275,6 +299,11 @@ function AddressDetail() {
               <h2 className="text-xl md:text-2xl font-semibold text-gray-800 flex items-center gap-3">
                 <span>📍</span> Bản đồ vị trí {unit && <span className="text-blue-600 text-lg md:text-xl ml-2">({unit.name})</span>}
               </h2>
+              {mapData.note && (
+                <p className="text-sm text-red-500 mt-2 italic flex items-center gap-1">
+                  ⚠️ {mapData.note}
+                </p>
+              )}
             </div>
 
             <div className="p-4 md:p-6">

@@ -66,7 +66,10 @@ const { validateSuggest, validateFuzzySearch } = require("../middlewares/validat
  *       400:
  *         description: Thiếu từ khóa hoặc level không hợp lệ
  */
+const unitController = require("../controllers/unitController");
+
 router.get("/suggest", validateSuggest, suggestController.suggestUnits);
+router.get("/:id", unitController.getUnitById);
 
 /**
  * @swagger

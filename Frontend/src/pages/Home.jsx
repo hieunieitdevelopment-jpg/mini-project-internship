@@ -20,13 +20,24 @@ function Home() {
 
   useEffect(() => {
     fetchProvinces();
-  }, []);
+  }, [convertType]);
 
   const fetchProvinces = async () => {
     try {
-      const res = await fetch("/api/v1/provinces");
+      const activeParam = convertType === "oldToNew" ? "all" : "true";
+      const res = await fetch(`/api/v1/provinces?active=${activeParam}`);
       const json = await res.json();
-      setProvinces(json.data || []);
+      
+      const items = json.data || [];
+      const unique = [];
+      const seen = new Set();
+      for (const item of items) {
+        if (!seen.has(item.name)) {
+          seen.add(item.name);
+          unique.push(item);
+        }
+      }
+      setProvinces(unique);
     } catch (error) {
       console.error("Error fetching provinces:", error);
     }
@@ -43,18 +54,27 @@ function Home() {
       if (convertType === "newToOld") {
         fetchWardsByProvince(id, true);
       } else {
-        fetchDistricts(id);
+        fetchDistricts(id, "all");
       }
     }
   };
 
-  const fetchDistricts = async (provinceId) => {
+  const fetchDistricts = async (provinceId, active = true) => {
     try {
       const res = await fetch(
-        `/api/v1/provinces/${provinceId}/districts`
+        `/api/v1/provinces/${provinceId}/districts?active=${active}`
       );
       const json = await res.json();
-      setDistricts(json.data || []);
+      
+      const unique = [];
+      const seen = new Set();
+      for (const d of (json.data || [])) {
+        if (!seen.has(d.name)) {
+          seen.add(d.name);
+          unique.push(d);
+        }
+      }
+      setDistricts(unique);
     } catch (error) {
       console.error("Error fetching districts:", error);
     }
@@ -65,7 +85,13 @@ function Home() {
     setSelectedDistrict(id);
     setSelectedWard("");
     setWards([]);
-    if (id) fetchWards(id, false);
+    if (id) {
+      if (convertType === "oldToNew") {
+        fetchWards(id, "all");
+      } else {
+        fetchWards(id, true);
+      }
+    }
   };
 
   const fetchWards = async (districtId, active) => {
@@ -74,7 +100,16 @@ function Home() {
         `/api/v1/districts/${districtId}/wards?active=${active}`
       );
       const json = await res.json();
-      setWards(json.data || []);
+      
+      const unique = [];
+      const seen = new Set();
+      for (const w of (json.data || [])) {
+        if (!seen.has(w.name)) {
+          seen.add(w.name);
+          unique.push(w);
+        }
+      }
+      setWards(unique);
     } catch (error) {
       console.error("Error fetching wards:", error);
     }
@@ -86,7 +121,16 @@ function Home() {
         `/api/v1/provinces/${provinceId}/wards?active=${active}`
       );
       const json = await res.json();
-      setWards(json.data || []);
+      
+      const unique = [];
+      const seen = new Set();
+      for (const w of (json.data || [])) {
+        if (!seen.has(w.name)) {
+          seen.add(w.name);
+          unique.push(w);
+        }
+      }
+      setWards(unique);
     } catch (error) {
       console.error("Error fetching wards:", error);
     }
@@ -110,22 +154,25 @@ function Home() {
 
   const formatAddressDetail = (unit, isNew = false) => {
     if (!unit) return "—";
-    const parts = [];
+    const parts = [unit.name];
     if (unit.level === "ward") {
-      parts.push(unit.name);
       if (isNew) {
-        const province = unit.grandparent || unit.parent;
-        if (province) parts.push(` • ${province}`);
+        // Mới: Chỉ lấy 2 cấp (Xã -> Tỉnh)
+        if (unit.grandparent) {
+          parts.push(` • ${unit.grandparent}`);
+        } else if (unit.parent) {
+          parts.push(` • ${unit.parent}`);
+        }
       } else {
+        // Cũ: Lấy đủ 3 cấp (Xã -> Huyện -> Tỉnh)
         if (unit.parent) parts.push(` • ${unit.parent}`);
         if (unit.grandparent) parts.push(` • ${unit.grandparent}`);
       }
     } else if (unit.level === "district") {
-      parts.push(unit.name);
       if (unit.parent) parts.push(` • ${unit.parent}`);
       if (unit.grandparent) parts.push(` • ${unit.grandparent}`);
     } else if (unit.level === "province") {
-      parts.push(unit.name);
+      // province has no parent
     }
     return parts.join("");
   };
@@ -442,7 +489,7 @@ function Home() {
             <option value="">-- Chọn Tỉnh/Thành phố --</option>
             {provinces.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name}
+                {p.name}{p.is_active === false ? " (cũ)" : ""}
               </option>
             ))}
           </select>
@@ -457,7 +504,7 @@ function Home() {
               <option value="">-- Chọn Huyện/Quận --</option>
               {districts.map((d) => (
                 <option key={d.id} value={d.id}>
-                  {d.name}
+                  {d.name}{d.is_active === false ? " (cũ)" : ""}
                 </option>
               ))}
             </select>
@@ -472,7 +519,7 @@ function Home() {
             <option value="">-- Chọn Xã/Phường --</option>
             {wards.map((w) => (
               <option key={w.id} value={w.id}>
-                {w.name}
+                {w.name}{w.is_active === false ? " (cũ)" : ""}
               </option>
             ))}
           </select>
