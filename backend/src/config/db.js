@@ -18,4 +18,4 @@ async function connectDB() {
   }
 }
 
-module.exports = { client, connectDB };
+module.exports = { client, connectDB, getClient: () => client };

@@ -3,6 +3,9 @@ const router = express.Router();
 const suggestController = require("../controllers/suggestController");
 const fuzzyController = require("../controllers/fuzzyController");
 const { validateSuggest, validateFuzzySearch } = require("../middlewares/validate");
+const { optionalAuth } = require("../middlewares/auth.middleware");
+const rateLimiter = require("../middlewares/rateLimiter");
+const usageLogger = require("../middlewares/usageLogger");
 
 
 /**
@@ -11,6 +14,8 @@ const { validateSuggest, validateFuzzySearch } = require("../middlewares/validat
  *   get:
  *     summary: Gợi ý đơn vị hành chính (autocomplete)
  *     tags: [Units]
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: query
  *         name: q
@@ -68,8 +73,8 @@ const { validateSuggest, validateFuzzySearch } = require("../middlewares/validat
  */
 const unitController = require("../controllers/unitController");
 
-router.get("/suggest", validateSuggest, suggestController.suggestUnits);
-router.get("/:id", unitController.getUnitById);
+router.get("/suggest", optionalAuth, rateLimiter, usageLogger, validateSuggest, suggestController.suggestUnits);
+router.get("/:id", optionalAuth, rateLimiter, usageLogger, unitController.getUnitById);
 
 /**
  * @swagger
@@ -77,6 +82,8 @@ router.get("/:id", unitController.getUnitById);
  *   get:
  *     summary: Tìm kiếm gần đúng đơn vị hành chính (fuzzy search)
  *     tags: [Units]
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: query
  *         name: q
@@ -142,6 +149,6 @@ router.get("/:id", unitController.getUnitById);
  *       400:
  *         description: Thiếu từ khóa hoặc level không hợp lệ
  */
-router.get("/search", validateFuzzySearch, fuzzyController.fuzzySearch);
+router.get("/search", optionalAuth, rateLimiter, usageLogger, validateFuzzySearch, fuzzyController.fuzzySearch);
 
 module.exports = router;    

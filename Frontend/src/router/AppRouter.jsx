@@ -10,6 +10,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Profile from "../pages/Profile";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
+import DeveloperPortal from "../pages/DeveloperPortal";
 
 function AppRouter() {
   return (
@@ -41,6 +42,8 @@ function AppRouter() {
       <Route path="/support" element={<Support />} />
 
       <Route path="/api" element={<Api />} />
+
+      <Route path="/developer" element={<DeveloperPortal />} />
 
     </Routes>
   );

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { logout } from "../services/authService";
 
 function Header() {
 
@@ -29,8 +30,13 @@ function Header() {
     return () => window.removeEventListener("authChange", checkAuth);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    try {
+        await logout();
+    } catch(e) {
+        console.error("Logout err", e);
+    }
+    localStorage.removeItem("token"); // Cleanup in case of remnants
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("authChange"));
     setShowMenu(false);
@@ -129,6 +135,15 @@ function Header() {
                     <span>Hồ sơ cá nhân</span>
                   </Link>
 
+                  <Link
+                    to="/developer"
+                    onClick={() => setShowMenu(false)}
+                    className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-gray-700 transition-colors duration-200 text-sm font-medium border-b border-gray-100"
+                  >
+                    <span>⚙️</span>
+                    <span>Developer Portal</span>
+                  </Link>
+
                   <button
                     onClick={handleLogout}
                     className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition-colors duration-200 text-sm font-medium border-none"
@@ -172,6 +187,9 @@ function Header() {
               <>
                 <Link to="/profile" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors text-left">
                   <span>👤</span> Hồ sơ cá nhân
+                </Link>
+                <Link to="/developer" onClick={() => setShowMobileMenu(false)} className="flex items-center gap-3 text-gray-700 hover:text-blue-600 transition-colors text-left">
+                  <span>⚙️</span> Developer Portal
                 </Link>
                 <button onClick={handleLogout} className="flex items-center gap-3 text-red-600 hover:text-red-700 transition-colors text-left">
                   <span>🚪</span> Đăng xuất

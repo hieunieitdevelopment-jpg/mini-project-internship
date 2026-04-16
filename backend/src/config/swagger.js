@@ -23,6 +23,12 @@ const options = {
           bearerFormat: "JWT",
           description: "Nhập JWT token lấy từ API login",
         },
+        ApiKeyAuth: {
+          type: "apiKey",
+          in: "header",
+          name: "x-api-key",
+          description: "Nhập API Key hợp lệ được cấp từ Developer Portal",
+        },
       },
     },
   },

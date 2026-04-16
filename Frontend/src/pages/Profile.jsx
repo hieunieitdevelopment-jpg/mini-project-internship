@@ -10,11 +10,25 @@ function Profile() {
   const [msg, setMsg] = useState({ type: "", text: "" });
   const navigate = useNavigate();
 
+  // Che email: ntp14042004@gmail.com → ntp****004@gmail.com
+  const maskEmail = (email) => {
+    if (!email) return "";
+    const [local, domain] = email.split("@");
+    if (local.length <= 4) return local[0] + "***@" + domain;
+    const visible = 3; // số ký tự hiện ở đầu và cuối
+    return local.slice(0, visible) + "****" + local.slice(-visible) + "@" + domain;
+  };
+
+  // Format username đẹp hơn: viết hoa chữ đầu
+  const formatDisplayName = (username) => {
+    if (!username) return "Người dùng";
+    return username.charAt(0).toUpperCase() + username.slice(1);
+  };
+
   // Kiểm tra đăng nhập và lấy thông tin User
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
-    if (!storedUser || !token) {
+    if (!storedUser) {
       navigate("/login");
     } else {
       setUser(JSON.parse(storedUser));
@@ -45,13 +59,13 @@ function Profile() {
 
     setIsLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      // cấu hình fetch tích hợp withCredentials
       const res = await fetch("/api/v1/auth/change-password", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify({
           old_password: oldPassword, // Format chung snake_case cho database
           new_password: newPassword,
@@ -116,10 +130,10 @@ function Profile() {
         <div className="md:col-span-1">
           <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 text-center border-t-4 border-blue-500">
             <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-4xl font-bold mx-auto mb-4 shadow-inner">
-              {(user.full_name || user.username || "U")[0].toUpperCase()}
+              {formatDisplayName(user.username)[0]}
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-1">{user.full_name || user.username || "Chưa có tên"}</h2>
-            <p className="text-gray-500 text-sm mb-4">{user.email}</p>
+            <h2 className="text-xl font-bold text-gray-800 mb-1">{formatDisplayName(user.username)}</h2>
+            <p className="text-gray-500 text-sm mb-4">{maskEmail(user.email)}</p>
             <span className={`inline-block px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${String(user.role).toLowerCase() === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
               {user.role || 'User'}
             </span>

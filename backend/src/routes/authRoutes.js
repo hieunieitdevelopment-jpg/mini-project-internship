@@ -142,6 +142,9 @@ router.post("/login",loginLimiter, validateLogin, authController.login);
  *         description: Không có refresh token hoặc token không hợp lệ
  */
 router.post("/refresh-token", authController.refreshToken);
+
+// Lấy thông tin user hiện tại (cần đăng nhập)
+router.get("/me", verifyToken, authController.getMe);
 /**
  * @swagger
  * /auth/logout:

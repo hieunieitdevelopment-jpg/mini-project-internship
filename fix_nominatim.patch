@@ -1,0 +1,50 @@
+--- Frontend/src/pages/AddressDetail.jsx
++++ Frontend/src/pages/AddressDetail.jsx
+@@ -80,10 +80,9 @@
+ 
+           // --- NEW STRATEGY ---
+           // Hàm thực hiện tìm kiếm và trả về kết quả nếu có
+-          const nominatimSearch = async (params) => {
++          const nominatimSearch = async (queryString) => {
+             const searchParams = new URLSearchParams({
+-              ...params,
+-              format: 'json',
++              q: queryString,
++              format: 'json',
+               polygon_geojson: 1,
+               limit: 1,
+               countrycodes: 'vn' // Luôn giới hạn trong Việt Nam
+             });
+@@ -103,26 +102,26 @@
+           };
+           
+-          // 1. Tìm kiếm có cấu trúc (ưu tiên cao nhất): Xã/Phường (q) + Huyện/Quận (county) + Tỉnh/TP (state)
++          // 1. Tìm kiếm cấp Xã/Phường -> Tỉnh
+           if (cleanName && cleanParent && cleanGrandparent) {
+-            location = await nominatimSearch({ state: cleanGrandparent, county: cleanParent, q: cleanName });
++            location = await nominatimSearch(`${unitData.name}, ${unitData.parent}, ${unitData.grandparent}`);
+           }
+           
+-          // 2. Dự phòng: Bỏ qua Huyện/Quận (do dữ liệu có thể thiếu)
++          // 2. Dự phòng: Chỉ Xã/Phường và Tỉnh
+           if (!location && cleanName && cleanGrandparent) {
+             await new Promise(r => setTimeout(r, 600)); // Delay để tránh rate limit
+-            location = await nominatimSearch({ state: cleanGrandparent, q: cleanName });
++            location = await nominatimSearch(`${unitData.name}, ${unitData.grandparent}`);
+           }
+           
+-          // 3. Dự phòng: Tìm theo Huyện/Quận + Tỉnh/TP
++          // 3. Dự phòng: Chỉ tìm Huyện/Quận + Tỉnh/TP
+           if (!location && cleanParent && cleanGrandparent) {
+             await new Promise(r => setTimeout(r, 600));
+-            location = await nominatimSearch({ state: cleanGrandparent, county: cleanParent });
++            location = await nominatimSearch(`${unitData.parent}, ${unitData.grandparent}`);
+           }
+           
+-          // 4. Dự phòng cuối cùng: Tìm theo tên Tỉnh/TP
++          // 4. Dự phòng cuối cùng: Tìm Tỉnh/TP
+           if (!location && cleanGrandparent) {
+             await new Promise(r => setTimeout(r, 600));
+-            location = await nominatimSearch({ state: cleanGrandparent });
++            location = await nominatimSearch(`${unitData.grandparent}`);
+           }

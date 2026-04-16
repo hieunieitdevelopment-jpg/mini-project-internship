@@ -9,7 +9,7 @@ exports.findByEmail = async (email) => {
 
 // tìm user theo id trong auth middleware (sau khi verify JWT token, lấy thông tin user từ userId trong token)
 exports.findById = async (id) => {
-  const sql = "SELECT id, username, email, role, is_active, created_at FROM users WHERE id = $1";
+  const sql = "SELECT id, username, email, role, avatar, is_active, created_at FROM users WHERE id = $1";
   const result = await client.query(sql, [id]);
   return result.rows[0] || null;
 };

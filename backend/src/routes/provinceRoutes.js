@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const dropdownController = require("../controllers/dropdownController");
 const { validateProvinceId, validateActiveQuery } = require("../middlewares/validate");
+const { optionalAuth } = require("../middlewares/auth.middleware");
+const rateLimiter = require("../middlewares/rateLimiter");
+const usageLogger = require("../middlewares/usageLogger");
 
 
 /**
@@ -10,6 +13,8 @@ const { validateProvinceId, validateActiveQuery } = require("../middlewares/vali
  *   get:
  *     summary: Lấy danh sách tỉnh/thành phố
  *     tags: [Dropdown]
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Danh sách tỉnh/TP đang hoạt động
@@ -33,7 +38,7 @@ const { validateProvinceId, validateActiveQuery } = require("../middlewares/vali
  *                       code:
  *                         type: string
  */
-router.get("/", dropdownController.getProvinces);
+router.get("/", optionalAuth, rateLimiter, usageLogger, dropdownController.getProvinces);
 
 /**
  * @swagger
@@ -41,6 +46,8 @@ router.get("/", dropdownController.getProvinces);
  *   get:
  *     summary: Lấy danh sách quận/huyện theo tỉnh
  *     tags: [Dropdown]
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: path
  *         name: provinceId
@@ -71,7 +78,7 @@ router.get("/", dropdownController.getProvinces);
  *                       code:
  *                         type: string
  */
-router.get("/:provinceId/districts", validateProvinceId, dropdownController.getDistricts);
+router.get("/:provinceId/districts", optionalAuth, rateLimiter, usageLogger, validateProvinceId, dropdownController.getDistricts);
 
 /**
  * @swagger
@@ -79,6 +86,8 @@ router.get("/:provinceId/districts", validateProvinceId, dropdownController.getD
  *   get:
  *     summary: Lấy danh sách xã/phường theo tỉnh (bỏ qua huyện)
  *     tags: [Dropdown]
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: path
  *         name: provinceId
@@ -96,6 +105,6 @@ router.get("/:provinceId/districts", validateProvinceId, dropdownController.getD
  *       200:
  *         description: Danh sách xã/phường thuộc tỉnh
  */
-router.get("/:provinceId/wards", validateProvinceId, validateActiveQuery, dropdownController.getWardsByProvince);
+router.get("/:provinceId/wards", optionalAuth, rateLimiter, usageLogger, validateProvinceId, validateActiveQuery, dropdownController.getWardsByProvince);
 
 module.exports = router;

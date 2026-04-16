@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register as registerRequest, googleAuth } from "../services/authService";
+import { register as registerRequest, googleAuth, getMe } from "../services/authService";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -38,14 +38,20 @@ function Register() {
       const res = await googleAuth(credentialResponse.credential);
       const data = res.data || {};
       const token =
-        data.token ||
-        data.access_token ||
-        data.data?.token ||
-        data.data?.access_token;
-      const user = data.user || data.data?.user || data.data || {};
+        data.token || data.access_token || data.data?.token || data.data?.access_token;
+      
+      const rawUser = data.user || data.data?.user || data.data || {};
+
+      const userData = {
+        ...rawUser,
+        username: rawUser.username || "",
+        full_name: rawUser.full_name || rawUser.username || "Tài Khoản",
+        role: String(rawUser.role || "user").toLowerCase(),
+        email: rawUser.email || ""
+      };
 
       if (token) localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(userData));
 
       window.dispatchEvent(new Event("authChange"));
       setSuccessMsg("Đăng ký/đăng nhập Google thành công!");
@@ -164,11 +170,16 @@ function Register() {
             console.error("Lỗi giải mã token:", e);
           }
 
-          const userInfo = data.user || data.data || {};
+          const userInfo = data.data || data.user || {};
+          
+          if (!userInfo.email) {
+            userInfo.email = cleanEmail;
+          }
+
           const userData = {
             ...userInfo,
             username: userInfo.username || data.username,
-            full_name: userInfo.full_name || data.full_name || userInfo.username || email.split("@")[0],
+            full_name: userInfo.full_name || data.full_name || userInfo.username || cleanEmail.split("@")[0],
             role: String(tokenRole || userInfo.role || data.role || "user").toLowerCase()
           };
           

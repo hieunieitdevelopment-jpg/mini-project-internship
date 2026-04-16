@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mappingController = require("../controllers/mappingController");
 const { validateMapping } = require("../middlewares/validate");
+const { optionalAuth } = require("../middlewares/auth.middleware");
+const rateLimiter = require("../middlewares/rateLimiter");
+const usageLogger = require("../middlewares/usageLogger");
 
 
 /**
@@ -10,6 +13,8 @@ const { validateMapping } = require("../middlewares/validate");
  *   get:
  *     summary: Tra cứu mapping thay đổi đơn vị hành chính
  *     tags: [Mappings]
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: query
  *         name: direction
@@ -102,6 +107,6 @@ const { validateMapping } = require("../middlewares/validate");
  *       400:
  *         description: Thiếu direction hoặc không truyền thông tin tìm kiếm
  */
-router.get("/", validateMapping, mappingController.getMappings);
+router.get("/", optionalAuth, rateLimiter, usageLogger, validateMapping, mappingController.getMappings);
 
 module.exports = router;

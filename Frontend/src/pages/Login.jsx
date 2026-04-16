@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login as loginRequest, googleAuth } from "../services/authService";
+import { login as loginRequest, googleAuth, getMe } from "../services/authService";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -36,17 +36,17 @@ function Login() {
 
       const res = await googleAuth(credentialResponse.credential);
       const data = res.data || {};
+      const rawUser = data.user || data.data?.user || data.data || {};
 
-      const actualToken =
-        data.token ||
-        data.access_token ||
-        data.data?.token ||
-        data.data?.access_token;
+      const userData = {
+        ...rawUser,
+        username: rawUser.username || "",
+        full_name: rawUser.full_name || rawUser.username || "Tài Khoản",
+        role: String(rawUser.role || "user").toLowerCase(),
+        email: rawUser.email || ""
+      };
 
-      const userInfo = data.user || data.data?.user || data.data || {};
-
-      if (actualToken) localStorage.setItem("token", actualToken);
-      localStorage.setItem("user", JSON.stringify(userInfo));
+      localStorage.setItem("user", JSON.stringify(userData));
 
       window.dispatchEvent(new Event("authChange"));
       setSuccessMsg("Đăng nhập Google thành công!");
@@ -137,46 +137,25 @@ function Login() {
       if (res.status >= 200 && res.status < 300) {
         setSuccessMsg("Đăng nhập thành công!");
         
-        // Tìm token linh hoạt theo nhiều cấu trúc API thường gặp
-        const actualToken = data.token || data.access_token || data.data?.token || data.data?.access_token;
-        if (actualToken) localStorage.setItem("token", actualToken);
-        
-        // 1. Giải mã Token để lấy quyền thật sự (bỏ qua dữ liệu rác bên ngoài của API)
-        let tokenRole = null;
-        if (actualToken) {
-          try {
-            // Tự động chuẩn hoá chuỗi Base64Url và bù dấu đệm '=' nếu thiếu
-            const base64Url = actualToken.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const pad = base64.length % 4;
-            const paddedBase64 = pad ? base64 + '='.repeat(4 - pad) : base64;
-            // Giải mã an toàn với cả Tiếng Việt (UTF-8)
-            const jsonPayload = decodeURIComponent(
-              atob(paddedBase64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
-            );
-            const decoded = JSON.parse(jsonPayload);
-            tokenRole = decoded.role;
-          } catch (e) {
-            console.error("Lỗi giải mã token:", e);
-          }
+        const userInfo = data.data || data.user || {}; 
+
+        if (!userInfo.email) {
+           userInfo.email = cleanEmail; // fallback
         }
-        
-        // 2. Lấy đúng object user nằm sâu bên trong
-        const userInfo = data.user || data.data || {}; 
 
         const userData = {
           ...userInfo,
           username: userInfo.username || data.username,
-          full_name: userInfo.full_name || data.full_name || userInfo.username || email.split("@")[0],
-          // Ép lấy Role từ Token làm chuẩn mực cao nhất
-          role: String(tokenRole || userInfo.role || data.role || "user").toLowerCase()
+          full_name: userInfo.full_name || data.full_name || userInfo.username || cleanEmail.split("@")[0],
+          role: String(userInfo.role || data.role || "user").toLowerCase()
         };
         
         localStorage.setItem("user", JSON.stringify(userData));
+
         window.dispatchEvent(new Event("authChange"));
         setTimeout(() => {
           navigate("/");
-        }, 1500); // Đợi 1.5 giây để hiện thông báo trước khi chuyển trang
+        }, 1500);
       }
 
     } catch (error) {

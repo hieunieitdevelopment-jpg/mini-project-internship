@@ -1,0 +1,18 @@
+  id  |                                          description                                          | old_unit_id |     old_name     | old_active | new_unit_id |     new_name     
+------+-----------------------------------------------------------------------------------------------+-------------+------------------+------------+-------------+------------------
+ 7697 | Sáp nhập Phường 1, Phường 2, Phường 4, Phường 5, Phường 7, Xã Hòa An thành Phường Tuy Hòa     |        6188 | Phường 8         | f          |        6187 | Phường Tuy Hòa
+ 7697 | Sáp nhập Phường 1, Phường 2, Phường 4, Phường 5, Phường 7, Xã Hòa An thành Phường Tuy Hòa     |        6192 | Phường 4         | f          |        6187 | Phường Tuy Hòa
+ 7697 | Sáp nhập Phường 1, Phường 2, Phường 4, Phường 5, Phường 7, Xã Hòa An thành Phường Tuy Hòa     |        6193 | Phường 5         | f          |        6187 | Phường Tuy Hòa
+ 7697 | Sáp nhập Phường 1, Phường 2, Phường 4, Phường 5, Phường 7, Xã Hòa An thành Phường Tuy Hòa     |        6194 | Phường 7         | f          |        6187 | Phường Tuy Hòa
+ 7697 | Sáp nhập Phường 1, Phường 2, Phường 4, Phường 5, Phường 7, Xã Hòa An thành Phường Tuy Hòa     |        6289 | Xã Hòa An        | f          |        6187 | Phường Tuy Hòa
+ 7697 | Sáp nhập Phường 1, Phường 2, Phường 4, Phường 5, Phường 7, Xã Hòa An thành Phường Tuy Hòa     |       12464 | Phường Tuy Hòa   | f          |        6187 | Phường Tuy Hòa
+ 7698 | Sáp nhập Phường 9, Xã Hòa Kiến, Xã Bình Kiến, Xã An Phú thành Phường Bình Kiến                |        6190 | Phường 9         | f          |        6199 | Phường Bình Kiến
+ 7698 | Sáp nhập Phường 9, Xã Hòa Kiến, Xã Bình Kiến, Xã An Phú thành Phường Bình Kiến                |        6198 | Xã Hòa Kiến      | f          |        6199 | Phường Bình Kiến
+ 7698 | Sáp nhập Phường 9, Xã Hòa Kiến, Xã Bình Kiến, Xã An Phú thành Phường Bình Kiến                |        6201 | Xã An Phú        | f          |        6199 | Phường Bình Kiến
+ 7698 | Sáp nhập Phường 9, Xã Hòa Kiến, Xã Bình Kiến, Xã An Phú thành Phường Bình Kiến                |       12465 | Phường Bình Kiến | f          |        6199 | Phường Bình Kiến
+ 7721 | Sáp nhập Phường Phú Thạnh, Phường Phú Đông, Phường Phú Lâm, Xã Hòa Thành thành Phường Phú Yên |        6196 | Phường Phú Thạnh | f          |        6202 | Phường Phú Yên
+ 7721 | Sáp nhập Phường Phú Thạnh, Phường Phú Đông, Phường Phú Lâm, Xã Hòa Thành thành Phường Phú Yên |        6197 | Phường Phú Đông  | f          |        6202 | Phường Phú Yên
+ 7721 | Sáp nhập Phường Phú Thạnh, Phường Phú Đông, Phường Phú Lâm, Xã Hòa Thành thành Phường Phú Yên |        6295 | Xã Hòa Thành     | f          |        6202 | Phường Phú Yên
+ 7721 | Sáp nhập Phường Phú Thạnh, Phường Phú Đông, Phường Phú Lâm, Xã Hòa Thành thành Phường Phú Yên |       12488 | Phường Phú Yên   | f          |        6202 | Phường Phú Yên
+(14 rows)
+

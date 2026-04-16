@@ -20,7 +20,13 @@ exports.login = async (req, res, next ) => {
         const result = await authService.login({ email, password });
         res.cookie("accessToken", result.accessToken, accessTokenOptions);
         res.cookie("refreshToken", result.refreshToken, refreshTokenOptions);
-        res.status(200).json({success: true, message: "Đăng nhập thành công", data: result.user });
+        res.status(200).json({
+            success: true, 
+            message: "Đăng nhập thành công", 
+            data: result.user,
+            token: result.token,
+            access_token: result.accessToken
+        });
     } catch (error){
         next(error);
     }
@@ -42,6 +48,23 @@ exports.refreshToken = async (req, res, next) => {
         next(error);
     }
 };  
+
+// lấy thông tin user hiện tại từ token (dùng cho frontend sau khi đăng nhập)
+exports.getMe = async (req, res, next) => {
+    try {
+        console.log("=== GET /auth/me called, req.user:", req.user);
+        const userModel = require("../models/user.model");
+        const user = await userModel.findById(req.user.id);
+        if (!user) {
+            console.log("User not found!");
+            return res.status(404).json({ success: false, message: "Không tìm thấy user" });
+        }
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        console.error("=== /auth/me ERROR ===", error);
+        next(error);
+    }
+};
 
 // đăng xuất
 exports.logout = async (req, res, next) => {
@@ -120,8 +143,10 @@ exports.googleCallback = (req, res) => {
 // xử lý POST từ frontend (React) nhận idToken và trả về API response
 exports.googleCallbackPost = async (req, res, next) => {
     try {
+        console.log("=== GOOGLE CALLBACK POST ===");
         const { idToken } = req.body;
         const result = await authService.googleLoginOrRegister({ idToken });
+        console.log("googleLoginOrRegister SUCCEEDED. setting cookies...");
         res.cookie("accessToken", result.accessToken, accessTokenOptions);
         res.cookie("refreshToken", result.refreshToken, refreshTokenOptions);
         res.status(200).json({ 
@@ -137,6 +162,7 @@ exports.googleCallbackPost = async (req, res, next) => {
             user: result.user
         });
     } catch (error) {
+        console.error("=== GOOGLE CALLBACK ERROR ===", error);
         next(error);
     }
 };

@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const dropdownController = require("../controllers/dropdownController");
 const { validateDistrictId } = require("../middlewares/validate");
+const { optionalAuth } = require("../middlewares/auth.middleware");
+const rateLimiter = require("../middlewares/rateLimiter");
+const usageLogger = require("../middlewares/usageLogger");
 
 /**
  * @swagger
@@ -9,6 +12,8 @@ const { validateDistrictId } = require("../middlewares/validate");
  *   get:
  *     summary: Lấy danh sách xã/phường theo huyện
  *     tags: [Dropdown]
+ *     security:
+ *       - ApiKeyAuth: []
  *     parameters:
  *       - in: path
  *         name: districtId
@@ -39,6 +44,6 @@ const { validateDistrictId } = require("../middlewares/validate");
  *                       code:
  *                         type: string
  */
-router.get("/:districtId/wards", validateDistrictId, dropdownController.getWards);
+router.get("/:districtId/wards", optionalAuth, rateLimiter, usageLogger, validateDistrictId, dropdownController.getWards);
 
 module.exports = router;

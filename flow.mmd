@@ -1,0 +1,38 @@
+flowchart TD
+    User((Ngươi dung Website))
+    Domain[Internet Ten Mien]
+    
+    subgraph May_Chu_EC2
+        direction TB
+        Nginx{Nginx Reverse Proxy}
+        
+        subgraph Tien_trinh_Node_js
+            Node[Backend Express.js port 3000]
+            
+            subgraph express_static
+                ReactFile[Cac File tinh React]
+            end
+            
+            subgraph API_Routes
+                AuthAPI[API Xac thuc]
+                CoreAPI[API Address]
+            end
+        end
+    end
+
+    User -->|1. Go URL HTTPS| Domain
+    Domain -->|2. Ma hoa SSL| Nginx
+    Nginx -->|3. Uy quyen ngam| Node
+    
+    Node -->|A. Neu URL la giao dien| ReactFile
+    Node -->|B. Neu goi lay du lieu| AuthAPI
+    Node -->|B. Neu goi lay du lieu| CoreAPI
+    
+    ReactFile -.->|Tra ve giao dien Web| Nginx
+    AuthAPI -.->|Tra ve JSON| Nginx
+    
+    Nginx -->|4. Xuat ket qua| User
+
+    style User fill:#f9f,stroke:#333
+    style Nginx fill:#f96,stroke:#333
+    style Node fill:#69b3a2,stroke:#333
